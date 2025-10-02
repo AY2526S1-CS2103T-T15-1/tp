@@ -12,7 +12,8 @@
         "johnny-doe": "Johnny Doe",
         "tang-kit-meng-shearer": "Tang Kit Meng Shearer",
         "gong-yiqian": "Gong Yiqian",
-        "tristan-seow": "Tristan Seow"
+        "tristan-seow": "Tristan Seow",
+        "lu-haomeng": "Lu Haomeng"
       },
       "headingKeywords": {}
     },
@@ -133,6 +134,14 @@
       "title": "",
       "headings": {
         "addressbook-level-3": "AddressBook Level-3"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "team/haomeng.md",
+      "title": "John Doe's Project Portfolio Page",
+      "headings": {
+        "project-addressbook-level-3": "Project: AddressBook Level 3"
       },
       "headingKeywords": {}
     },
