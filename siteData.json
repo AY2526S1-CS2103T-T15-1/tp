@@ -13,7 +13,8 @@
         "tang-kit-meng-shearer": "Tang Kit Meng Shearer",
         "gong-yiqian": "Gong Yiqian",
         "tristan-seow": "Tristan Seow",
-        "lu-haomeng": "Lu Haomeng"
+        "lu-haomeng": "Lu Haomeng",
+        "sim-yee-kai": "Sim Yee Kai"
       },
       "headingKeywords": {}
     },
@@ -156,6 +157,14 @@
     {
       "src": "team/shearer.md",
       "title": "John Doe's Project Portfolio Page",
+      "headings": {
+        "project-addressbook-level-3": "Project: AddressBook Level 3"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "team/simyeekai.md",
+      "title": "simyeekai's Project Portfolio Page",
       "headings": {
         "project-addressbook-level-3": "Project: AddressBook Level 3"
       },
