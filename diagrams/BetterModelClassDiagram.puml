@@ -20,4 +20,8 @@ Person *--> "1"Email
 Person *--> "1"Address
 Person *--> "1"TimeSlot
 
+TimeSlot *--> "1"Date
+TimeSlot *--> "1"StartTime
+TimeSlot *--> "1"EndTime
+
 @enduml
