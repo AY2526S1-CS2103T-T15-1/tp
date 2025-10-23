@@ -22,6 +22,10 @@ Class JsonAdaptedPerson
 Class JsonAdaptedTag
 }
 
+package "TimeSlot Storage" #F4F6F6{
+Class "<<interface>>\nTimeSlotStorage" as TimeSlotStorage
+}
+
 }
 
 Class HiddenOutside #FFFFFF
@@ -30,9 +34,11 @@ HiddenOutside ..> Storage
 StorageManager .up.|> Storage
 StorageManager -up-> "1" UserPrefsStorage
 StorageManager -up-> "1" AddressBookStorage
+StorageManager -up-> "1" TimeSlotStorage
 
 Storage -left-|> UserPrefsStorage
 Storage -right-|> AddressBookStorage
+Storage -up-|> TimeSlotStorage
 
 JsonUserPrefsStorage .up.|> UserPrefsStorage
 JsonAddressBookStorage .up.|> AddressBookStorage
