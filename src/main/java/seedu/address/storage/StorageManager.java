@@ -27,6 +27,8 @@ public class StorageManager implements Storage {
      * Creates a {@code StorageManager} with the given {@code AddressBookStorage} and {@code UserPrefStorage}.
      */
     public StorageManager(AddressBookStorage addressBookStorage, UserPrefsStorage userPrefsStorage) {
+        assert addressBookStorage != null : "AddressBookStorage cannot be null";
+        assert userPrefsStorage != null : "UserPrefsStorage cannot be null";
         this.addressBookStorage = addressBookStorage;
         this.userPrefsStorage = userPrefsStorage;
     }
@@ -45,6 +47,7 @@ public class StorageManager implements Storage {
 
     @Override
     public void saveUserPrefs(ReadOnlyUserPrefs userPrefs) throws IOException {
+        assert userPrefs != null : "UserPrefs to sage cannot be null";
         userPrefsStorage.saveUserPrefs(userPrefs);
     }
 
@@ -63,6 +66,7 @@ public class StorageManager implements Storage {
 
     @Override
     public Optional<ReadOnlyAddressBook> readAddressBook(Path filePath) throws DataLoadingException {
+        assert filePath != null : "File path cannot be null";
         logger.fine("Attempting to read data from file: " + filePath);
         return addressBookStorage.readAddressBook(filePath);
     }
@@ -74,12 +78,15 @@ public class StorageManager implements Storage {
 
     @Override
     public void saveAddressBook(ReadOnlyAddressBook addressBook, Path filePath) throws IOException {
+        assert addressBook != null : "AddressBook cannot be null";
+        assert filePath != null : "File path cannot be null";
         logger.fine("Attempting to write to data file: " + filePath);
         addressBookStorage.saveAddressBook(addressBook, filePath);
     }
 
     @Override
     public boolean addSlot(TimeSlot slot) {
+        assert slot != null : "TimeSlot to add cannot be null";
         for (TimeSlot existing : timeSlots) {
             if (existing.overlaps(slot)) {
                 return false;
@@ -96,6 +103,7 @@ public class StorageManager implements Storage {
 
     @Override
     public void loadExistingSlots(ReadOnlyAddressBook addressBook) {
+        assert addressBook != null : "AddressBook cannot be null when loading slots";
         timeSlots.clear();
         addressBook.getPersonList().forEach(person -> timeSlots.add(person.getTimeSlot()));
     }
