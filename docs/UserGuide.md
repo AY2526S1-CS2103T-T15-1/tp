@@ -226,12 +226,12 @@ Example: `findtimeslot 2025-10-12 1200`
 
 * To prevent double-booking, the application now automatically checks for scheduling conflicts.
 
-* You will be prevented from adding or editing a contact if their specified time slot 
+* You will be prevented from adding or editing a contact if their specified time slot
 overlaps with another existing time slot. An error message will be shown to alert you of the conflict.
 
 ### Prefix search for default findCommand
 
-With reference from the original find, where 
+With reference from the original find, where
 
 * Only full words will be matched e.g. `Han` will not match `Hans`;
 
@@ -251,7 +251,7 @@ Example: `findtag Math`
 
 Format: `filtertimeslot` sd/[START_DATE] ed/[END_DATE] st/[START_TIME] et/[END_TIME]
 
-* You must provide at least one of the following prefixes: 
+* You must provide at least one of the following prefixes:
 * sd/ (start date), ed/ (end date), st/ (start time), or et/ (end time); the rest are optional fields (like tag)
 
 Example: `filtertimeslot sd/2025-10-27 ed 2025-10-27 st/0800 et/1200`
@@ -271,7 +271,7 @@ Result: Only contacts with timeslots that are between 20-21 Oct 2025, with times
 * For any long-term tutees that the user may have (weekly lessons), he can tag them as "recurring"
 * Clearpast will use the current time to retrieve all contacts with timeslots in the past
 * Amongst these timeslots, those that are not marked recurring will be deleted (cleared from addressbook)
-* For recurring timeslots, the contact will have its timeslot automatically updated to 7 days in the future, 
+* For recurring timeslots, the contact will have its timeslot automatically updated to 7 days in the future,
 provided that there is no conflict with a future timeslot; if there is, the update will fail with an error message
 
 Format: `clearpast`
