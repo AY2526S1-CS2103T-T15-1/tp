@@ -177,6 +177,105 @@ Furthermore, certain edits can cause the AddressBook to behave in unexpected way
 
 _Details coming soon ..._
 
+### What's new (Combined changes from v1.3 and v1.4)
+
+Disclaimer, we have not added the corresponding images to the user guide
+
+### New timeSlot Field for Contacts
+
+* You can now add a dedicated time slot to each person in the address book. This is perfect for scheduling meetings, appointments, or consultations; in our case, it would be used for lessons.
+
+* The field is added using the add command. (this is a compulsory field)
+
+Format: `ts/YYYY-MM-DD HHMM-HHMM` (e.g., ts/2025-10-12 1200-1400)
+
+Updated addCommmand is as below:
+
+* `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal ts/2025-10-12 1200-1400`
+
+### Findtimeslot Command
+
+We've added a flexible new command, findtimeslot, to easily find contacts based on their scheduled time slots. The command supports three types of searches:
+
+1. Find by Date: Lists all persons who have a time slot on a specific date.
+
+Format: `findtimeslot YYYY-MM-DD`
+
+* This will list all contacts (tutees) in EduTrack with timeslots that fall on that day
+
+Example: `findtimeslot 2025-10-12`
+
+2.  Find by Time: Lists all persons whose time slot starts at a specific time, regardless of the date.
+
+Format: `findtimeslot HHMM`
+
+* This will list all contacts (tutees) in EduTrack with timeslots that start from the specified time
+
+Example: `findtimeslot 1200`
+
+3.  Find by Date and Time: Narrows the search to a specific date and start time.
+
+Format: `findtimeslot YYYY-MM-DD HHMM`
+
+* This is the most specific, and will list all contacts (tutees) in EduTrack with
+  timeslots that start from the specified time, and fall on that day
+
+Example: `findtimeslot 2025-10-12 1200`
+
+### Automatic Time Slot Conflict Detection
+
+* To prevent double-booking, the application now automatically checks for scheduling conflicts.
+
+* You will be prevented from adding or editing a contact if their specified time slot 
+overlaps with another existing time slot. An error message will be shown to alert you of the conflict.
+
+### Prefix search for default findCommand
+
+With reference from the original find, where 
+
+* Only full words will be matched e.g. `Han` will not match `Hans`;
+
+* we have now improved it such that searching `find Ha` would return `Han`, `Hans`, and `Hansen` (assuming in addressbook)
+
+### New findtag Command
+
+Format: `findtag [TAG]`
+
+* Finds contacts that match one or more tags.
+
+Example: `findtag Math`
+
+* List is filtered to show all students with tag Math
+
+### New filtertimeslot Command
+
+Format: `filtertimeslot` sd/[START_DATE] ed/[END_DATE] st/[START_TIME] et/[END_TIME]
+
+* You must provide at least one of the following prefixes: 
+* sd/ (start date), ed/ (end date), st/ (start time), or et/ (end time); the rest are optional fields (like tag)
+
+Example: `filtertimeslot sd/2025-10-27 ed 2025-10-27 st/0800 et/1200`
+
+Result: Only contacts with timeslots that are on 27 Oct 2025, with timeslots in between 0800 to 1200 are shown
+
+Example: `filtertimeslot sd/2025-10-27 st/0800 et/1200`
+
+Result: Only contacts with timeslots that are on/after 27 Oct 2025, with timeslots in between 0800 to 1200 are shown
+
+Example: `filtertimeslot sd/2025-10-20 ed/2025-10-21 st/0800`
+
+Result: Only contacts with timeslots that are between 20-21 Oct 2025, with timeslots on/after 0800 are shown
+
+### New clearpast Command
+
+* For any long-term tutees that the user may have (weekly lessons), he can tag them as "recurring"
+* Clearpast will use the current time to retrieve all contacts with timeslots in the past
+* Amongst these timeslots, those that are not marked recurring will be deleted (cleared from addressbook)
+* For recurring timeslots, the contact will have its timeslot automatically updated to 7 days in the future, 
+provided that there is no conflict with a future timeslot; if there is, the update will fail with an error message
+
+Format: `clearpast`
+
 --------------------------------------------------------------------------------------------------------------------
 
 ## FAQ
@@ -197,10 +296,14 @@ _Details coming soon ..._
 
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Add**    | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
+**Add**    | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/TIMESLOT [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 ts/2025-10-27 1400-1600 t/friend t/colleague`
 **Clear**  | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List**   | `list`
 **Help**   | `help`
+**Findtag**| `find TAG [MORE_TAGS}` <br> e.g., `find Math English`
+**FindTimeSlot** | `findtimeslot [DATE] [TIME]` <br> e.g. `findtimeslot 2025-10-27 1400`
+**Filtertimeslot** | `filtertimeslot [sd/START_DATE] [ed/END_DATE] [st/START_TIME] [et/END_TIME]` <br> e.g `filtertimeslot 2025-10-27 2025-10-27 1400`
+**Clearpast** | `clearpast`
