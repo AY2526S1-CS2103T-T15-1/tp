@@ -159,7 +159,7 @@ public class TimeSlot implements Comparable<TimeSlot> {
         if (!this.date.equals(other.date)) {
             return false; // Different dates cannot overlap
         }
-        return !(this.endTime.isBefore(other.startTime) || this.startTime.isAfter(other.endTime));
+        return this.endTime.isAfter(other.startTime) || other.endTime.isBefore(this.startTime);
     }
 
     @Override
