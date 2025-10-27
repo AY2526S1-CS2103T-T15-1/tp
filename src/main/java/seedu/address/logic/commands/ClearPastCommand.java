@@ -113,7 +113,6 @@ public class ClearPastCommand extends Command {
 
         // --- SEE FIX FOR QUESTION 2 BELOW ---
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-        model.sortFilteredPersonList(Comparator.comparing(Person::getTimeSlot));
 
         return new CommandResult(result.toString());
     }

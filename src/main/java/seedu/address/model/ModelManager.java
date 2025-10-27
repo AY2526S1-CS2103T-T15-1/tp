@@ -184,11 +184,6 @@ public class ModelManager implements Model {
     }
 
     @Override
-    public void sortFilteredPersonList(Comparator<Person> comparator) {
-        sortedPersons.setComparator(comparator);
-    }
-
-    @Override
     public boolean equals(Object other) {
         if (other == this) {
             return true;

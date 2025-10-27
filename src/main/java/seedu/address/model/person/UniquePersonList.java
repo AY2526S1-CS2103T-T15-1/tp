@@ -28,6 +28,19 @@ public class UniquePersonList implements Iterable<Person> {
     private final ObservableList<Person> internalUnmodifiableList =
             FXCollections.unmodifiableObservableList(internalList);
 
+    public void sortTimeSlot() {
+        this.internalList.sort((p1, p2) -> {
+            if (p1.getTimeSlot() == null && p2.getTimeSlot() == null) {
+                return 0;
+            } else if (p1. getTimeSlot() == null) {
+                return 1;
+            } else if (p2.getTimeSlot() == null) {
+                return -1;
+            } else {
+                return p1.getTimeSlot().compareTo(p2.getTimeSlot());
+            }
+        });
+    }
     /**
      * Returns true if the list contains an equivalent person as the given argument.
      */
@@ -46,6 +59,7 @@ public class UniquePersonList implements Iterable<Person> {
             throw new DuplicatePersonException();
         }
         internalList.add(toAdd);
+        sortTimeSlot();
     }
 
     /**
@@ -66,6 +80,7 @@ public class UniquePersonList implements Iterable<Person> {
         }
 
         internalList.set(index, editedPerson);
+        sortTimeSlot();
     }
 
     /**
@@ -77,11 +92,13 @@ public class UniquePersonList implements Iterable<Person> {
         if (!internalList.remove(toRemove)) {
             throw new PersonNotFoundException();
         }
+        sortTimeSlot();
     }
 
     public void setPersons(UniquePersonList replacement) {
         requireNonNull(replacement);
         internalList.setAll(replacement.internalList);
+        sortTimeSlot();
     }
 
     /**
@@ -95,6 +112,7 @@ public class UniquePersonList implements Iterable<Person> {
         }
 
         internalList.setAll(persons);
+        sortTimeSlot();
     }
 
     /**
