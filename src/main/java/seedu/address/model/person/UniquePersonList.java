@@ -28,11 +28,14 @@ public class UniquePersonList implements Iterable<Person> {
     private final ObservableList<Person> internalUnmodifiableList =
             FXCollections.unmodifiableObservableList(internalList);
 
+    /**
+     * sorts the internal list by their timeslots chronologically
+     */
     public void sortTimeSlot() {
         this.internalList.sort((p1, p2) -> {
             if (p1.getTimeSlot() == null && p2.getTimeSlot() == null) {
                 return 0;
-            } else if (p1. getTimeSlot() == null) {
+            } else if (p1.getTimeSlot() == null) {
                 return 1;
             } else if (p2.getTimeSlot() == null) {
                 return -1;

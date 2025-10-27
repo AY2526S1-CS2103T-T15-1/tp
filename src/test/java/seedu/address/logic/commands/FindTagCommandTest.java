@@ -11,7 +11,6 @@ import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,6 @@ import seedu.address.logic.Messages;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
-import seedu.address.model.person.Person;
 import seedu.address.model.person.TagContainsKeywordsPredicate;
 
 /**
@@ -110,7 +108,6 @@ public class FindTagCommandTest {
         FindTagCommand command = new FindTagCommand(predicate);
 
         expectedModel.updateFilteredPersonList(predicate);
-        expectedModel.sortFilteredPersonList(Comparator.comparing(Person::getTimeSlot));
 
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
         // We check the contents, assuming ALICE, BENSON, DANIEL are the matches and sorted by timeslot
@@ -127,7 +124,6 @@ public class FindTagCommandTest {
         FindTagCommand command = new FindTagCommand(predicate);
 
         expectedModel.updateFilteredPersonList(predicate);
-        expectedModel.sortFilteredPersonList(Comparator.comparing(Person::getTimeSlot));
 
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
         assertEquals(Arrays.asList(ALICE, BENSON, DANIEL), model.getFilteredPersonList());
@@ -140,7 +136,6 @@ public class FindTagCommandTest {
         FindTagCommand command = new FindTagCommand(predicate);
 
         expectedModel.updateFilteredPersonList(predicate);
-        expectedModel.sortFilteredPersonList(Comparator.comparing(Person::getTimeSlot));
 
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
         assertEquals(Collections.emptyList(), model.getFilteredPersonList());
