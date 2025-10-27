@@ -1,0 +1,33 @@
+@startuml
+!theme plain
+actor User
+participant Logic
+participant FilterTimeslotCommandParser
+participant FilterTimeslotCommand
+participant Model
+
+User -> Logic : execute("filtertimeslot sd/...")
+activate Logic
+Logic -> FilterTimeslotCommandParser : parse("sd/...")
+activate FilterTimeslotCommandParser
+Logic <-- FilterTimeslotCommandParser : cmd:FilterTimeslotCommand
+deactivate FilterTimeslotCommandParser
+
+Logic -> FilterTimeslotCommand : execute(model)
+activate FilterTimeslotCommand
+FilterTimeslotCommand -> Model : updateFilteredPersonList(predicate)
+activate Model
+deactivate Model
+
+' This next step is optional, but included in your findtag command
+' and makes sense for consistency.
+FilterTimeslotCommand -> Model : sortFilteredPersonList(comparator)
+activate Model
+deactivate Model
+
+Logic <-- FilterTimeslotCommand : result:CommandResult
+deactivate FilterTimeslotCommand
+
+User <-- Logic : result
+deactivate Logic
+@enduml
