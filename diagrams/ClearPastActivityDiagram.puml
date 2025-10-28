@@ -1,0 +1,44 @@
+@startuml
+!theme plain
+start
+:Get current time (now);
+:Create empty lists:
+'personsToDelete'
+'personsToUpdate';
+
+:Iterate through all persons;
+while (for each person)
+    if (person.getTimeSlot().isPast(now)?) then (yes)
+        if (person.hasTag("recurring")?) then (yes)
+            :Calculate nextOccurrence;
+            :Add person to 'personsToUpdate' list;
+        else (no)
+            :Add person to 'personsToDelete' list;
+        endif
+    else (no)
+    endif
+endwhile
+
+:Iterate 'personsToDelete' list;
+:Call model.deletePerson() for each
+Add name to 'deletedNames';
+
+:Iterate 'personsToUpdate' list;
+while (for each person to update)
+    if (model.setPerson() succeeds?) then (yes)
+        :Add name to 'updatedNames';
+    else (no, conflict)
+        :Add name to 'conflictNames';
+    endif
+endwhile
+
+:Build result string from
+'deletedNames', 'updatedNames',
+and 'conflictNames';
+
+:model.updateFilteredPersonList(ALL);
+:model.sortFilteredPersonList(BY_TIMESLOT);
+
+:Return CommandResult;
+stop
+@enduml
