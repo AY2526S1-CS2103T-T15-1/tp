@@ -3,10 +3,12 @@ package seedu.address.model;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import java.util.Optional;
 
 import javafx.collections.ObservableList;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.TimeSlot;
 import seedu.address.model.person.UniquePersonList;
 
 /**
@@ -92,6 +94,42 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     public void removePerson(Person key) {
         persons.remove(key);
+    }
+
+    /**
+     * Checks if the given timeslot conflicts with any person in the address book.
+     * @param timeSlot The timeslot to check.
+     * @return An Optional containing the conflicting person, or empty if no conflict.
+     */
+    public Optional<Person> getConflictingPerson(TimeSlot timeSlot) {
+        requireNonNull(timeSlot);
+        for (Person person : persons) {
+            if (person.getTimeSlot() != null && person.getTimeSlot().overlaps(timeSlot)) {
+                return Optional.of(person);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Checks if the given timeslot conflicts with any person in the address book,
+     * ignoring a specific person (e.g., the person being edited).
+     * @param timeSlot The timeslot to check.
+     * @param personToIgnore The person to ignore during the check.
+     * @return An Optional containing the conflicting person, or empty if no conflict.
+     */
+    public Optional<Person> getConflictingPerson(TimeSlot timeSlot, Person personToIgnore) {
+        requireNonNull(timeSlot);
+        requireNonNull(personToIgnore);
+        for (Person person : persons) {
+            // Ignore the personToIgnore AND check for conflict
+            if (!person.isSamePerson(personToIgnore)
+                    && person.getTimeSlot() != null
+                    && person.getTimeSlot().overlaps(timeSlot)) {
+                return Optional.of(person);
+            }
+        }
+        return Optional.empty();
     }
 
     //// util methods

@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.CollectionUtil;
@@ -82,6 +84,7 @@ public class EditCommand extends Command {
         }
 
         Person personToEdit = lastShownList.get(index.getZeroBased());
+        assert personToEdit != null : "Person to edit should not be null";
         Person editedPerson = createEditedPerson(personToEdit, editPersonDescriptor);
 
         if (!personToEdit.isSamePerson(editedPerson) && model.hasPerson(editedPerson)) {
@@ -94,7 +97,45 @@ public class EditCommand extends Command {
             throw new CommandException(e.getMessage());
         }
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-        return new CommandResult(String.format(MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)));
+        String editedFields = buildEditedFieldsString(personToEdit, editedPerson, editPersonDescriptor);
+        return new CommandResult(String.format(MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson))
+                + "\n" + editedFields);
+    }
+
+    /**
+     * Builds a string describing the fields that were changed.
+     *
+     * @param personToEdit The original person object.
+     * @param editedPerson The new person object after edits.
+     * @param descriptor   The descriptor that specified the edits.
+     * @return A string detailing the changes.
+     */
+    private String buildEditedFieldsString(Person personToEdit, Person editedPerson,
+                                           EditPersonDescriptor descriptor) {
+        String changes = Stream.of(
+                        descriptor.getName().map(val -> "Name: '" + personToEdit.getName()
+                                + "' -> '" + editedPerson.getName() + "'"),
+                        descriptor.getPhone().map(val -> "Phone: '" + personToEdit.getPhone()
+                                + "' -> '" + editedPerson.getPhone() + "'"),
+                        descriptor.getEmail().map(val -> "Email: '" + personToEdit.getEmail()
+                                + "' -> '" + editedPerson.getEmail() + "'"),
+                        descriptor.getAddress().map(val -> "Address: '" + personToEdit.getAddress()
+                                + "' -> '" + editedPerson.getAddress() + "'"),
+                        descriptor.getTimeSlot().map(val -> "Timeslot: '" + personToEdit.getTimeSlot()
+                                + "' -> '" + editedPerson.getTimeSlot() + "'"),
+                        descriptor.getTags().map(val -> "Tags: '" + personToEdit.getTags()
+                                + "' -> '" + editedPerson.getTags() + "'")
+                )
+                .filter(Optional::isPresent) // Filter out any empty Optionals (fields not edited)
+                .map(Optional::get) // Get the change string from the Optional
+                .collect(Collectors.joining(", ")); // Join all changes with a comma and space
+
+        if (changes.isEmpty()) {
+            // This logic is preserved from your original code.
+            return "No changes were applied.";
+        }
+
+        return "Changes: [" + changes + "]";
     }
 
     /**

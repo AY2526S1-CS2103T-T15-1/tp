@@ -26,6 +26,7 @@ import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FilterTimeslotCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.FindTagCommand;
+import seedu.address.logic.commands.FindTimeslotCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -33,6 +34,7 @@ import seedu.address.model.person.NameContainsKeywordsPredicate;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.TagContainsKeywordsPredicate;
 import seedu.address.model.person.TimeslotRangePredicate;
+import seedu.address.model.person.TimeslotStartTimeContainsKeywordsPredicate;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
 import seedu.address.testutil.PersonBuilder;
 import seedu.address.testutil.PersonUtil;
@@ -50,8 +52,18 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_clear() throws Exception {
+        // Test that "clear" (with no args) works
         assertTrue(parser.parseCommand(ClearCommand.COMMAND_WORD) instanceof ClearCommand);
-        assertTrue(parser.parseCommand(ClearCommand.COMMAND_WORD + " 3") instanceof ClearCommand);
+
+        // Test that "clear" with any arguments fails
+        assertThrows(ParseException.class,
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, ClearCommand.MESSAGE_USAGE), () ->
+                        parser.parseCommand(ClearCommand.COMMAND_WORD + " 3"));
+
+        // Also test with other arguments
+        assertThrows(ParseException.class,
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, ClearCommand.MESSAGE_USAGE), () ->
+                        parser.parseCommand(ClearCommand.COMMAND_WORD + " past"));
     }
 
     @Test
@@ -72,8 +84,13 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_exit() throws Exception {
+        // Test that "exit" (with no args) works
         assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD) instanceof ExitCommand);
-        assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD + " 3") instanceof ExitCommand);
+
+        // Test that "exit" with any arguments fails
+        assertThrows(ParseException.class,
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, ExitCommand.MESSAGE_USAGE), () ->
+                        parser.parseCommand(ExitCommand.COMMAND_WORD + " 3"));
     }
 
     @Test
@@ -86,14 +103,24 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_help() throws Exception {
+        // Test that "help" (with no args) works
         assertTrue(parser.parseCommand(HelpCommand.COMMAND_WORD) instanceof HelpCommand);
-        assertTrue(parser.parseCommand(HelpCommand.COMMAND_WORD + " 3") instanceof HelpCommand);
+
+        // Test that "help" with any arguments fails
+        assertThrows(ParseException.class,
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE), () ->
+                        parser.parseCommand(HelpCommand.COMMAND_WORD + " 3"));
     }
 
     @Test
     public void parseCommand_list() throws Exception {
+        // Test that "list" (with no args) works
         assertTrue(parser.parseCommand(ListCommand.COMMAND_WORD) instanceof ListCommand);
-        assertTrue(parser.parseCommand(ListCommand.COMMAND_WORD + " 3") instanceof ListCommand);
+
+        // Test that "list" with any arguments fails
+        assertThrows(ParseException.class,
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListCommand.MESSAGE_USAGE), () ->
+                        parser.parseCommand(ListCommand.COMMAND_WORD + " 3"));
     }
 
     @Test
@@ -136,6 +163,16 @@ public class AddressBookParserTest {
         FindTagCommand command = (FindTagCommand) parser.parseCommand(
                 FindTagCommand.COMMAND_WORD + " " + String.join(" ", keywords));
         assertEquals(new FindTagCommand(new TagContainsKeywordsPredicate(keywords)), command);
+    }
+
+    @Test
+    public void parseCommand_findtimeslot() throws Exception {
+        List<String> keywords = Arrays.asList("2025-10-12", "0900");
+        FindTimeslotCommand command = (FindTimeslotCommand) parser.parseCommand(
+                FindTimeslotCommand.COMMAND_WORD + " " + String.join(" ", keywords));
+
+        assertEquals(new FindTimeslotCommand(
+                new TimeslotStartTimeContainsKeywordsPredicate(keywords)), command);
     }
 
 }

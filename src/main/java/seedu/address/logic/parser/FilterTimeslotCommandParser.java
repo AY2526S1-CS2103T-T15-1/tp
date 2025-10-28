@@ -9,7 +9,9 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_START_TIME;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import seedu.address.logic.commands.FilterTimeslotCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -25,6 +27,17 @@ public class FilterTimeslotCommandParser implements Parser<FilterTimeslotCommand
      * and returns a FilterTimeslotCommand object for execution.
      * @throws ParseException if the user input does not conform the expected format
      */
+
+    public static final String MESSAGE_INVALID_DATE_RANGE = "Start date must be before or on end date.";
+    public static final String MESSAGE_INVALID_TIME_RANGE = "Start time must be before or on end time.";
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HHmm");
+
+    /**
+     * Parses the overall command string with helper methods and returns a FilterTimeSlotCommand
+     * @param args
+     * @return
+     * @throws ParseException
+     */
     public FilterTimeslotCommand parse(String args) throws ParseException {
         requireNonNull(args);
         ArgumentMultimap argMultimap =
@@ -36,53 +49,65 @@ public class FilterTimeslotCommandParser implements Parser<FilterTimeslotCommand
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, FilterTimeslotCommand.MESSAGE_USAGE));
         }
 
-        // We need to check if at least one prefix is present
-        if (argMultimap.getValue(PREFIX_START_DATE).isEmpty()
-                && argMultimap.getValue(PREFIX_END_DATE).isEmpty()
-                && argMultimap.getValue(PREFIX_START_TIME).isEmpty()
-                && argMultimap.getValue(PREFIX_END_TIME).isEmpty()) {
+        if (Stream.of(PREFIX_START_DATE, PREFIX_END_DATE, PREFIX_START_TIME, PREFIX_END_TIME)
+                .noneMatch(prefix -> argMultimap.getValue(prefix).isPresent())) {
             throw new ParseException(
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, FilterTimeslotCommand.MESSAGE_USAGE));
         }
 
-        // Parse all the optional values
-        Optional<LocalDate> startDate = Optional.empty();
-        if (argMultimap.getValue(PREFIX_START_DATE).isPresent()) {
-            startDate = Optional.of(ParserUtil.parseDate(argMultimap.getValue(PREFIX_START_DATE).get()));
+        try {
+            // --- REFACTORED: Parsing logic moved to helper methods ---
+            Optional<LocalDate> startDate = parseDate(argMultimap.getValue(PREFIX_START_DATE));
+            Optional<LocalDate> endDate = parseDate(argMultimap.getValue(PREFIX_END_DATE));
+            Optional<LocalTime> startTime = parseTime(argMultimap.getValue(PREFIX_START_TIME));
+            Optional<LocalTime> endTime = parseTime(argMultimap.getValue(PREFIX_END_TIME));
+
+            if (startDate.isPresent() && endDate.isPresent() && startDate.get().isAfter(endDate.get())) {
+                throw new ParseException(MESSAGE_INVALID_DATE_RANGE);
+            }
+
+            if (startTime.isPresent() && endTime.isPresent() && startTime.get().isAfter(endTime.get())) {
+                throw new ParseException(MESSAGE_INVALID_TIME_RANGE);
+            }
+
+            TimeslotRangePredicate predicate = new TimeslotRangePredicate(
+                    startDate, endDate, startTime, endTime);
+
+            return new FilterTimeslotCommand(predicate);
+
+        } catch (ParseException pe) {
+            // Catch exceptions from helper methods
+            throw new ParseException(pe.getMessage(), pe);
         }
+    }
 
-        Optional<LocalDate> endDate = Optional.empty();
-        if (argMultimap.getValue(PREFIX_END_DATE).isPresent()) {
-            endDate = Optional.of(ParserUtil.parseDate(argMultimap.getValue(PREFIX_END_DATE).get()));
+    /**
+     * Parses an Optional date string, handling "now"/"today" keywords.
+     */
+    private Optional<LocalDate> parseDate(Optional<String> dateStr) throws ParseException {
+        if (dateStr.isEmpty()) {
+            return Optional.empty();
         }
-
-        Optional<LocalTime> startTime = Optional.empty();
-        if (argMultimap.getValue(PREFIX_START_TIME).isPresent()) {
-            startTime = Optional.of(ParserUtil.parseTime(argMultimap.getValue(PREFIX_START_TIME).get()));
+        String str = dateStr.get();
+        if (str.equalsIgnoreCase("now") || str.equalsIgnoreCase("today")) {
+            return Optional.of(LocalDate.now());
         }
+        return Optional.of(ParserUtil.parseDate(str));
+    }
 
-        Optional<LocalTime> endTime = Optional.empty();
-        if (argMultimap.getValue(PREFIX_END_TIME).isPresent()) {
-            endTime = Optional.of(ParserUtil.parseTime(argMultimap.getValue(PREFIX_END_TIME).get()));
+    /**
+     * Parses an Optional time string, handling "now" keyword.
+     */
+    private Optional<LocalTime> parseTime(Optional<String> timeStr) throws ParseException {
+        if (timeStr.isEmpty()) {
+            return Optional.empty();
         }
-
-        // Add validation logic
-        if (startDate.isPresent() && endDate.isPresent() && startDate.get().isAfter(endDate.get())) {
-            throw new ParseException("Start date must be before or on end date.");
+        String str = timeStr.get();
+        if (str.equalsIgnoreCase("now")) {
+            // Use a formatter to avoid ParseException if LocalTime.now() has nanoseconds
+            String formattedNow = LocalTime.now().format(TIME_FORMATTER);
+            return Optional.of(LocalTime.parse(formattedNow, TIME_FORMATTER));
         }
-
-        // Add validation logic
-        if (startDate.isPresent() && endDate.isPresent() && startDate.get().isAfter(endDate.get())) {
-            throw new ParseException("Start date must be before or on end date.");
-        }
-
-        if (startTime.isPresent() && endTime.isPresent() && startTime.get().isAfter(endTime.get())) {
-            throw new ParseException("Start time must be before or on end time.");
-        }
-
-        TimeslotRangePredicate predicate = new TimeslotRangePredicate(
-                startDate, endDate, startTime, endTime);
-
-        return new FilterTimeslotCommand(predicate);
+        return Optional.of(ParserUtil.parseTime(str));
     }
 }

@@ -55,10 +55,11 @@ public class FilterTimeslotCommandTest {
     @Test
     public void execute_zeroKeywords_noPersonFound() {
         // We assume TypicalPersons ALICE and BENSON do not have timeslots on this date
-        String expectedMessage = String.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 0);
         TimeslotRangePredicate predicate = new TimeslotRangePredicate(
                 Optional.of(LocalDate.of(2030, 1, 1)), Optional.empty(),
                 Optional.empty(), Optional.empty());
+        String expectedMessage = String.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 0)
+                + " " + predicate.getFilterDescription();
         FilterTimeslotCommand command = new FilterTimeslotCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
         CommandResult expectedCommandResult = new CommandResult(expectedMessage);

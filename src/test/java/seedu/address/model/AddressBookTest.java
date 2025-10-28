@@ -7,6 +7,7 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.ALICE;
+import static seedu.address.testutil.TypicalPersons.BENSON;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
 import java.util.Arrays;
@@ -19,7 +20,9 @@ import org.junit.jupiter.api.Test;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.TimeSlot;
 import seedu.address.model.person.exceptions.DuplicatePersonException;
+import seedu.address.model.person.exceptions.PersonNotFoundException;
 import seedu.address.testutil.PersonBuilder;
 
 public class AddressBookTest {
@@ -87,6 +90,133 @@ public class AddressBookTest {
     public void toStringMethod() {
         String expected = AddressBook.class.getCanonicalName() + "{persons=" + addressBook.getPersonList() + "}";
         assertEquals(expected, addressBook.toString());
+    }
+
+    @Test
+    public void getConflictingPerson_withConflict_returnsPerson() {
+        addressBook.addPerson(ALICE); // ALICE has timeslot "2025-10-12 1600-1800"
+        TimeSlot conflictingSlot = new TimeSlot("2025-10-12 1500-1700"); // Overlaps
+        assertTrue(addressBook.getConflictingPerson(conflictingSlot).isPresent());
+        assertEquals(ALICE, addressBook.getConflictingPerson(conflictingSlot).get());
+    }
+
+    @Test
+    public void getConflictingPerson_noConflict_returnsEmpty() {
+        addressBook.addPerson(ALICE);
+        TimeSlot nonConflictingSlot = new TimeSlot("2099-01-01 1200-1300");
+        assertFalse(addressBook.getConflictingPerson(nonConflictingSlot).isPresent());
+    }
+
+    @Test
+    public void getConflictingPerson_personHasNullTimeslot_noConflict() {
+        // PersonBuilder with no timeslot
+        Person noSlotPerson = new PersonBuilder().withName("No Slot").build();
+        addressBook.addPerson(noSlotPerson);
+        TimeSlot someSlot = new TimeSlot("2099-01-01 1200-1300");
+
+        // Ensures the null check in getConflictingPerson works
+        assertFalse(addressBook.getConflictingPerson(someSlot).isPresent());
+    }
+
+    @Test
+    public void getConflictingPerson_nullTimeslot_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> addressBook.getConflictingPerson(null));
+    }
+
+    @Test
+    public void getConflictingPerson_ignoreSelf_returnsEmpty() {
+        addressBook.addPerson(ALICE);
+        TimeSlot alicesSlot = ALICE.getTimeSlot();
+
+        // Check for conflict, but ignore ALICE. Should find no conflict.
+        assertFalse(addressBook.getConflictingPerson(alicesSlot, ALICE).isPresent());
+    }
+
+    @Test
+    public void getConflictingPerson_conflictWithOther_returnsOtherPerson() {
+        addressBook.addPerson(ALICE);
+        addressBook.addPerson(BENSON); // BENSON has timeslot "2025-10-13 1000-1100"
+        TimeSlot bensonSlot = BENSON.getTimeSlot();
+
+        // Check for conflict with Benson's slot, while (hypothetically) editing ALICE
+        assertTrue(addressBook.getConflictingPerson(bensonSlot, ALICE).isPresent());
+        assertEquals(BENSON, addressBook.getConflictingPerson(bensonSlot, ALICE).get());
+    }
+
+    @Test
+    public void getConflictingPerson_nullInputs_throwsNullPointerException() {
+        TimeSlot someSlot = new TimeSlot("2099-01-01 1200-1300");
+        assertThrows(NullPointerException.class, () -> addressBook.getConflictingPerson(null, ALICE));
+        assertThrows(NullPointerException.class, () -> addressBook.getConflictingPerson(someSlot, null));
+    }
+
+    @Test
+    public void addPerson_nullPerson_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> addressBook.addPerson(null));
+    }
+
+    @Test
+    public void addPerson_duplicatePerson_throwsDuplicatePersonException() {
+        addressBook.addPerson(ALICE);
+        assertThrows(DuplicatePersonException.class, () -> addressBook.addPerson(ALICE));
+    }
+
+    @Test
+    public void setPerson_nullTargetPerson_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> addressBook.setPerson(null, ALICE));
+    }
+
+    @Test
+    public void setPerson_nullEditedPerson_throwsNullPointerException() {
+        addressBook.addPerson(ALICE);
+        assertThrows(NullPointerException.class, () -> addressBook.setPerson(ALICE, null));
+    }
+
+    @Test
+    public void setPerson_targetPersonNotInList_throwsPersonNotFoundException() {
+        assertThrows(PersonNotFoundException.class, () -> addressBook.setPerson(ALICE, ALICE));
+    }
+
+    @Test
+    public void removePerson_nullPerson_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> addressBook.removePerson(null));
+    }
+
+    @Test
+    public void removePerson_personDoesNotExist_throwsPersonNotFoundException() {
+        assertThrows(PersonNotFoundException.class, () -> addressBook.removePerson(ALICE));
+    }
+
+    @Test
+    public void removePerson_personExists_removesPerson() {
+        addressBook.addPerson(ALICE);
+        addressBook.removePerson(ALICE);
+        AddressBook expectedAddressBook = new AddressBook();
+        assertEquals(expectedAddressBook, addressBook);
+    }
+
+    @Test
+    public void equals() {
+        addressBook.addPerson(ALICE);
+
+        // same object -> returns true
+        assertTrue(addressBook.equals(addressBook));
+
+        // same values -> returns true
+        AddressBook addressBookCopy = new AddressBook();
+        addressBookCopy.addPerson(ALICE);
+        assertTrue(addressBook.equals(addressBookCopy));
+
+        // different types -> returns false
+        assertFalse(addressBook.equals(5));
+
+        // null -> returns false
+        assertFalse(addressBook.equals(null));
+
+        // different person -> returns false
+        AddressBook differentAddressBook = new AddressBook();
+        differentAddressBook.addPerson(BENSON);
+        assertFalse(addressBook.equals(differentAddressBook));
     }
 
     /**
