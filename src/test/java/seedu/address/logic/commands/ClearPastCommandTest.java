@@ -5,7 +5,6 @@ import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Comparator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -88,10 +87,6 @@ public class ClearPastCommandTest {
         expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs(), storage);
 
         String expectedMessage = ClearPastCommand.MESSAGE_NO_CHANGES;
-        // Sort both models to be safe (though they are already sorted)
-        model.sortFilteredPersonList(Comparator.comparing(Person::getTimeSlot));
-        expectedModel.sortFilteredPersonList(Comparator.comparing(Person::getTimeSlot));
-
         assertCommandSuccess(new ClearPastCommand(), model, expectedMessage, expectedModel);
     }
 
@@ -135,9 +130,6 @@ public class ClearPastCommandTest {
         String expectedMessage = new StringBuilder(ClearPastCommand.MESSAGE_SUCCESS)
                 .append(String.format(ClearPastCommand.MESSAGE_UPDATED, 1, "Recurring Carl"))
                 .toString();
-
-        // Add the sort command to the expectedModel
-        expectedModel.sortFilteredPersonList(Comparator.comparing(Person::getTimeSlot));
         assertCommandSuccess(new ClearPastCommand(), model, expectedMessage, expectedModel);
     }
 
@@ -172,9 +164,6 @@ public class ClearPastCommandTest {
                 .append(String.format(ClearPastCommand.MESSAGE_DELETED, 1, "Past Alice"))
                 .append(String.format(ClearPastCommand.MESSAGE_UPDATED, 1, "Recurring Carl"))
                 .toString();
-
-        // Add the sort command to the expectedModel
-        expectedModel.sortFilteredPersonList(Comparator.comparing(Person::getTimeSlot));
         assertCommandSuccess(new ClearPastCommand(), model, expectedMessage, expectedModel);
     }
 
@@ -202,8 +191,6 @@ public class ClearPastCommandTest {
         String expectedMessage = new StringBuilder(ClearPastCommand.MESSAGE_SUCCESS)
                 .append(String.format(ClearPastCommand.MESSAGE_CONFLICTS, 1, "Recurring Carl"))
                 .toString();
-
-        expectedModel.sortFilteredPersonList(Comparator.comparing(Person::getTimeSlot));
 
         assertCommandSuccess(new ClearPastCommand(), model, expectedMessage, expectedModel);
     }
