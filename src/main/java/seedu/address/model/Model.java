@@ -1,11 +1,13 @@
 package seedu.address.model;
 
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.TimeSlot;
 import seedu.address.storage.Storage;
 
 /**
@@ -90,4 +92,17 @@ public interface Model {
      * @return
      */
     Storage getStorage();
+
+    /**
+     * Finds and returns a person who conflicts with the given timeslot.
+     * @return An Optional containing the conflicting person, or empty if no conflict.
+     */
+    Optional<Person> getConflictingPerson(TimeSlot timeSlot);
+
+    /**
+     * Finds and returns a person who conflicts with the given timeslot, ignoring a specific person.
+     * @return An Optional containing the conflicting person, or empty if no conflict.
+     */
+    Optional<Person> getConflictingPerson(
+            TimeSlot timeSlot, Person personToIgnore);
 }

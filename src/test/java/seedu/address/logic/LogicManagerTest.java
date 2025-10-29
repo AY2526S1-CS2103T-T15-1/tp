@@ -21,6 +21,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -86,6 +87,52 @@ public class LogicManagerTest {
     @Test
     public void getFilteredPersonList_modifyList_throwsUnsupportedOperationException() {
         assertThrows(UnsupportedOperationException.class, () -> logic.getFilteredPersonList().remove(0));
+    }
+
+    @Test
+    public void execute_addCommand_success() throws Exception {
+        // This test ensures a valid add command works through the LogicManager
+        String command = AddCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY
+                + EMAIL_DESC_AMY + ADDRESS_DESC_AMY + TIMESLOT_DESC_AMY;
+
+        Person expectedPerson = new PersonBuilder(AMY).withTags().build();
+        ModelManager expectedModel = new ModelManager();
+        expectedModel.addPerson(expectedPerson);
+
+        String expectedMessage = String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(expectedPerson));
+
+        assertCommandSuccess(command, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_addCommand_missingPrefixthrowsParseException() {
+        // This test ensures our new parser validation works via the LogicManager
+        String command = AddCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY + EMAIL_DESC_AMY;
+
+        String expectedMessage = "Missing prefix: " + seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS.getPrefix()
+                + "\n" + AddCommand.MESSAGE_USAGE;
+
+        assertParseException(command, expectedMessage);
+    }
+
+    @Test
+    public void execute_editCommand_success() throws Exception {
+        // This test ensures the new success message for edit is correct
+        model.addPerson(AMY); // Add AMY first (index 1)
+
+        String command = "edit 1 n/Amy V2";
+
+        Person personToEdit = model.getFilteredPersonList().get(0);
+        Person editedPerson = new PersonBuilder(AMY).withName("Amy V2").build();
+
+        ModelManager expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.setPerson(personToEdit, editedPerson);
+
+        String changes = "Changes: [Name: '" + AMY.getName() + "' -> 'Amy V2']";
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson))
+                + "\n" + changes;
+
+        assertCommandSuccess(command, expectedMessage, expectedModel);
     }
 
     /**

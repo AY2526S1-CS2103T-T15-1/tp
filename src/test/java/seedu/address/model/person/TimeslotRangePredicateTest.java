@@ -1,5 +1,6 @@
 package seedu.address.model.person;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -93,5 +94,36 @@ public class TimeslotRangePredicateTest {
                 Optional.empty(), Optional.empty(),
                 Optional.of(LocalTime.of(10, 30)), Optional.of(LocalTime.of(12, 0)));
         assertTrue(predicate.test(PERSON_IN_RANGE));
+    }
+
+    @Test
+    public void getFilterDescription_noFilters_returnsDefaultMessage() {
+        TimeslotRangePredicate predicate = new TimeslotRangePredicate(
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+        assertEquals("with no time filter applied.", predicate.getFilterDescription());
+    }
+
+    @Test
+    public void getFilterDescription_allFilters_returnsCorrectString() {
+        TimeslotRangePredicate predicate = new TimeslotRangePredicate(
+                Optional.of(DATE_1), Optional.of(DATE_2),
+                Optional.of(TIME_1), Optional.of(TIME_2));
+        String expected = "with timeslots starting from 2025-10-10 and "
+                + "starting from 09:00 and "
+                + "ending by 2025-10-12 and "
+                + "ending by 12:00";
+        assertEquals(expected, predicate.getFilterDescription());
+    }
+
+    @Test
+    public void toString_returnsCorrectString() {
+        TimeslotRangePredicate predicate = new TimeslotRangePredicate(
+                Optional.of(DATE_1), Optional.empty(), Optional.of(TIME_1), Optional.empty());
+        String expected = TimeslotRangePredicate.class.getCanonicalName()
+                + "{startDate=2025-10-10, "
+                + "endDate=any, "
+                + "startTime=09:00, "
+                + "endTime=any}";
+        assertEquals(expected, predicate.toString());
     }
 }

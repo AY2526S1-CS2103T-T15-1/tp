@@ -13,6 +13,8 @@ import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.exceptions.DuplicatePersonException;
+import seedu.address.model.person.exceptions.TimeSlotConflictException;
 
 /**
  * Adds a person to the address book.
@@ -27,7 +29,7 @@ public class AddCommand extends Command {
             + PREFIX_PHONE + "PHONE "
             + PREFIX_EMAIL + "EMAIL "
             + PREFIX_ADDRESS + "ADDRESS "
-            + PREFIX_TIMESLOT + "TIMESLOT"
+            + PREFIX_TIMESLOT + "TIMESLOT "
             + "[" + PREFIX_TAG + "TAG]...\n"
             + "Example: " + COMMAND_WORD + " "
             + PREFIX_NAME + "John Doe "
@@ -56,16 +58,16 @@ public class AddCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        if (model.hasPerson(toAdd)) {
+        try {
+            model.addPerson(toAdd);
+            return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(toAdd)));
+        } catch (TimeSlotConflictException e) {
+            // Catch conflict exception
+            throw new CommandException(e.getMessage());
+        } catch (DuplicatePersonException e) {
+            // Catch duplicate exception
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);
         }
-
-        if (!(model.getStorage().addSlot(toAdd.getTimeSlot()))) {
-            throw new CommandException(Messages.MESSAGE_TIMESLOT_CONFLICT);
-        }
-
-        model.addPerson(toAdd);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(toAdd)));
     }
 
     @Override

@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.Messages;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -188,8 +189,15 @@ public class ClearPastCommandTest {
         // recurring person is *also* untouched (it failed to update)
         expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs(), storage);
 
+        String conflictError = Messages.MESSAGE_TIMESLOT_CONFLICT
+                + " " + conflictingPerson.getName()
+                + " [" + conflictingPerson.getTimeSlot() + "]";
+
+        // 2. This is the new format from ClearPastCommand's helper method
+        String conflictDetails = "Recurring Carl (Conflict: " + conflictError + ")";
+
         String expectedMessage = new StringBuilder(ClearPastCommand.MESSAGE_SUCCESS)
-                .append(String.format(ClearPastCommand.MESSAGE_CONFLICTS, 1, "Recurring Carl"))
+                .append(String.format(ClearPastCommand.MESSAGE_CONFLICTS, 1, conflictDetails))
                 .toString();
 
         assertCommandSuccess(new ClearPastCommand(), model, expectedMessage, expectedModel);

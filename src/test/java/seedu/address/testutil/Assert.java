@@ -17,6 +17,7 @@ public class Assert {
      */
     public static void assertThrows(Class<? extends Throwable> expectedType, Executable executable) {
         Assertions.assertThrows(expectedType, executable);
+        //return null;
     }
 
     /**

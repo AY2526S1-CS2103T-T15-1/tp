@@ -1,5 +1,6 @@
 package seedu.address.model.person;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -69,5 +70,13 @@ public class TagContainsKeywordsPredicateTest {
         // Person has no tags
         predicate = new TagContainsKeywordsPredicate(Collections.singletonList("friends"));
         assertFalse(predicate.test(new PersonBuilder().withTags().build()));
+    }
+
+    @Test
+    public void toString_returnsCorrectString() {
+        var predicate = new TagContainsKeywordsPredicate(Arrays.asList("friends", "owesMoney"));
+        String expected = TagContainsKeywordsPredicate.class.getCanonicalName()
+                + "{keywords=[friends, owesMoney]}";
+        assertEquals(expected, predicate.toString());
     }
 }
