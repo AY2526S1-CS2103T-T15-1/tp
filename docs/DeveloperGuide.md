@@ -176,6 +176,16 @@ The following sequence diagram shows how a `filtertimeslot` operation goes throu
 
 #### Design considerations:
 
+**Aspect: How to parse the find parameter**
+
+* **Alternative 1 (current choice):** Use substring matching to find matching persons. 
+    * Pros: Greater leeway. Allows users to find matching persons more easily. For example, `find john` will show results for the person with name `Johnathan`.
+    * Cons: Find results will not be as helpful. Matching the parameter with persons is not strict, which may introduce many redundant results depending on length of the input parameter. 
+
+* **Alternative 2:** Use prefix matching to find matching persons.
+    * Pros: Greater precision. Users will be able to receive more relevant results from their input parameter. For example, `find marc` will return `Marc Tan` but not `Demarco Lee` or `Marceline Ong`.
+    * Cons: Much less leeway for users. If users are uncertain about a person's name, they might not be able to find the person with their input parameter.
+
 **Aspect: How to parse the filter parameters:**
 
 * **Alternative 1 (current choice):** Use flexible, optional prefixes (e.g., `sd/`, `st/`, `et/`).
