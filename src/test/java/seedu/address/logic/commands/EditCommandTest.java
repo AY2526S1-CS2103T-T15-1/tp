@@ -13,6 +13,7 @@ import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.logic.commands.CommandTestUtil.showPersonAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_PERSON;
+import static seedu.address.testutil.TypicalPersons.ALICE;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
 import java.nio.file.Paths;
@@ -56,22 +57,7 @@ public class EditCommandTest {
         EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder(editedPerson).build();
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
 
-        StringBuilder changes = new StringBuilder("Changes: [");
-        changes.append("Name: '").append(personToEdit.getName())
-                .append("' -> '").append(editedPerson.getName()).append("'");
-        changes.append(", Phone: '").append(personToEdit.getPhone())
-                .append("' -> '").append(editedPerson.getPhone()).append("'");
-        changes.append(", Email: '").append(personToEdit.getEmail())
-                .append("' -> '").append(editedPerson.getEmail()).append("'");
-        changes.append(", Address: '").append(personToEdit.getAddress())
-                .append("' -> '").append(editedPerson.getAddress()).append("'");
-        changes.append(", Timeslot: '").append(personToEdit.getTimeSlot())
-                .append("' -> '").append(editedPerson.getTimeSlot()).append("'");
-        changes.append(", Tags: '").append(personToEdit.getTags()).append("' -> '")
-                .append(editedPerson.getTags()).append("']");
-
-        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson))
-                + "\n" + changes.toString();
+        String expectedMessage = getExpectedSuccessMessage(personToEdit, editedPerson, descriptor);
 
         // 1. Create a *new, separate* storage for the expected model.
         // This assumes you have 'Paths' and other storage classes imported.
@@ -92,9 +78,9 @@ public class EditCommandTest {
     @Test
     public void execute_someFieldsSpecifiedUnfilteredList_success() {
         Index indexLastPerson = Index.fromOneBased(model.getFilteredPersonList().size());
-        Person lastPerson = model.getFilteredPersonList().get(indexLastPerson.getZeroBased());
+        Person personToEdit = model.getFilteredPersonList().get(indexLastPerson.getZeroBased());
 
-        PersonBuilder personInList = new PersonBuilder(lastPerson);
+        PersonBuilder personInList = new PersonBuilder(personToEdit);
         Person editedPerson = personInList.withName(VALID_NAME_BOB).withPhone(VALID_PHONE_BOB)
                 .withTags(VALID_TAG_HUSBAND).build();
 
@@ -102,19 +88,10 @@ public class EditCommandTest {
                 .withPhone(VALID_PHONE_BOB).withTags(VALID_TAG_HUSBAND).build();
         EditCommand editCommand = new EditCommand(indexLastPerson, descriptor);
 
-        StringBuilder changes = new StringBuilder("Changes: [");
-        changes.append("Name: '").append(lastPerson.getName()).append("' -> '")
-                .append(editedPerson.getName()).append("'");
-        changes.append(", Phone: '").append(lastPerson.getPhone()).append("' -> '")
-                .append(editedPerson.getPhone()).append("'");
-        changes.append(", Tags: '").append(lastPerson.getTags()).append("' -> '")
-                .append(editedPerson.getTags()).append("']");
-
-        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson))
-                + "\n" + changes.toString();
+        String expectedMessage = getExpectedSuccessMessage(personToEdit, editedPerson, descriptor);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
-        expectedModel.setPerson(lastPerson, editedPerson);
+        expectedModel.setPerson(personToEdit, editedPerson);
 
         assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
     }
@@ -122,12 +99,13 @@ public class EditCommandTest {
     @Test
     public void execute_noFieldSpecifiedUnfilteredList_success() {
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, new EditPersonDescriptor());
-        Person editedPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person editedPerson = personToEdit; // No changes
+        EditPersonDescriptor descriptor = new EditPersonDescriptor(); // Empty descriptor
 
-        String changes = "No changes were applied.";
-
-        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson))
-                + "\n" + changes;
+        // --- USE HELPER ---
+        String expectedMessage = getExpectedSuccessMessage(personToEdit, editedPerson, descriptor);
+        // --- END HELPER ---
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
 
@@ -138,15 +116,13 @@ public class EditCommandTest {
     public void execute_filteredList_success() {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
 
-        Person personInFilteredList = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
-        Person editedPerson = new PersonBuilder(personInFilteredList).withName(VALID_NAME_BOB).build();
+        Person personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person editedPerson = new PersonBuilder(personToEdit).withName(VALID_NAME_BOB).build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build();
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON,
                 new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build());
 
-        String changes = "Changes: [Name: '" + personInFilteredList.getName()
-                + "' -> '" + editedPerson.getName() + "']";
-        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson))
-                + "\n" + changes;
+        String expectedMessage = getExpectedSuccessMessage(personToEdit, editedPerson, descriptor);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(model.getFilteredPersonList().get(0), editedPerson);
@@ -171,7 +147,6 @@ public class EditCommandTest {
         Person personInList = model.getAddressBook().getPersonList().get(INDEX_SECOND_PERSON.getZeroBased());
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON,
                 new EditPersonDescriptorBuilder(personInList).build());
-
         assertCommandFailure(editCommand, model, EditCommand.MESSAGE_DUPLICATE_PERSON);
     }
 
@@ -249,6 +224,23 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_duplicatePhone_failure() {
+        // Model contains ALICE (94351253) and BENSON (98765432)
+
+        // Descriptor to change BENSON's phone to ALICE's phone
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
+                .withPhone(ALICE.getPhone().value) // ALICE's phone
+                .build();
+
+        // Create the command targeting BENSON (INDEX_SECOND_PERSON)
+        EditCommand editCommand = new EditCommand(INDEX_SECOND_PERSON, descriptor);
+        String expectedError = "This phone number already exists in the address book, assigned to: "
+                + ALICE.getName();
+        // Expect a command failure with the duplicate phone message
+        assertCommandFailure(editCommand, model, expectedError);
+    }
+
+    @Test
     public void toStringMethod() {
         Index index = Index.fromOneBased(1);
         EditPersonDescriptor editPersonDescriptor = new EditPersonDescriptor();
@@ -256,6 +248,43 @@ public class EditCommandTest {
         String expected = EditCommand.class.getCanonicalName() + "{index=" + index + ", editPersonDescriptor="
                 + editPersonDescriptor + "}";
         assertEquals(expected, editCommand.toString());
+    }
+
+    /**
+     * Helper method to construct the expected success message for EditCommand,
+     * including the "Edited Person" details and the "Changes" list.
+     * This mimics the logic used in EditCommand itself.
+     */
+    private String getExpectedSuccessMessage(Person personToEdit, Person editedPerson,
+                                             EditPersonDescriptor descriptor) {
+        // --- Replicate the logic from EditCommand's buildEditedFieldsString ---
+        String changesString = java.util.stream.Stream.of(
+                        descriptor.getName().map(val -> "Name: '" + personToEdit.getName()
+                                + "' -> '" + editedPerson.getName() + "'"),
+                        descriptor.getPhone().map(val -> "Phone: '" + personToEdit.getPhone()
+                                + "' -> '" + editedPerson.getPhone() + "'"),
+                        descriptor.getEmail().map(val -> "Email: '" + personToEdit.getEmail()
+                                + "' -> '" + editedPerson.getEmail() + "'"),
+                        descriptor.getAddress().map(val -> "Address: '" + personToEdit.getAddress()
+                                + "' -> '" + editedPerson.getAddress() + "'"),
+                        descriptor.getTimeSlot().map(val -> "Timeslot: '" + personToEdit.getTimeSlot()
+                                + "' -> '" + editedPerson.getTimeSlot() + "'"),
+                        descriptor.getTags().map(val -> "Tags: '" + personToEdit.getTags()
+                                + "' -> '" + editedPerson.getTags() + "'")
+                )
+                .filter(java.util.Optional::isPresent)
+                .map(java.util.Optional::get)
+                .collect(java.util.stream.Collectors.joining(", "));
+
+        String changesSummary;
+        if (changesString.isEmpty()) {
+            changesSummary = "No changes were applied.";
+        } else {
+            changesSummary = "Changes: [" + changesString + "]";
+        }
+
+        return String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson))
+                + "\n" + changesSummary;
     }
 
 }

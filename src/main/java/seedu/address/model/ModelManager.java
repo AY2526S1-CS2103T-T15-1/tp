@@ -15,6 +15,7 @@ import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.exceptions.DuplicatePersonException;
+import seedu.address.model.person.exceptions.DuplicatePhoneException;
 import seedu.address.model.person.exceptions.TimeSlotConflictException;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
@@ -143,10 +144,17 @@ public class ModelManager implements Model {
         if (hasPerson(person)) {
             throw new DuplicatePersonException();
         }
+
+        Optional<Person> phoneConflict = findDuplicatePhone(person, null); // Changed method name
+        if (phoneConflict.isPresent()) {
+            throw new DuplicatePhoneException(phoneConflict.get()); // Pass person to exception
+        }
+
         Optional<Person> conflict = addressBook.getConflictingPerson(person.getTimeSlot());
         if (conflict.isPresent()) {
             throw new TimeSlotConflictException(conflict.get());
         }
+
         storage.addSlot(person.getTimeSlot());
         addressBook.addPerson(person);
         updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
@@ -157,6 +165,10 @@ public class ModelManager implements Model {
     public void setPerson(Person target, Person editedPerson) {
         requireAllNonNull(target, editedPerson);
 
+        if (!target.isSamePerson(editedPerson) && hasPerson(editedPerson)) {
+            throw new DuplicatePersonException();
+        }
+
         // Check if timeslot is being changed
         if (!target.getTimeSlot().equals(editedPerson.getTimeSlot())) {
             // Timeslot has changed. Must check for conflicts.
@@ -166,6 +178,13 @@ public class ModelManager implements Model {
             }
             storage.removeSlot(target.getTimeSlot());
             storage.addSlot(editedPerson.getTimeSlot());
+        }
+
+        if (!target.getPhone().equals(editedPerson.getPhone())) {
+            Optional<Person> phoneConflict = findDuplicatePhone(editedPerson, target); // Changed method name
+            if (phoneConflict.isPresent()) {
+                throw new DuplicatePhoneException(phoneConflict.get()); // Pass person to exception
+            }
         }
 
         // If we are here, either timeslot didn't change, or it did and it was successful.
@@ -215,6 +234,29 @@ public class ModelManager implements Model {
     public Optional<Person> getConflictingPerson(
             seedu.address.model.person.TimeSlot timeSlot, Person personToIgnore) {
         return addressBook.getConflictingPerson(timeSlot, personToIgnore);
+    }
+
+    /**
+     * Finds if the given person's phone number conflicts with any existing person
+     * in the address book, optionally ignoring one person.
+     *
+     * @param personToCheck The person whose phone number to check.
+     * @param personToIgnore The person to ignore during the check (can be null for add).
+     * @return An Optional containing the conflicting person if found, otherwise empty.
+     */
+    private Optional<Person> findDuplicatePhone(Person personToCheck, Person personToIgnore) {
+        requireNonNull(personToCheck);
+        for (Person existingPerson : addressBook.getPersonList()) {
+            // Skip the person being ignored (if any)
+            if (personToIgnore != null && existingPerson.isSamePerson(personToIgnore)) {
+                continue;
+            }
+            // Check if phone numbers are the same
+            if (existingPerson.getPhone().equals(personToCheck.getPhone())) {
+                return Optional.of(existingPerson); // Found a duplicate, return the person
+            }
+        }
+        return Optional.empty(); // No duplicates found
     }
 
 }
