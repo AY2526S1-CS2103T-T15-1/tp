@@ -158,7 +158,7 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 
 ## **Implementation**
 
-This section describes some noteworthy details on how certain features are implemented.
+This section provides an overview of the key implementation details for major features and design improvements. Each subsection highlights the rationale, core logic, and design considerations behind the feature, with reference diagrams where appropriate.
 
 ### \[Implemented\] `filtertimeslot` feature
 
@@ -208,11 +208,11 @@ The following sequence diagram shows how a `filtertimeslot` operation goes throu
 
 #### Proposed Implementation
 
-The `clearpast` feature provides a "smart-clear" function designed for tutors. It iterates through the entire person list and performs actions on contacts whose timeslots are in the past (i.e., `TimeSlot.isPast(LocalDateTime.now())` is true).
+The `clearpast` feature introduces an intelligent cleanup mechanism to manage outdated or recurring timeslots which is specifically designed for tutors. It iterates through the entire person list and performs actions on contacts whose timeslots are in the past (i.e., `TimeSlot.isPast(LocalDateTime.now())` is true).
 
 The command follows two main logic paths:
 1.  **Non-recurring contacts:** If a past contact does **not** have the `t/recurring` tag, it is deleted from the `Model` using `model.deletePerson()`.
-2.  **Recurring contacts:** If a past contact **has** the `t/recurring` tag, the command calculates its next weekly timeslot using `TimeSlot.getNextOccurrence(now)`. It then attempts to update the contact with this new timeslot using `model.setPerson()`.
+2.  **Recurring contacts:** If a past contact **has** the `t/recurring` tag, the command calculates its next weekly occurrence using `TimeSlot.getNextOccurrence(now)`. It then attempts to update the contact with the new timeslot using `model.setPerson()`.
 
 This `execute` method is designed to be "all-or-nothing" for each contact but not for the whole command. It builds lists of successfully deleted, successfully updated, and failed-to-update (conflicted) contacts and presents this summary to the user in the `CommandResult`.
 
@@ -238,7 +238,7 @@ Detailed Logic Flow for `clearpast`
 
 * **Alternative 1 (current choice):** A manual `clearpast` command that checks for a `t/recurring` tag.
     * Pros: Simple to implement and understand. The user retains full control over when their schedule is cleaned up. Fits well within a command-line application.
-    * Cons: The user must remember to run the command. Only supports one type of recurrence (weekly).
+    * Cons: The user needs to remember to run the command. Only supports one type of recurrence (weekly).
 
 * **Alternative 2:** A fully abstract `Schedule` class with `OneTimeSlot` and `RecurringSlot` subclasses.
     * Pros: Far more powerful. Could support complex schedules (e.g., "every Monday and Wednesday"). The `list` command could show all future occurrences.
@@ -265,7 +265,7 @@ Detailed Logic Flow for `clearpast`
 * **Alternative 1 (Current Choice):** Process each past contact individually. Deletions happen, and updates happen or fail one by one.
     * **Pros:** Robust against errors. If one update fails, others can still succeed. Provides detailed feedback.
     * **Cons:** The command is not atomic. State might be inconsistent until conflicts are resolved.
-* **Alternative 2:** Transactional approach. If *any* update would cause a conflict, fail the *entire* command and make no changes.
+* **Alternative 2:** Transactional approach. If *any* update caused a conflict, the *entire* command would fail and make no changes.
     * **Pros:** Ensures the address book state remains consistent.
     * **Cons:** Less user-friendly if one conflict prevents many valid changes. More complex to implement.
 
