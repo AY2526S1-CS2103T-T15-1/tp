@@ -19,12 +19,6 @@ FilterTimeslotCommand -> Model : updateFilteredPersonList(predicate)
 activate Model
 deactivate Model
 
-' This next step is optional, but included in your findtag command
-' and makes sense for consistency.
-FilterTimeslotCommand -> Model : sortFilteredPersonList(comparator)
-activate Model
-deactivate Model
-
 Logic <-- FilterTimeslotCommand : result:CommandResult
 deactivate FilterTimeslotCommand
 

@@ -112,8 +112,9 @@ Here are the other classes in `Logic` (omitted from the class diagram above) tha
 <puml src="diagrams/ParserClasses.puml" width="600"></puml>
 
 How the parsing works:
-* When called upon to parse a user command, the `AddressBookParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name e.g., `AddCommandParser`) which uses the other classes shown above to parse the user command and create a `XYZCommand` object (e.g., `AddCommand`) which the `AddressBookParser` returns back as a `Command` object.
-* All `XYZCommandParser` classes (e.g., `AddCommandParser`, `DeleteCommandParser`, ...) inherit from the `Parser` interface so that they can be treated similarly where possible e.g, during testing.
+* When called upon to parse a user command, the `AddressBookParser` class determines the command word and creates the appropriate parser (e.g., `AddCommandParser`, `DeleteCommandParser`, or simpler ones like `ClearCommandParser`, `ListCommandParser`). This specific parser uses the other utility classes shown above to parse the arguments (if any) and create a `XYZCommand` object (e.g., `AddCommand`) which the `AddressBookParser` returns back as a `Command` object.
+* Parsers for commands requiring specific arguments (like `AddCommandParser`) also provide detailed error messages if mandatory prefixes are missing, while `EditCommandParser` success message confirms with the user the edited fields.
+* All `XYZCommandParser` classes (e.g., `AddCommandParser`, `DeleteCommandParser` `ClearCommandParser`, ...) inherit from the `Parser` interface so that they can be treated similarly where possible e.g, during testing.
 
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
@@ -126,6 +127,7 @@ The `Model` component,
 * stores the address book data i.e., all `Person` objects (which are contained in a `UniquePersonList` object).
 * stores the currently 'selected' `Person` objects (e.g., results of a search query) as a separate _filtered_ list which is exposed to outsiders as an unmodifiable `ObservableList<Person>` that can be 'observed' e.g. the UI can be bound to this list so that the UI automatically updates when the data in the list change.
 * stores a `UserPref` object that represents the user’s preferences. This is exposed to the outside as a `ReadOnlyUserPref` objects.
+* Provides methods to check for potential timeslot conflicts (`getConflictingPerson`), abstracting this logic away from individual commands
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
 <box type="info" seamless>
@@ -166,7 +168,7 @@ The `filtertimeslot` feature allows users to filter the displayed list of person
 
 The `FilterTimeslotCommand`'s `execute` method passes this predicate to the `Model`'s `updateFilteredPersonList(predicate)` method. The `ModelManager` then uses this predicate to update its `FilteredList`, which in turn updates the UI.
 
-The `FilterTimeslotCommandParser` is responsible for parsing the user's input, which must contain at least one of the four optional prefixes: `sd/` (start date), `ed/` (end date), `st/` (start time), and `et/` (end time). These are used to construct the `TimeslotRangePredicate` which contains the logic to check if a `Person`'s `TimeSlot` overlaps with the specified range.
+The `FilterTimeslotCommandParser` is responsible for parsing the user's input, which must contain at least one of the four optional prefixes: `sd/` (start date), `ed/` (end date), `st/` (start time), and `et/` (end time). It also supports the keywords now and today (e.g., `sd/today`, `st/now`) for date and time fields to filter relative to the current system time.These are used to construct the `TimeslotRangePredicate` which contains the logic to check if a `Person`'s `TimeSlot` overlaps with the specified range.
 
 The following sequence diagram shows how a `filtertimeslot` operation goes through the components:
 
@@ -184,6 +186,24 @@ The following sequence diagram shows how a `filtertimeslot` operation goes throu
     * Pros: Very simple to parse.
     * Cons: Much less flexible. It's difficult to filter for "all 9am-12pm slots on any date," which is a key use case.
 
+**Aspect: Handling of Relative Time ("Now"/"Today")**
+
+* **Alternative 1 (Current Choice):** Special keywords (`now`, `today`) used as *values* for existing date/time prefixes (`sd/`, `st/`, etc.).
+    * **Pros:** Highly flexible and **composable**. Allows combining relative times with specific dates/times (e.g., `sd/now ed/2025-11-30`). Consistent with the existing prefix-based command structure.
+    * **Cons:** Requires slightly more complex logic within the parser to detect and handle these keywords.
+* **Alternative 2:** Introduce a dedicated, mutually exclusive prefix or flag (e.g., `filtertimeslot /future` or `filtertimeslot mode=future`).
+    * **Pros:** Might seem conceptually simpler for a single use case (like "show only future slots").
+    * **Cons:** Much less flexible. Cannot be easily combined with other date/time filters. Adds complexity to the parser to handle mutual exclusion rules. Violates the consistency of using prefixes for parameters.
+
+**Aspect: Definition of Time Range Overlap**
+
+* **Alternative 1 (Current Choice):** Overlap requires actual intersection of time intervals. Slots ending exactly when the filter starts, or starting exactly when the filter ends, are *not* considered overlapping.
+    * **Pros:** Mathematically clear definition of overlap.
+    * **Cons:** May not match user intuition for back-to-back schedules (e.g., filter `et/1000` might not include a person scheduled `1000-1100`).
+* **Alternative 2:** Inclusive boundaries. Consider slots overlapping if they touch at the boundaries (e.g., filter `et/1000` *would* include `1000-1100`).
+    * **Pros:** Catches adjacent schedules, potentially matching user expectation better.
+    * **Cons:** Requires careful adjustment of the boundary checking logic in `TimeslotRangePredicate` (e.g., using `!isBefore` instead of `isAfter` and `!isAfter` instead of `isBefore`).
+
 ### \[Implemented\] `clearpast` feature
 
 #### Proposed Implementation
@@ -198,13 +218,17 @@ This `execute` method is designed to be "all-or-nothing" for each contact but no
 
 <box type="info" seamless>
 
-**Note:** Conflict handling is critical. When `clearpast` calls `model.setPerson()` with a recurring contact's new timeslot, the `ModelManager`'s `setPerson` logic handles the conflict check. If the new timeslot is already taken, `setPerson` throws a `TimeSlotConflictException`. The `ClearPastCommand` catches this exception, adds the person's name to the `conflictNames` list, and continues processing the rest of the contacts.
+**Note:** Conflict handling is critical. When `clearpast` calls `model.setPerson()` with a recurring contact's new timeslot, the `ModelManager`'s `setPerson` logic handles the conflict check. If the new timeslot is already taken, `setPerson` throws a `TimeSlotConflictException` which contains details about the conflicting person. The `ClearPastCommand` catches this specific exception, formats a detailed error message including the conflicting person's name and timeslot, adds this to the `conflictNames` list, and continues processing the rest of the contacts.
 
 </box>
 
-At the end of the operation, `clearpast` forces the UI to refresh and re-sort by the default timeslot order by calling `model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS)` and `model.sortFilteredPersonList(Comparator.comparing(Person::getTimeSlot))`.
+At the end of the operation, `clearpast` forces the UI to refresh and re-sort by the default timeslot order by calling `model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS)`.
 
 The following activity diagram summarizes the logic flow for the `clearpast` command:
+
+<puml src="diagrams/HighLevelClearPastActivityDiagram.puml" alt="HighLevelClearPastActivityDiagram"></puml>
+
+Detailed Logic Flow for `clearpast`
 
 <puml src="diagrams/ClearPastActivityDiagram.puml" alt="ClearPastActivityDiagram"></puml>
 
@@ -223,6 +247,39 @@ The following activity diagram summarizes the logic flow for the `clearpast` com
 * **Alternative 3:** An automatic background service that "watches" the clock.
     * Pros: Fully automated.
     * Cons: Not feasible for a simple command-line application. It's impossible to resolve conflicts (like in Alternative 1) without user input, leading to data being lost or updates failing silently.
+
+**Aspect: Conflict Resolution Strategy for Recurring Slots**
+
+* **Alternative 1 (Current Choice):** Report conflict and skip update for that specific contact.
+    * **Pros:** Safe, prevents accidental data loss or overwriting. Provides clear feedback to the user about which updates failed.
+    * **Cons:** Requires the user to manually resolve the conflict later. The address book can be left in a partially updated state.
+* **Alternative 2:** Force overwrite. Delete the conflicting contact to make space for the recurring one.
+    * **Pros:** Ensures the recurring appointment is always scheduled. Fully automated.
+    * **Cons:** High risk of unintended data loss. Could be confusing for the user.
+* **Alternative 3:** Automatic rescheduling. Find the *next available* slot for the recurring contact.
+    * **Pros:** Attempts to preserve both contacts.
+    * **Cons:** Complex logic. The recurring contact might end up scheduled at an unexpected time.
+
+**Aspect: Granularity of Operation (All-or-Nothing)**
+
+* **Alternative 1 (Current Choice):** Process each past contact individually. Deletions happen, and updates happen or fail one by one.
+    * **Pros:** Robust against errors. If one update fails, others can still succeed. Provides detailed feedback.
+    * **Cons:** The command is not atomic. State might be inconsistent until conflicts are resolved.
+* **Alternative 2:** Transactional approach. If *any* update would cause a conflict, fail the *entire* command and make no changes.
+    * **Pros:** Ensures the address book state remains consistent.
+    * **Cons:** Less user-friendly if one conflict prevents many valid changes. More complex to implement.
+
+### General Design Improvements
+
+Beyond specific features, several architectural improvements were made to enhance code quality, maintainability, and user experience across the application.
+
+#### Smarter Conflict Detection (in `Model`)
+
+To adhere to the **Single Level of Abstraction (SLA)** principle, the business logic for detecting timeslot conflicts and duplicate persons is centralized within the `Model` component, specifically in `ModelManager#addPerson` and `ModelManager#setPerson`. Commands like `AddCommand` and `EditCommand` now delegate these checks to the `Model`. They simply call the appropriate `Model` method and handle any `TimeSlotConflictException` or `DuplicatePersonException` that arises. This separation makes the commands simpler and ensures consistent validation logic.
+
+#### Safer & Consistent Commands (Argument Handling)
+
+To improve user experience and ensure consistent command behavior, commands that are not designed to accept arguments (such as `clear`, `list`, `exit`, and `help`) now utilize dedicated parsers (e.g., `ClearCommandParser`, `ListCommandParser`). These parsers strictly check for the absence of arguments and throw a `ParseException` if any unexpected input is provided after the command word. This prevents potentially confusing situations (e.g., `list 123` silently ignoring "123") and provides immediate, clear feedback to the user, adhering to the principle of least surprise.
 
 ### \[Proposed\] Undo/redo feature
 

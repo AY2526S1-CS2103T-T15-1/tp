@@ -1,0 +1,23 @@
+@startuml
+!theme plain
+start
+:Get current time (now);
+:Get copy of person list;
+
+:Categorize past contacts
+(into 'toDelete' and 'toUpdate' lists);
+
+:Perform deletions
+(populates 'deletedNames');
+
+:Perform updates
+(populates 'updatedNames' and 'conflictNames');
+
+:Update filtered person list;
+
+:Build CommandResult
+from name lists;
+
+:Return CommandResult;
+stop
+@enduml
