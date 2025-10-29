@@ -2,8 +2,11 @@ package seedu.address.model.person;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import seedu.address.commons.util.ToStringBuilder;
 
@@ -33,25 +36,36 @@ public class TimeslotRangePredicate implements Predicate<Person> {
         if (person.getTimeSlot() == null) {
             return false;
         }
+        return checkDateRange(person.getTimeSlot()) && checkTimeRange(person.getTimeSlot());
+    }
 
-        TimeSlot personSlot = person.getTimeSlot();
+    /**
+     * Checks if the timeslot's date is within the specified date range.
+     */
+    private boolean checkDateRange(TimeSlot personSlot) {
         LocalDate personDate = personSlot.getDate();
-        LocalTime personStart = personSlot.getStartTime();
-        LocalTime personEnd = personSlot.getEndTime();
 
-        // 1. Check Date Range
         // Must be on or after startDate (if it exists)
         boolean afterStartDate = startDate.map(start -> !personDate.isBefore(start)).orElse(true);
         // Must be on or before endDate (if it exists)
         boolean beforeEndDate = endDate.map(end -> !personDate.isAfter(end)).orElse(true);
 
-        // 2. Check Time Range
+        return afterStartDate && beforeEndDate;
+    }
+
+    /**
+     * Checks if the timeslot's time overlaps with the specified time range.
+     */
+    private boolean checkTimeRange(TimeSlot personSlot) {
+        LocalTime personStart = personSlot.getStartTime();
+        LocalTime personEnd = personSlot.getEndTime();
+
         // The person's slot must NOT end before the filter's start time
         boolean afterStartTime = startTime.map(start -> !personEnd.isBefore(start)).orElse(true);
         // The person's slot must NOT start after the filter's end time
         boolean beforeEndTime = endTime.map(end -> !personStart.isAfter(end)).orElse(true);
 
-        return afterStartDate && beforeEndDate && afterStartTime && beforeEndTime;
+        return afterStartTime && beforeEndTime;
     }
 
     @Override
@@ -80,5 +94,23 @@ public class TimeslotRangePredicate implements Predicate<Person> {
                 .add("startTime", startTime.map(LocalTime::toString).orElse("any"))
                 .add("endTime", endTime.map(LocalTime::toString).orElse("any"))
                 .toString();
+    }
+
+    public String getFilterDescription() {
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        String filters = Stream.of(
+                        startDate.map(d -> "starting from " + d.toString()),
+                        startTime.map(t -> "starting from " + t.format(timeFormatter)),
+                        endDate.map(d -> "ending by " + d.toString()),
+                        endTime.map(t -> "ending by " + t.format(timeFormatter))
+                )
+                .filter(Optional::isPresent) // Filter out empty optionals
+                .map(Optional::get) // Get the string value
+                .collect(Collectors.joining(" and ")); // Join them with " and "
+
+        if (filters.isEmpty()) {
+            return "with no time filter applied.";
+        }
+        return "with timeslots " + filters;
     }
 }

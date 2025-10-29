@@ -130,4 +130,94 @@ public class TimeslotTest {
         // Slot is in the future, so the "next" occurrence is itself
         assertEquals(futureSlot, futureSlot.getNextOccurrence(now));
     }
+
+    @Test
+    public void constructor_invalidLength_throwsIllegalArgumentException() {
+        // Test what happens if the string is too long or has extra parts
+
+        // Extra space
+        assertThrows(IllegalArgumentException.class, () -> new TimeSlot("2025-10-12 0800-0900 extra"));
+
+        // Missing space
+        assertThrows(IllegalArgumentException.class, () -> new TimeSlot("2025-10-120800-0900"));
+
+        // Invalid time format (e.g., extra dash)
+        assertThrows(IllegalArgumentException.class, () -> new TimeSlot("2025-10-12 0800-0900-1000"));
+    }
+
+    @Test
+    public void isValidTimeSlot_invalidLength_returnFalse() {
+        // Extra space
+        assertFalse(TimeSlot.isValidTimeSlot("2025-10-12 0800-0900 extra"));
+
+        // Missing space
+        assertFalse(TimeSlot.isValidTimeSlot("2025-10-120800-0900"));
+
+        // Invalid time format (e.g., extra dash)
+        assertFalse(TimeSlot.isValidTimeSlot("2025-10-12 0800-0900-1000"));
+    }
+
+    @Test
+    public void constructor_endTimeEqualsStartTime_throwsIllegalArgumentException() {
+        // This is explicitly checked in isValidTimeSlot but not tested
+        assertThrows(IllegalArgumentException.class, () -> new TimeSlot("2025-10-12 0900-0900"));
+    }
+
+    @Test
+    public void overlaps_test() {
+        TimeSlot slot = new TimeSlot("2025-10-20 1000-1200");
+
+        // Case 1: Different date
+        TimeSlot differentDate = new TimeSlot("2025-10-21 1000-1200");
+        assertFalse(slot.overlaps(differentDate));
+
+        // Case 2: Identical slot
+        TimeSlot identical = new TimeSlot("2025-10-20 1000-1200");
+        assertTrue(slot.overlaps(identical));
+
+        // Case 3: Other slot is contained within
+        TimeSlot inside = new TimeSlot("2025-10-20 1030-1130");
+        assertTrue(slot.overlaps(inside));
+
+        // Case 4: Other slot contains this slot
+        TimeSlot contains = new TimeSlot("2025-10-20 0900-1300");
+        assertTrue(slot.overlaps(contains));
+
+        // Case 5: Overlaps start
+        TimeSlot overlapsStart = new TimeSlot("2025-10-20 0900-1100");
+        assertTrue(slot.overlaps(overlapsStart));
+
+        // Case 6: Overlaps end
+        TimeSlot overlapsEnd = new TimeSlot("2025-10-20 1100-1300");
+        assertTrue(slot.overlaps(overlapsEnd));
+
+        // Case 7: No overlap (just before)
+        TimeSlot before = new TimeSlot("2025-10-20 0800-1000"); // Ends exactly at start
+        assertFalse(slot.overlaps(before));
+
+        // Case 8: No overlap (just after)
+        TimeSlot after = new TimeSlot("2025-10-20 1200-1400"); // Starts exactly at end
+        assertFalse(slot.overlaps(after));
+    }
+
+    @Test
+    public void compareTo_test() {
+        TimeSlot slot1 = new TimeSlot("2025-10-20 1000-1200");
+        TimeSlot slot2 = new TimeSlot("2025-10-20 1000-1200");
+        TimeSlot slotEarlierTime = new TimeSlot("2025-10-20 0900-1000");
+        TimeSlot slotLaterTime = new TimeSlot("2025-10-20 1400-1500");
+        TimeSlot slotEarlierDate = new TimeSlot("2025-10-19 1400-1500");
+        TimeSlot slotLaterDate = new TimeSlot("2025-10-21 0900-1000");
+
+        // Same
+        assertEquals(0, slot1.compareTo(slot2));
+
+        // Different date
+        assertTrue(slot1.compareTo(slotEarlierDate) > 0);
+        assertTrue(slot1.compareTo(slotLaterDate) < 0);
+
+        // Same date, different time
+        assertTrue(slot1.compareTo(slotEarlierTime) > 0);
+        assertTrue(slot1.compareTo(slotLaterTime) < 0);
+    }
 }

@@ -172,4 +172,87 @@ public class UniquePersonListTest {
     public void toStringMethod() {
         assertEquals(uniquePersonList.asUnmodifiableObservableList().toString(), uniquePersonList.toString());
     }
+
+    // Helper to build a person with a specific timeslot.
+    // Assumes PersonBuilder is set up with default values.
+    private Person buildPerson(String name, String timeSlot) {
+        return new PersonBuilder().withName(name).withTimeSlot(timeSlot).build();
+    }
+
+    @Test
+    public void sortTimeSlot_unsortedList_sortsChronologically() {
+        UniquePersonList list = new UniquePersonList();
+
+        // Create persons with timeslots in a messy order
+        Person pA = buildPerson("Alice", "2025-10-20 1000-1100"); // 1st
+        Person pB = buildPerson("Bob", "2025-10-22 1400-1500"); // 3rd
+        Person pC = buildPerson("Charles", "2025-10-21 0900-1000"); // 2nd
+
+        list.add(pB);
+        list.add(pA);
+        list.add(pC);
+
+        list.sortTimeSlot();
+
+        UniquePersonList expectedList = new UniquePersonList();
+        expectedList.add(pA);
+        expectedList.add(pC);
+        expectedList.add(pB);
+
+        assertEquals(expectedList, list);
+    }
+
+    @Test
+    public void sortTimeSlot_alreadySortedList_remainsSorted() {
+        UniquePersonList list = new UniquePersonList();
+
+        Person pA = buildPerson("Alice", "2025-10-20 1000-1100");
+        Person pB = buildPerson("Bob", "2025-10-21 1400-1500");
+        Person pC = buildPerson("Charles", "2025-10-22 0900-1000");
+
+        list.add(pA);
+        list.add(pB);
+        list.add(pC);
+
+        list.sortTimeSlot(); // Should have no effect
+
+        UniquePersonList expectedList = new UniquePersonList();
+        expectedList.add(pA);
+        expectedList.add(pB);
+        expectedList.add(pC);
+
+        assertEquals(expectedList, list);
+    }
+
+    @Test
+    public void sortTimeSlot_listWithSameTimeSlots_maintainsRelativeOrder() {
+        UniquePersonList list = new UniquePersonList();
+
+        Person pA = buildPerson("Alice", "2025-10-20 1000-1100");
+        Person pB = buildPerson("Bob", "2025-10-20 1000-1100");
+        Person pC = buildPerson("Charles", "2025-10-19 0900-1000");
+
+        list.add(pA);
+        list.add(pB); // Add B after A
+        list.add(pC);
+
+        list.sortTimeSlot();
+
+        UniquePersonList expectedList = new UniquePersonList();
+        expectedList.add(pC);
+        expectedList.add(pA);
+        expectedList.add(pB); // Order of A and B should be stable
+
+        assertEquals(expectedList, list);
+    }
+
+    @Test
+    public void sortTimeSlot_emptyList_noException() {
+        UniquePersonList list = new UniquePersonList();
+
+        list.sortTimeSlot(); // Should not throw any exception
+
+        assertEquals(new UniquePersonList(), list);
+    }
+
 }

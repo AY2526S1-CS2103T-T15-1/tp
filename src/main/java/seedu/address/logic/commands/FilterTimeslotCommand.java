@@ -2,11 +2,8 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Comparator;
-
 import seedu.address.logic.Messages;
 import seedu.address.model.Model;
-import seedu.address.model.person.Person;
 import seedu.address.model.person.TimeslotRangePredicate;
 
 /**
@@ -35,9 +32,11 @@ public class FilterTimeslotCommand extends Command {
     public CommandResult execute(Model model) {
         requireNonNull(model);
         model.updateFilteredPersonList(predicate);
-        model.sortFilteredPersonList(Comparator.comparing(Person::getTimeSlot));
-        return new CommandResult(
-                String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, model.getFilteredPersonList().size()));
+        String filterDescription = predicate.getFilterDescription();
+        String resultMessage = String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW,
+                model.getFilteredPersonList().size())
+                + " " + filterDescription;
+        return new CommandResult(resultMessage);
     }
 
     @Override

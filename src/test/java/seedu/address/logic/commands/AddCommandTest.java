@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
@@ -25,6 +25,8 @@ import seedu.address.model.Model;
 import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.ReadOnlyUserPrefs;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.TimeSlot;
+import seedu.address.model.person.exceptions.DuplicatePersonException;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
 import seedu.address.storage.Storage;
@@ -54,9 +56,19 @@ public class AddCommandTest {
     public void execute_duplicatePerson_throwsCommandException() {
         Person validPerson = new PersonBuilder().build();
         AddCommand addCommand = new AddCommand(validPerson);
-        ModelStub modelStub = new ModelStubWithPerson(validPerson);
 
-        assertThrows(CommandException.class, AddCommand.MESSAGE_DUPLICATE_PERSON, () -> addCommand.execute(modelStub));
+        // --- NEW STUB ---
+        // This stub now throws the exception from addPerson, as the model does
+        ModelStub modelStub = new ModelStub() {
+            @Override
+            public void addPerson(Person person) {
+                throw new DuplicatePersonException();
+            }
+        };
+        // --- END NEW STUB ---
+
+        assertThrows(CommandException.class, AddCommand.MESSAGE_DUPLICATE_PERSON, ()
+                -> addCommand.execute(modelStub));
     }
 
     @Test
@@ -173,26 +185,14 @@ public class AddCommandTest {
         }
 
         @Override
-        public void sortFilteredPersonList(Comparator<Person> comparator) {
+        public Optional<Person> getConflictingPerson(TimeSlot timeSlot) {
             throw new AssertionError("This method should not be called.");
-        }
-    }
-
-    /**
-     * A Model stub that contains a single person.
-     */
-    private class ModelStubWithPerson extends ModelStub {
-        private final Person person;
-
-        ModelStubWithPerson(Person person) {
-            requireNonNull(person);
-            this.person = person;
         }
 
         @Override
-        public boolean hasPerson(Person person) {
-            requireNonNull(person);
-            return this.person.isSamePerson(person);
+        public Optional<Person> getConflictingPerson(
+                TimeSlot timeSlot, Person personToIgnore) {
+            throw new AssertionError("This method should not be called.");
         }
     }
 
@@ -201,6 +201,17 @@ public class AddCommandTest {
      */
     private class ModelStubAcceptingPersonAdded extends ModelStub {
         final ArrayList<Person> personsAdded = new ArrayList<>();
+
+        private final Storage storageStub = new StorageManager(
+                new JsonAddressBookStorage(Paths.get("dummy-ab.json")),
+                new JsonUserPrefsStorage(Paths.get("dummy-up.json"))
+        ) {
+            // Override the one method we need to control for this test
+            @Override
+            public boolean addSlot(TimeSlot timeSlot) {
+                return true; // Always return true for success
+            }
+        };
 
         @Override
         public boolean hasPerson(Person person) {
@@ -212,6 +223,16 @@ public class AddCommandTest {
         public void addPerson(Person person) {
             requireNonNull(person);
             personsAdded.add(person);
+        }
+
+        @Override
+        public Optional<Person> getConflictingPerson(TimeSlot timeSlot) {
+            return Optional.empty();
+        }
+
+        @Override
+        public Storage getStorage() {
+            return this.storageStub; // Return our new stub
         }
 
         @Override

@@ -1,12 +1,13 @@
 package seedu.address.model;
 
 import java.nio.file.Path;
-import java.util.Comparator;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.TimeSlot;
 import seedu.address.storage.Storage;
 
 /**
@@ -86,16 +87,22 @@ public interface Model {
      * @throws NullPointerException if {@code predicate} is null.
      */
     void updateFilteredPersonList(Predicate<Person> predicate);
-
-    /**
-     * Sorts the filtered person list using the given {@code comparator}.
-     * @throws NullPointerException if {@code comparator} is null.
-     */
-
-    void sortFilteredPersonList(Comparator<Person> comparator);
     /**
      * Returns the StorageManager
      * @return
      */
     Storage getStorage();
+
+    /**
+     * Finds and returns a person who conflicts with the given timeslot.
+     * @return An Optional containing the conflicting person, or empty if no conflict.
+     */
+    Optional<Person> getConflictingPerson(TimeSlot timeSlot);
+
+    /**
+     * Finds and returns a person who conflicts with the given timeslot, ignoring a specific person.
+     * @return An Optional containing the conflicting person, or empty if no conflict.
+     */
+    Optional<Person> getConflictingPerson(
+            TimeSlot timeSlot, Person personToIgnore);
 }

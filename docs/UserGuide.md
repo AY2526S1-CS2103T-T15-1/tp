@@ -17,7 +17,7 @@ AddressBook Level 3 (AB3) is a **desktop app for managing contacts, optimized fo
 1.  Ensure you have Java `17` or above installed in your Computer.<br>
     **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
-2.  Download the latest `.jar` file from [here](https://github.com/AY2526S1-CS2103T-T15-1/tp/releases).
+2.  Download the latest `.jar` file from [here](https://github.com/AY2526S1-CS2103T-T15-1/tp/releases/tag/v1.4).
 
 3.  Copy the file to the folder you want to use as the _home folder_ for your AddressBook.
 
@@ -28,7 +28,7 @@ AddressBook Level 3 (AB3) is a **desktop app for managing contacts, optimized fo
 5.  Type the command in the command box and press Enter to execute it. e.g. typing **`help`** and pressing Enter will open the help window.<br>
     Some example commands you can try:
 
-    * `list` : Lists all contacts by time slot.
+    * `list` : Lists all contacts which are sorted by time slot.
 
     * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01 t/Chemistry ts/2025-10-20 1400-1500` : Adds a contact named `John Doe` with a specified tag and time slot to the Address Book.
 

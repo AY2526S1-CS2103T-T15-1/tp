@@ -16,9 +16,11 @@ import java.time.format.DateTimeParseException;
  */
 public class TimeSlot implements Comparable<TimeSlot> {
 
+    private static final int MIN_DURATION_MINUTES = 30;
     public static final String MESSAGE_CONSTRAINTS =
             "TimeSlot should be in the format YYYY-MM-DD HHMM-HHMM, "
-                    + "where start time is before end time and the duration is at least 30 minutes.\n"
+                    + "where start time is before end time and the duration is at least "
+                    + MIN_DURATION_MINUTES + " minutes.\n"
                     + "Example: 2025-10-12 1600-1800";
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HHmm");
@@ -52,6 +54,10 @@ public class TimeSlot implements Comparable<TimeSlot> {
      * Used by getNextOccurrence.
      */
     private TimeSlot(LocalDate date, LocalTime startTime, LocalTime endTime) {
+        assert date != null : "Date cannot be null";
+        assert startTime != null : "Start time cannot be null";
+        assert endTime != null : "End time cannot be null";
+        assert startTime.isBefore(endTime) : "Start time must be before end time";
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -98,7 +104,7 @@ public class TimeSlot implements Comparable<TimeSlot> {
             }
 
             Duration duration = Duration.between(start, end);
-            if (duration.toMinutes() < 30) {
+            if (duration.toMinutes() < MIN_DURATION_MINUTES) {
                 return false;
             }
 
@@ -159,7 +165,7 @@ public class TimeSlot implements Comparable<TimeSlot> {
         if (!this.date.equals(other.date)) {
             return false; // Different dates cannot overlap
         }
-        return this.endTime.isAfter(other.startTime) || other.endTime.isBefore(this.startTime);
+        return this.endTime.isAfter(other.startTime) && this.startTime.isBefore(other.endTime);
     }
 
     @Override

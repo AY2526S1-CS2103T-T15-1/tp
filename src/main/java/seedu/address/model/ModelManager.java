@@ -4,7 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.nio.file.Path;
-import java.util.Comparator;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
@@ -14,6 +14,7 @@ import javafx.collections.transformation.SortedList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.exceptions.DuplicatePersonException;
 import seedu.address.model.person.exceptions.TimeSlotConflictException;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
@@ -134,12 +135,22 @@ public class ModelManager implements Model {
     public void deletePerson(Person target) {
         storage.removeSlot(target.getTimeSlot());
         addressBook.removePerson(target);
+        logger.fine("Deleted person: " + target.getName());
     }
 
     @Override
     public void addPerson(Person person) {
+        if (hasPerson(person)) {
+            throw new DuplicatePersonException();
+        }
+        Optional<Person> conflict = addressBook.getConflictingPerson(person.getTimeSlot());
+        if (conflict.isPresent()) {
+            throw new TimeSlotConflictException(conflict.get());
+        }
+        storage.addSlot(person.getTimeSlot());
         addressBook.addPerson(person);
         updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+        logger.fine("Added person: " + person.getName());
     }
 
     @Override
@@ -149,17 +160,12 @@ public class ModelManager implements Model {
         // Check if timeslot is being changed
         if (!target.getTimeSlot().equals(editedPerson.getTimeSlot())) {
             // Timeslot has changed. Must check for conflicts.
-            // 1. Remove old slot
-            storage.removeSlot(target.getTimeSlot());
-
-            // 2. Try to add new slot
-            if (!storage.addSlot(editedPerson.getTimeSlot())) {
-                // Conflict! Abort.
-                // Add the old slot back to restore state.
-                storage.addSlot(target.getTimeSlot());
-                throw new TimeSlotConflictException(
-                        "The timeslot for " + editedPerson.getName() + " conflicts with an existing entry.");
+            Optional<Person> conflict = addressBook.getConflictingPerson(editedPerson.getTimeSlot(), target);
+            if (conflict.isPresent()) {
+                throw new TimeSlotConflictException(conflict.get());
             }
+            storage.removeSlot(target.getTimeSlot());
+            storage.addSlot(editedPerson.getTimeSlot());
         }
 
         // If we are here, either timeslot didn't change, or it did and it was successful.
@@ -184,11 +190,6 @@ public class ModelManager implements Model {
     }
 
     @Override
-    public void sortFilteredPersonList(Comparator<Person> comparator) {
-        sortedPersons.setComparator(comparator);
-    }
-
-    @Override
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -203,6 +204,17 @@ public class ModelManager implements Model {
         return addressBook.equals(otherModelManager.addressBook)
                 && userPrefs.equals(otherModelManager.userPrefs)
                 && sortedPersons.equals(otherModelManager.sortedPersons);
+    }
+
+    @Override
+    public Optional<Person> getConflictingPerson(seedu.address.model.person.TimeSlot timeSlot) {
+        return addressBook.getConflictingPerson(timeSlot);
+    }
+
+    @Override
+    public Optional<Person> getConflictingPerson(
+            seedu.address.model.person.TimeSlot timeSlot, Person personToIgnore) {
+        return addressBook.getConflictingPerson(timeSlot, personToIgnore);
     }
 
 }

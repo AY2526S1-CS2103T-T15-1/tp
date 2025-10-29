@@ -56,7 +56,22 @@ public class EditCommandTest {
         EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder(editedPerson).build();
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
 
-        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+        StringBuilder changes = new StringBuilder("Changes: [");
+        changes.append("Name: '").append(personToEdit.getName())
+                .append("' -> '").append(editedPerson.getName()).append("'");
+        changes.append(", Phone: '").append(personToEdit.getPhone())
+                .append("' -> '").append(editedPerson.getPhone()).append("'");
+        changes.append(", Email: '").append(personToEdit.getEmail())
+                .append("' -> '").append(editedPerson.getEmail()).append("'");
+        changes.append(", Address: '").append(personToEdit.getAddress())
+                .append("' -> '").append(editedPerson.getAddress()).append("'");
+        changes.append(", Timeslot: '").append(personToEdit.getTimeSlot())
+                .append("' -> '").append(editedPerson.getTimeSlot()).append("'");
+        changes.append(", Tags: '").append(personToEdit.getTags()).append("' -> '")
+                .append(editedPerson.getTags()).append("']");
+
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson))
+                + "\n" + changes.toString();
 
         // 1. Create a *new, separate* storage for the expected model.
         // This assumes you have 'Paths' and other storage classes imported.
@@ -87,7 +102,16 @@ public class EditCommandTest {
                 .withPhone(VALID_PHONE_BOB).withTags(VALID_TAG_HUSBAND).build();
         EditCommand editCommand = new EditCommand(indexLastPerson, descriptor);
 
-        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+        StringBuilder changes = new StringBuilder("Changes: [");
+        changes.append("Name: '").append(lastPerson.getName()).append("' -> '")
+                .append(editedPerson.getName()).append("'");
+        changes.append(", Phone: '").append(lastPerson.getPhone()).append("' -> '")
+                .append(editedPerson.getPhone()).append("'");
+        changes.append(", Tags: '").append(lastPerson.getTags()).append("' -> '")
+                .append(editedPerson.getTags()).append("']");
+
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson))
+                + "\n" + changes.toString();
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(lastPerson, editedPerson);
@@ -100,7 +124,10 @@ public class EditCommandTest {
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, new EditPersonDescriptor());
         Person editedPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
 
-        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+        String changes = "No changes were applied.";
+
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson))
+                + "\n" + changes;
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
 
@@ -116,7 +143,10 @@ public class EditCommandTest {
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON,
                 new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build());
 
-        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+        String changes = "Changes: [Name: '" + personInFilteredList.getName()
+                + "' -> '" + editedPerson.getName() + "']";
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson))
+                + "\n" + changes;
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(model.getFilteredPersonList().get(0), editedPerson);
@@ -157,10 +187,14 @@ public class EditCommandTest {
                 .build();
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
 
+        String expectedMessage = Messages.MESSAGE_TIMESLOT_CONFLICT
+                + " " + conflictingPerson.getName()
+                + " [" + conflictingPerson.getTimeSlot() + "]";
+
         // Expect a command failure with the conflict message
         // The message comes from the TimeSlotConflictException we created
         assertCommandFailure(editCommand, model,
-                "The timeslot for " + personToEdit.getName() + " conflicts with an existing entry.");
+                expectedMessage);
     }
 
     @Test

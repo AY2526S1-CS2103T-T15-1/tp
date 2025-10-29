@@ -27,7 +27,7 @@ Refer to the guide [_Setting up and getting started_](SettingUp.md).
 
 ### Architecture
 
-<puml src="diagrams/ArchitectureDiagram.puml" width="280" />
+<puml src="diagrams/ArchitectureDiagram.puml" width="280"></puml>
 
 The ***Architecture Diagram*** given above explains the high-level design of the App.
 
@@ -52,7 +52,7 @@ The bulk of the app's work is done by the following four components:
 
 The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `delete 1`.
 
-<puml src="diagrams/ArchitectureSequenceDiagram.puml" width="574" />
+<puml src="diagrams/ArchitectureSequenceDiagram.puml" width="574"></puml>
 
 Each of the four main components (also shown in the diagram above),
 
@@ -61,7 +61,7 @@ Each of the four main components (also shown in the diagram above),
 
 For example, the `Logic` component defines its API in the `Logic.java` interface and implements its functionality using the `LogicManager.java` class which follows the `Logic` interface. Other components interact with a given component through its interface rather than the concrete class (reason: to prevent outside component's being coupled to the implementation of a component), as illustrated in the (partial) class diagram below.
 
-<puml src="diagrams/ComponentManagers.puml" width="300" />
+<puml src="diagrams/ComponentManagers.puml" width="300"></puml>
 
 The sections below give more details of each component.
 
@@ -69,7 +69,7 @@ The sections below give more details of each component.
 
 The **API** of this component is specified in [`Ui.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/Ui.java)
 
-<puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component"/>
+<puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component"><puml>
 
 The UI consists of a `MainWindow` that is made up of parts e.g.`CommandBox`, `ResultDisplay`, `PersonListPanel`, `StatusBarFooter` etc. All these, including the `MainWindow`, inherit from the abstract `UiPart` class which captures the commonalities between classes that represent parts of the visible GUI.
 
@@ -88,11 +88,11 @@ The `UI` component,
 
 Here's a (partial) class diagram of the `Logic` component:
 
-<puml src="diagrams/LogicClassDiagram.puml" width="550"/>
+<puml src="diagrams/LogicClassDiagram.puml" width="550"></puml>
 
 The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("delete 1")` API call as an example.
 
-<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `delete 1` Command" />
+<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `delete 1` Command"></puml>
 
 <box type="info" seamless>
 
@@ -109,16 +109,17 @@ How the `Logic` component works:
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
-<puml src="diagrams/ParserClasses.puml" width="600"/>
+<puml src="diagrams/ParserClasses.puml" width="600"></puml>
 
 How the parsing works:
-* When called upon to parse a user command, the `AddressBookParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name e.g., `AddCommandParser`) which uses the other classes shown above to parse the user command and create a `XYZCommand` object (e.g., `AddCommand`) which the `AddressBookParser` returns back as a `Command` object.
-* All `XYZCommandParser` classes (e.g., `AddCommandParser`, `DeleteCommandParser`, ...) inherit from the `Parser` interface so that they can be treated similarly where possible e.g, during testing.
+* When called upon to parse a user command, the `AddressBookParser` class determines the command word and creates the appropriate parser (e.g., `AddCommandParser`, `DeleteCommandParser`, or simpler ones like `ClearCommandParser`, `ListCommandParser`). This specific parser uses the other utility classes shown above to parse the arguments (if any) and create a `XYZCommand` object (e.g., `AddCommand`) which the `AddressBookParser` returns back as a `Command` object.
+* Parsers for commands requiring specific arguments (like `AddCommandParser`) also provide detailed error messages if mandatory prefixes are missing, while `EditCommandParser` success message confirms with the user the edited fields.
+* All `XYZCommandParser` classes (e.g., `AddCommandParser`, `DeleteCommandParser` `ClearCommandParser`, ...) inherit from the `Parser` interface so that they can be treated similarly where possible e.g, during testing.
 
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
 
-<puml src="diagrams/ModelClassDiagram.puml" width="450" />
+<puml src="diagrams/ModelClassDiagram.puml" width="450"></puml>
 
 
 The `Model` component,
@@ -126,13 +127,14 @@ The `Model` component,
 * stores the address book data i.e., all `Person` objects (which are contained in a `UniquePersonList` object).
 * stores the currently 'selected' `Person` objects (e.g., results of a search query) as a separate _filtered_ list which is exposed to outsiders as an unmodifiable `ObservableList<Person>` that can be 'observed' e.g. the UI can be bound to this list so that the UI automatically updates when the data in the list change.
 * stores a `UserPref` object that represents the user’s preferences. This is exposed to the outside as a `ReadOnlyUserPref` objects.
+* Provides methods to check for potential timeslot conflicts (`getConflictingPerson`), abstracting this logic away from individual commands
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
 <box type="info" seamless>
 
 **Note:** An alternative (arguably, a more OOP) model is given below. It has a `Tag` list in the `AddressBook`, which `Person` references. This allows `AddressBook` to only require one `Tag` object per unique tag, instead of each `Person` needing their own `Tag` objects.<br>
 
-<puml src="diagrams/BetterModelClassDiagram.puml" width="450" />
+<puml src="diagrams/BetterModelClassDiagram.puml" width="450"></puml>
 
 </box>
 
@@ -141,7 +143,7 @@ The `Model` component,
 
 **API** : [`Storage.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/storage/Storage.java)
 
-<puml src="diagrams/StorageClassDiagram.puml" width="550" />
+<puml src="diagrams/StorageClassDiagram.puml" width="550"></puml>
 
 The `Storage` component,
 * can save both address book data and user preference data in JSON format, and read them back into corresponding objects.
@@ -157,6 +159,127 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 ## **Implementation**
 
 This section describes some noteworthy details on how certain features are implemented.
+
+### \[Implemented\] `filtertimeslot` feature
+
+#### Proposed Implementation
+
+The `filtertimeslot` feature allows users to filter the displayed list of persons to only those whose timeslots fall within a specified date and/or time range. This mechanism is facilitated by a new `TimeslotRangePredicate` class.
+
+The `FilterTimeslotCommand`'s `execute` method passes this predicate to the `Model`'s `updateFilteredPersonList(predicate)` method. The `ModelManager` then uses this predicate to update its `FilteredList`, which in turn updates the UI.
+
+The `FilterTimeslotCommandParser` is responsible for parsing the user's input, which must contain at least one of the four optional prefixes: `sd/` (start date), `ed/` (end date), `st/` (start time), and `et/` (end time). It also supports the keywords now and today (e.g., `sd/today`, `st/now`) for date and time fields to filter relative to the current system time.These are used to construct the `TimeslotRangePredicate` which contains the logic to check if a `Person`'s `TimeSlot` overlaps with the specified range.
+
+The following sequence diagram shows how a `filtertimeslot` operation goes through the components:
+
+<puml src="diagrams/FilterTimeslotSequenceDiagram.puml" alt="FilterTimeslotSequenceDiagram"></puml>
+
+#### Design considerations:
+
+**Aspect: How to parse the filter parameters:**
+
+* **Alternative 1 (current choice):** Use flexible, optional prefixes (e.g., `sd/`, `st/`, `et/`).
+    * Pros: Highly flexible. Allows users to filter by just a start time (`st/0900`), just a date range (`sd/2025-10-20 ed/2025-10-22`), or a specific time on a specific day (`sd/2025-10-20 st/0900 et/1700`).
+    * Cons: Parsing logic is more complex as many combinations are valid.
+
+* **Alternative 2:** A single, fixed-format argument (e.g., `filtertimeslot YYYY-MM-DD to YYYY-MM-DD`).
+    * Pros: Very simple to parse.
+    * Cons: Much less flexible. It's difficult to filter for "all 9am-12pm slots on any date," which is a key use case.
+
+**Aspect: Handling of Relative Time ("Now"/"Today")**
+
+* **Alternative 1 (Current Choice):** Special keywords (`now`, `today`) used as *values* for existing date/time prefixes (`sd/`, `st/`, etc.).
+    * **Pros:** Highly flexible and **composable**. Allows combining relative times with specific dates/times (e.g., `sd/now ed/2025-11-30`). Consistent with the existing prefix-based command structure.
+    * **Cons:** Requires slightly more complex logic within the parser to detect and handle these keywords.
+* **Alternative 2:** Introduce a dedicated, mutually exclusive prefix or flag (e.g., `filtertimeslot /future` or `filtertimeslot mode=future`).
+    * **Pros:** Might seem conceptually simpler for a single use case (like "show only future slots").
+    * **Cons:** Much less flexible. Cannot be easily combined with other date/time filters. Adds complexity to the parser to handle mutual exclusion rules. Violates the consistency of using prefixes for parameters.
+
+**Aspect: Definition of Time Range Overlap**
+
+* **Alternative 1 (Current Choice):** Overlap requires actual intersection of time intervals. Slots ending exactly when the filter starts, or starting exactly when the filter ends, are *not* considered overlapping.
+    * **Pros:** Mathematically clear definition of overlap.
+    * **Cons:** May not match user intuition for back-to-back schedules (e.g., filter `et/1000` might not include a person scheduled `1000-1100`).
+* **Alternative 2:** Inclusive boundaries. Consider slots overlapping if they touch at the boundaries (e.g., filter `et/1000` *would* include `1000-1100`).
+    * **Pros:** Catches adjacent schedules, potentially matching user expectation better.
+    * **Cons:** Requires careful adjustment of the boundary checking logic in `TimeslotRangePredicate` (e.g., using `!isBefore` instead of `isAfter` and `!isAfter` instead of `isBefore`).
+
+### \[Implemented\] `clearpast` feature
+
+#### Proposed Implementation
+
+The `clearpast` feature provides a "smart-clear" function designed for tutors. It iterates through the entire person list and performs actions on contacts whose timeslots are in the past (i.e., `TimeSlot.isPast(LocalDateTime.now())` is true).
+
+The command follows two main logic paths:
+1.  **Non-recurring contacts:** If a past contact does **not** have the `t/recurring` tag, it is deleted from the `Model` using `model.deletePerson()`.
+2.  **Recurring contacts:** If a past contact **has** the `t/recurring` tag, the command calculates its next weekly timeslot using `TimeSlot.getNextOccurrence(now)`. It then attempts to update the contact with this new timeslot using `model.setPerson()`.
+
+This `execute` method is designed to be "all-or-nothing" for each contact but not for the whole command. It builds lists of successfully deleted, successfully updated, and failed-to-update (conflicted) contacts and presents this summary to the user in the `CommandResult`.
+
+<box type="info" seamless>
+
+**Note:** Conflict handling is critical. When `clearpast` calls `model.setPerson()` with a recurring contact's new timeslot, the `ModelManager`'s `setPerson` logic handles the conflict check. If the new timeslot is already taken, `setPerson` throws a `TimeSlotConflictException` which contains details about the conflicting person. The `ClearPastCommand` catches this specific exception, formats a detailed error message including the conflicting person's name and timeslot, adds this to the `conflictNames` list, and continues processing the rest of the contacts.
+
+</box>
+
+At the end of the operation, `clearpast` forces the UI to refresh and re-sort by the default timeslot order by calling `model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS)`.
+
+The following activity diagram summarizes the logic flow for the `clearpast` command:
+
+<puml src="diagrams/HighLevelClearPastActivityDiagram.puml" alt="HighLevelClearPastActivityDiagram"></puml>
+
+Detailed Logic Flow for `clearpast`
+
+<puml src="diagrams/ClearPastActivityDiagram.puml" alt="ClearPastActivityDiagram"></puml>
+
+#### Design considerations:
+
+**Aspect: How to handle recurring timeslots:**
+
+* **Alternative 1 (current choice):** A manual `clearpast` command that checks for a `t/recurring` tag.
+    * Pros: Simple to implement and understand. The user retains full control over when their schedule is cleaned up. Fits well within a command-line application.
+    * Cons: The user must remember to run the command. Only supports one type of recurrence (weekly).
+
+* **Alternative 2:** A fully abstract `Schedule` class with `OneTimeSlot` and `RecurringSlot` subclasses.
+    * Pros: Far more powerful. Could support complex schedules (e.g., "every Monday and Wednesday"). The `list` command could show all future occurrences.
+    * Cons: Massive architectural change. It would require rewriting all time-based commands (`add`, `edit`, `findtimeslot`, `filtertimeslot`, `list` sorting) and the conflict detection logic.
+
+* **Alternative 3:** An automatic background service that "watches" the clock.
+    * Pros: Fully automated.
+    * Cons: Not feasible for a simple command-line application. It's impossible to resolve conflicts (like in Alternative 1) without user input, leading to data being lost or updates failing silently.
+
+**Aspect: Conflict Resolution Strategy for Recurring Slots**
+
+* **Alternative 1 (Current Choice):** Report conflict and skip update for that specific contact.
+    * **Pros:** Safe, prevents accidental data loss or overwriting. Provides clear feedback to the user about which updates failed.
+    * **Cons:** Requires the user to manually resolve the conflict later. The address book can be left in a partially updated state.
+* **Alternative 2:** Force overwrite. Delete the conflicting contact to make space for the recurring one.
+    * **Pros:** Ensures the recurring appointment is always scheduled. Fully automated.
+    * **Cons:** High risk of unintended data loss. Could be confusing for the user.
+* **Alternative 3:** Automatic rescheduling. Find the *next available* slot for the recurring contact.
+    * **Pros:** Attempts to preserve both contacts.
+    * **Cons:** Complex logic. The recurring contact might end up scheduled at an unexpected time.
+
+**Aspect: Granularity of Operation (All-or-Nothing)**
+
+* **Alternative 1 (Current Choice):** Process each past contact individually. Deletions happen, and updates happen or fail one by one.
+    * **Pros:** Robust against errors. If one update fails, others can still succeed. Provides detailed feedback.
+    * **Cons:** The command is not atomic. State might be inconsistent until conflicts are resolved.
+* **Alternative 2:** Transactional approach. If *any* update would cause a conflict, fail the *entire* command and make no changes.
+    * **Pros:** Ensures the address book state remains consistent.
+    * **Cons:** Less user-friendly if one conflict prevents many valid changes. More complex to implement.
+
+### General Design Improvements
+
+Beyond specific features, several architectural improvements were made to enhance code quality, maintainability, and user experience across the application.
+
+#### Smarter Conflict Detection (in `Model`)
+
+To adhere to the **Single Level of Abstraction (SLA)** principle, the business logic for detecting timeslot conflicts and duplicate persons is centralized within the `Model` component, specifically in `ModelManager#addPerson` and `ModelManager#setPerson`. Commands like `AddCommand` and `EditCommand` now delegate these checks to the `Model`. They simply call the appropriate `Model` method and handle any `TimeSlotConflictException` or `DuplicatePersonException` that arises. This separation makes the commands simpler and ensures consistent validation logic.
+
+#### Safer & Consistent Commands (Argument Handling)
+
+To improve user experience and ensure consistent command behavior, commands that are not designed to accept arguments (such as `clear`, `list`, `exit`, and `help`) now utilize dedicated parsers (e.g., `ClearCommandParser`, `ListCommandParser`). These parsers strictly check for the absence of arguments and throw a `ParseException` if any unexpected input is provided after the command word. This prevents potentially confusing situations (e.g., `list 123` silently ignoring "123") and provides immediate, clear feedback to the user, adhering to the principle of least surprise.
 
 ### \[Proposed\] Undo/redo feature
 
@@ -174,15 +297,15 @@ Given below is an example usage scenario and how the undo/redo mechanism behaves
 
 Step 1. The user launches the application for the first time. The `VersionedAddressBook` will be initialized with the initial address book state, and the `currentStatePointer` pointing to that single address book state.
 
-<puml src="diagrams/UndoRedoState0.puml" alt="UndoRedoState0" />
+<puml src="diagrams/UndoRedoState0.puml" alt="UndoRedoState0"></puml>
 
 Step 2. The user executes `delete 3` command to delete the 3rd person in the address book. The `delete` command calls `Model#commitAddressBook()`, causing the modified state of the address book after the `delete 5` command executes to be saved in the `addressBookStateList`, and the `currentStatePointer` is shifted to the newly inserted address book state.
 
-<puml src="diagrams/UndoRedoState1.puml" alt="UndoRedoState1" />
+<puml src="diagrams/UndoRedoState1.puml" alt="UndoRedoState1"></puml>
 
 Step 3. The user executes `add n/David …​` to add a new person. The `add` command also calls `Model#commitAddressBook()`, causing another modified address book state to be saved into the `addressBookStateList`.
 
-<puml src="diagrams/UndoRedoState2.puml" alt="UndoRedoState2" />
+<puml src="diagrams/UndoRedoState2.puml" alt="UndoRedoState2"></puml>
 
 <box type="info" seamless>
 
@@ -192,7 +315,7 @@ Step 3. The user executes `add n/David …​` to add a new person. The `add` co
 
 Step 4. The user now decides that adding the person was a mistake, and decides to undo that action by executing the `undo` command. The `undo` command will call `Model#undoAddressBook()`, which will shift the `currentStatePointer` once to the left, pointing it to the previous address book state, and restores the address book to that state.
 
-<puml src="diagrams/UndoRedoState3.puml" alt="UndoRedoState3" />
+<puml src="diagrams/UndoRedoState3.puml" alt="UndoRedoState3"></puml>
 
 
 <box type="info" seamless>
@@ -204,7 +327,7 @@ than attempting to perform the undo.
 
 The following sequence diagram shows how an undo operation goes through the `Logic` component:
 
-<puml src="diagrams/UndoSequenceDiagram-Logic.puml" alt="UndoSequenceDiagram-Logic" />
+<puml src="diagrams/UndoSequenceDiagram-Logic.puml" alt="UndoSequenceDiagram-Logic"></puml>
 
 <box type="info" seamless>
 
@@ -214,7 +337,7 @@ The following sequence diagram shows how an undo operation goes through the `Log
 
 Similarly, how an undo operation goes through the `Model` component is shown below:
 
-<puml src="diagrams/UndoSequenceDiagram-Model.puml" alt="UndoSequenceDiagram-Model" />
+<puml src="diagrams/UndoSequenceDiagram-Model.puml" alt="UndoSequenceDiagram-Model"></puml>
 
 The `redo` command does the opposite — it calls `Model#redoAddressBook()`, which shifts the `currentStatePointer` once to the right, pointing to the previously undone state, and restores the address book to that state.
 
@@ -226,15 +349,15 @@ The `redo` command does the opposite — it calls `Model#redoAddressBook()`,
 
 Step 5. The user then decides to execute the command `list`. Commands that do not modify the address book, such as `list`, will usually not call `Model#commitAddressBook()`, `Model#undoAddressBook()` or `Model#redoAddressBook()`. Thus, the `addressBookStateList` remains unchanged.
 
-<puml src="diagrams/UndoRedoState4.puml" alt="UndoRedoState4" />
+<puml src="diagrams/UndoRedoState4.puml" alt="UndoRedoState4"></puml>
 
 Step 6. The user executes `clear`, which calls `Model#commitAddressBook()`. Since the `currentStatePointer` is not pointing at the end of the `addressBookStateList`, all address book states after the `currentStatePointer` will be purged. Reason: It no longer makes sense to redo the `add n/David …​` command. This is the behavior that most modern desktop applications follow.
 
-<puml src="diagrams/UndoRedoState5.puml" alt="UndoRedoState5" />
+<puml src="diagrams/UndoRedoState5.puml" alt="UndoRedoState5"></puml>
 
 The following activity diagram summarizes what happens when a user executes a new command:
 
-<puml src="diagrams/CommitActivityDiagram.puml" width="250" />
+<puml src="diagrams/CommitActivityDiagram.puml" width="250"></puml>
 
 #### Design considerations:
 

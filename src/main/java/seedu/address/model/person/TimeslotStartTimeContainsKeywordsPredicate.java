@@ -56,4 +56,8 @@ public class TimeslotStartTimeContainsKeywordsPredicate implements Predicate<Per
     public String toString() {
         return new ToStringBuilder(this).add("keywords", keywords).toString();
     }
+
+    public List<String> getKeywords() {
+        return keywords;
+    }
 }
