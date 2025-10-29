@@ -36,6 +36,8 @@ AddressBook Level 3 (AB3) is a **desktop app for managing contacts, optimized fo
 
     * `clear` : Deletes all contacts.
 
+    * `help` : Displays a message explaining how to access the help page
+
     * `exit` : Exits the app.
 
 6.  Refer to the [Features](#features) below for details of each command.
@@ -81,7 +83,7 @@ Adds a person to the address book.
 Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/TAG]…​`
 
 * The `ts/` (time slot) parameter is mandatory for all new contacts.
-* The application will automatically check for scheduling conflicts. You will be prevented from adding a contact if their specified time slot overlaps with an existing time slot.
+* The application automatically checks for scheduling conflicts and prevents you from adding a contact whose time slot overlaps with an existing one.
 
 <box type="tip" seamless>
 
@@ -122,7 +124,7 @@ Examples:
 
 ### Locating persons by name: `find`
 
-Finds persons whose names start with any of the given keywords.
+Finds persons whose names contain any of the given keywords.
 
 Format: `find KEYWORD [MORE_KEYWORDS]`
 
