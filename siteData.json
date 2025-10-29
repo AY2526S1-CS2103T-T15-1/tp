@@ -52,6 +52,7 @@
         "implementation": "Implementation",
         "implemented-filtertimeslot-feature": "[Implemented] filtertimeslot feature",
         "implemented-clearpast-feature": "[Implemented] clearpast feature",
+        "general-design-improvements": "General Design Improvements",
         "proposed-undo-redo-feature": "[Proposed] Undo/redo feature",
         "proposed-data-archiving": "[Proposed] Data archiving",
         "documentation-logging-testing-configuration-dev-ops": "Documentation, logging, testing, configuration, dev-ops",
