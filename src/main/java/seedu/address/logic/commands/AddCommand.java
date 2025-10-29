@@ -14,6 +14,7 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.exceptions.DuplicatePersonException;
+import seedu.address.model.person.exceptions.DuplicatePhoneException;
 import seedu.address.model.person.exceptions.TimeSlotConflictException;
 
 /**
@@ -67,6 +68,8 @@ public class AddCommand extends Command {
         } catch (DuplicatePersonException e) {
             // Catch duplicate exception
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);
+        } catch (DuplicatePhoneException e) {
+            throw new CommandException(e.getMessage());
         }
     }
 

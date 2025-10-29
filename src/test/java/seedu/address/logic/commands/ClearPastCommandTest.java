@@ -5,6 +5,8 @@ import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +36,7 @@ public class ClearPastCommandTest {
     private Person buildPastPerson(String name) {
         return new PersonBuilder()
                 .withName(name)
+                .withPhone("11111111")
                 .withTimeSlot("2020-01-01 1000-1100") // Definitely in the past
                 .build();
     }
@@ -42,6 +45,7 @@ public class ClearPastCommandTest {
     private Person buildRecurringPastPerson(String name) {
         return new PersonBuilder()
                 .withName(name)
+                .withPhone("22222222")
                 .withTimeSlot("2020-01-05 1200-1300") // Definitely in the past
                 .withTags(ClearPastCommand.RECURRING_TAG_NAME)
                 .build();
@@ -52,6 +56,7 @@ public class ClearPastCommandTest {
         String futureTime = now.plusDays(10).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         return new PersonBuilder()
                 .withName(name)
+                .withPhone("33333333")
                 .withTimeSlot(futureTime + " 1000-1100")
                 .build();
     }
@@ -101,9 +106,11 @@ public class ClearPastCommandTest {
         // Expected model is empty
         expectedModel = new ModelManager();
 
-        String expectedMessage = new StringBuilder(ClearPastCommand.MESSAGE_SUCCESS)
-                .append(String.format(ClearPastCommand.MESSAGE_DELETED, 1, "Past Alice"))
-                .toString();
+        String expectedMessage = getExpectedClearPastMessage(
+                List.of("Past Alice"),
+                Collections.emptyList(),
+                Collections.emptyList()
+        );
         assertCommandSuccess(new ClearPastCommand(), model, expectedMessage, expectedModel);
     }
 
@@ -128,9 +135,11 @@ public class ClearPastCommandTest {
         expectedModel.addPerson(expectedUpdatedPerson);
         expectedModel.getStorage().addSlot(expectedUpdatedPerson.getTimeSlot());
 
-        String expectedMessage = new StringBuilder(ClearPastCommand.MESSAGE_SUCCESS)
-                .append(String.format(ClearPastCommand.MESSAGE_UPDATED, 1, "Recurring Carl"))
-                .toString();
+        String expectedMessage = getExpectedClearPastMessage(
+                Collections.emptyList(),
+                List.of("Recurring Carl"),
+                Collections.emptyList()
+        );
         assertCommandSuccess(new ClearPastCommand(), model, expectedMessage, expectedModel);
     }
 
@@ -161,10 +170,11 @@ public class ClearPastCommandTest {
         expectedModel.addPerson(futurePerson);
         expectedModel.getStorage().addSlot(futurePerson.getTimeSlot());
 
-        String expectedMessage = new StringBuilder(ClearPastCommand.MESSAGE_SUCCESS)
-                .append(String.format(ClearPastCommand.MESSAGE_DELETED, 1, "Past Alice"))
-                .append(String.format(ClearPastCommand.MESSAGE_UPDATED, 1, "Recurring Carl"))
-                .toString();
+        String expectedMessage = getExpectedClearPastMessage(
+                List.of("Past Alice"),
+                List.of("Recurring Carl"),
+                Collections.emptyList()
+        );
         assertCommandSuccess(new ClearPastCommand(), model, expectedMessage, expectedModel);
     }
 
@@ -177,6 +187,7 @@ public class ClearPastCommandTest {
         // occurrence of the recurring person
         Person conflictingPerson = new PersonBuilder()
                 .withName("Blocker Bob")
+                .withPhone("44444444")
                 .withTimeSlot(pastRecurring.getTimeSlot().getNextOccurrence(now).toString())
                 .build();
 
@@ -196,10 +207,38 @@ public class ClearPastCommandTest {
         // 2. This is the new format from ClearPastCommand's helper method
         String conflictDetails = "Recurring Carl (Conflict: " + conflictError + ")";
 
-        String expectedMessage = new StringBuilder(ClearPastCommand.MESSAGE_SUCCESS)
-                .append(String.format(ClearPastCommand.MESSAGE_CONFLICTS, 1, conflictDetails))
-                .toString();
+        String expectedMessage = getExpectedClearPastMessage(
+                Collections.emptyList(), // No deleted
+                Collections.emptyList(), // No updated
+                List.of(conflictDetails) // One conflict
+        );
 
         assertCommandSuccess(new ClearPastCommand(), model, expectedMessage, expectedModel);
+    }
+
+    /**
+     * Helper method to construct the expected success/result message for ClearPastCommand.
+     * This mimics the logic used in ClearPastCommand itself.
+     */
+    private String getExpectedClearPastMessage(List<String> deletedNames, List<String> updatedNames,
+                                               List<String> conflictDetails) {
+        if (deletedNames.isEmpty() && updatedNames.isEmpty() && conflictDetails.isEmpty()) {
+            return ClearPastCommand.MESSAGE_NO_CHANGES;
+        }
+
+        StringBuilder result = new StringBuilder(ClearPastCommand.MESSAGE_SUCCESS);
+        if (!deletedNames.isEmpty()) {
+            result.append(String.format(ClearPastCommand.MESSAGE_DELETED,
+                    deletedNames.size(), String.join(", ", deletedNames)));
+        }
+        if (!updatedNames.isEmpty()) {
+            result.append(String.format(ClearPastCommand.MESSAGE_UPDATED,
+                    updatedNames.size(), String.join(", ", updatedNames)));
+        }
+        if (!conflictDetails.isEmpty()) {
+            result.append(String.format(ClearPastCommand.MESSAGE_CONFLICTS,
+                    conflictDetails.size(), String.join(", ", conflictDetails)));
+        }
+        return result.toString();
     }
 }

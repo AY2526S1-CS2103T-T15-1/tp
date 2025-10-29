@@ -21,6 +21,7 @@ import seedu.address.logic.Messages;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.exceptions.DuplicatePersonException;
+import seedu.address.model.person.exceptions.DuplicatePhoneException;
 import seedu.address.model.person.exceptions.TimeSlotConflictException;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
@@ -192,6 +193,48 @@ public class ModelManagerTest {
     @Test
     public void getFilteredPersonList_modifyList_throwsUnsupportedOperationException() {
         assertThrows(UnsupportedOperationException.class, () -> modelManager.getFilteredPersonList().remove(0));
+    }
+
+    @Test
+    public void addPerson_duplicatePhone_throwsDuplicatePhoneException() {
+        // Create BOB but give him ALICE's phone number
+        Person conflictingPerson = new PersonBuilder(BOB)
+                .withPhone(ALICE.getPhone().value) // ALICE's phone
+                .build();
+        String expectedError = "This phone number already exists in the address book, assigned to: "
+                + ALICE.getName();
+        // Use the 2-argument assertThrows (since DuplicatePhoneException has no message)
+        assertThrows(DuplicatePhoneException.class, expectedError, () -> modelManager.addPerson(conflictingPerson));
+    }
+
+    @Test
+    public void setPerson_duplicatePhone_throwsDuplicatePhoneException() {
+        // modelManager already contains ALICE (94351253) and BENSON (98765432)
+
+        // Try to edit BENSON to have ALICE's phone number
+        Person editedBenson = new PersonBuilder(BENSON)
+                .withPhone(ALICE.getPhone().value) // ALICE's phone
+                .build();
+        String expectedError = "This phone number already exists in the address book, assigned to: "
+                + ALICE.getName();
+        assertThrows(DuplicatePhoneException.class, expectedError, () -> modelManager.setPerson(BENSON, editedBenson));
+    }
+
+    @Test
+    public void setPerson_noPhoneChange_allowsEdit() {
+        // Edit BENSON's name but keep his phone number
+        Person editedBenson = new PersonBuilder(BENSON)
+                .withName("Benson V2")
+                // Phone number remains BENSON's original phone
+                .build();
+
+        // This should succeed without throwing DuplicatePhoneException
+        modelManager.setPerson(BENSON, editedBenson);
+
+        // Verify the change was made (optional but good)
+        Person personInList = modelManager.getAddressBook().getPersonList().get(1); // Assuming BENSON is at index 1
+        assertEquals("Benson V2", personInList.getName().toString());
+        assertEquals(BENSON.getPhone(), personInList.getPhone());
     }
 
     @Test

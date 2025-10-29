@@ -30,6 +30,8 @@ import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.TimeSlot;
+import seedu.address.model.person.exceptions.DuplicatePersonException;
+import seedu.address.model.person.exceptions.DuplicatePhoneException;
 import seedu.address.model.person.exceptions.TimeSlotConflictException;
 import seedu.address.model.tag.Tag;
 
@@ -87,14 +89,15 @@ public class EditCommand extends Command {
         assert personToEdit != null : "Person to edit should not be null";
         Person editedPerson = createEditedPerson(personToEdit, editPersonDescriptor);
 
-        if (!personToEdit.isSamePerson(editedPerson) && model.hasPerson(editedPerson)) {
-            throw new CommandException(MESSAGE_DUPLICATE_PERSON);
-        }
-
         try {
             model.setPerson(personToEdit, editedPerson);
         } catch (TimeSlotConflictException e) {
             throw new CommandException(e.getMessage());
+        } catch (DuplicatePersonException e) {
+            throw new CommandException(MESSAGE_DUPLICATE_PERSON);
+        } catch (DuplicatePhoneException e) {
+            throw new CommandException(e.getMessage());
+            // --- END ---
         }
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
         String editedFields = buildEditedFieldsString(personToEdit, editedPerson, editPersonDescriptor);
