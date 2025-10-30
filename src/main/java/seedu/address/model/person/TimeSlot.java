@@ -19,7 +19,8 @@ import seedu.address.model.person.exceptions.PastTimeSlotException;
  */
 public class TimeSlot implements Comparable<TimeSlot> {
 
-    private static final int MIN_DURATION_MINUTES = 30;
+    // for the sake of testing, min_duration is 1
+    private static final int MIN_DURATION_MINUTES = 1;
     public static final String MESSAGE_CONSTRAINTS =
             "TimeSlot should be in the format YYYY-MM-DD HHMM-HHMM, "
                     + "where start time is before end time and the duration is at least "
