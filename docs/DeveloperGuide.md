@@ -570,7 +570,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 * **Recurring lesson/Recurring timeslot**: A lesson or timeslot that automatically repeats at a fixed interval (e.g., weekly)
 * **Timeslot conflict**: A situation where two students have overlapping or identical lesson times
 * **Predicate**: A logical condition used by the system to filter or search for students (e.g., based on timeslot or name)
-* **Filter**: A command that limits the displayed student list based on specified criteria such as date, time, or subject
+* **Filter**: A command that limits the displayed student list based on specified criteria, such as timeslot 
 * **Command**: A line of text entered by the user into the CLI to perform an action
 * **Command parser**: A component responsible for interpreting user input and converting it into a command that the system can execute
 * **Parameter prefix**: A short label used before command arguments (e.g., n/ for name, st/ for start time) to identify their purpose
