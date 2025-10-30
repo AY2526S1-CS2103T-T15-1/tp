@@ -3,6 +3,7 @@ package seedu.address.logic.parser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 
 import java.util.Arrays;
 
@@ -46,6 +47,17 @@ public class FindTimeslotCommandParserTest {
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindTimeslotCommand.MESSAGE_USAGE),
                 exception.getMessage()
         );
+    }
+
+    @Test
+    public void parse_invalidKeywords_throwsParseException() {
+        // Test with garbage text
+        assertParseFailure(parser, "7837e832e",
+                String.format(FindTimeslotCommandParser.MESSAGE_INVALID_KEYWORD, "7837e832e"));
+
+        // Test with invalid time format
+        assertParseFailure(parser, "09:00",
+                String.format(FindTimeslotCommandParser.MESSAGE_INVALID_KEYWORD, "09:00"));
     }
 }
 
