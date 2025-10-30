@@ -457,30 +457,21 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ### Use cases
 
-(For all use cases below, the **System** is the `AddressBook` and the **Actor** is the `user`, unless specified otherwise)
-
 **Use case: Delete a person**
 
 **MSS**
 
 1.  User requests to list persons.
 2.  EduTrack shows a list of persons.
-3.  User requests to delete a specific person in the list.
-4.  EduTrack requests the user to confirm the deletion.
-5.  User confirms the deletion.
-6.  EduTrack deletes the person.
+3.  User requests to delete a specific person in the list by indicating the index of the person. 
+4.  EduTrack deletes the person.
 
     Use case ends.
 
 **Extensions**
 
-* 2a. The list is empty.
-    * 2a1. EduTrack informs user that the contact list is empty.
-
-      Use case ends.
-
 * 3a. The given index is invalid.
-    * 3a1. EduTrack shows an error message.
+    * 3a1. EduTrack shows an error message `The person index provided is invalid`.
 
       Use case resumes at step 2.
 
@@ -490,7 +481,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 **MSS**
 
 1.  User requests to add a person.
-2.  EduTrack requests for contact details (name, phone number, email address, subject, appointment slot).
+2.  EduTrack requests for contact details (name, phone number, email address, address, tags, appointment slot) where tags are optional.
 3.  User enters the requested details.
 4.  EduTrack saves the contact to a local file.
 
@@ -499,24 +490,28 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 **Extensions**
 
 * 3a. User leaves required fields blank.
-    * 3a1. System requests the missing fields.
+    * 3a1. EduTrack requests the missing fields by showing an error message `Missing prefix: p/`.
     * 3a2. User re-enters details.
     Steps 3a1–3a2 repeat until all required details are valid.
 
       Use case resumes at step 4.
 
-* 3b. User enters invalid data (e.g., wrong email format).
-
-    * 3b1. System shows an error message.
+* 3b. User enters invalid data that is of wrong format.
+    * 3b1. EduTrack shows an error message `Emails should be of the format local-part@domain`.
 
       Use case resumes at step 2.
 
-* *a. At any time, User cancels the operation.
-    * *a1. System requests to confirm the cancellation.
-    * *a2. User confirms the cancellation
-    * *a3. System discards input and returns to idle state.
+* 2a. User enters conflicting timeslot.
+    * 2a1. EduTrack shows an error message `This time slot conflicts with another existing time slot! John Doe [2025-10-31 1500-1800]`
+    
+      Use case resumes at step 2.
 
-      Use case ends.
+* 2b. User enters conflicting phone number.
+    * 2b1. EduTrack shows an error message `This phone number already exists in the address book, assigned to: John Doe`
+  
+      Use case resumes at step 2.
+
+    Use case ends.
 
 
 **Use case: Edit a person**
@@ -534,12 +529,12 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 **Extensions**
 
 * 3a. The given index is invalid.
-    * 3a1. EduTrack shows an error message.
+    * 3a1. EduTrack shows an error message `The person index provided is invalid`.
 
       Use case resumes at step 2.
 
 * 4a. New details are invalid (e.g., bad email format).
-    * 4a1. AddressBook shows an error message.
+    * 4a1. EduTrack shows an error message.
 
       Use case resumes at step 4.
 
