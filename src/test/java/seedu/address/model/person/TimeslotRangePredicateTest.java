@@ -52,7 +52,7 @@ public class TimeslotRangePredicateTest {
     }
 
     @Test
-    public void test_timeslotOverlaps_returnsTrue() {
+    public void test_timeslotIsContained_returnsTrue() {
         // No filters
         TimeslotRangePredicate predicate = new TimeslotRangePredicate(
                 Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
@@ -82,18 +82,23 @@ public class TimeslotRangePredicateTest {
         predicate = new TimeslotRangePredicate(
                 Optional.of(DATE_1), Optional.of(DATE_2), Optional.of(TIME_1), Optional.of(TIME_2));
         assertTrue(predicate.test(PERSON_IN_RANGE));
+    }
 
+    @Test
+    public void test_timeslotOverlapsButNotContained_returnsFalse() {
         // Overlap start time (filter 08:00-10:30)
-        predicate = new TimeslotRangePredicate(
+        // Person (10:00-11:00) is NOT contained because it ends after 10:30
+        TimeslotRangePredicate predicate = new TimeslotRangePredicate(
                 Optional.empty(), Optional.empty(),
                 Optional.of(LocalTime.of(8, 0)), Optional.of(LocalTime.of(10, 30)));
-        assertTrue(predicate.test(PERSON_IN_RANGE));
+        assertFalse(predicate.test(PERSON_IN_RANGE));
 
         // Overlap end time (filter 10:30-12:00)
+        // Person (10:00-11:00) is NOT contained because it starts before 10:30
         predicate = new TimeslotRangePredicate(
                 Optional.empty(), Optional.empty(),
                 Optional.of(LocalTime.of(10, 30)), Optional.of(LocalTime.of(12, 0)));
-        assertTrue(predicate.test(PERSON_IN_RANGE));
+        assertFalse(predicate.test(PERSON_IN_RANGE));
     }
 
     @Test
