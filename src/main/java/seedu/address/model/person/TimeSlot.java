@@ -1,6 +1,10 @@
 package seedu.address.model.person;
 
 import static java.util.Objects.requireNonNull;
+
+import seedu.address.logic.Messages;
+import seedu.address.model.person.exceptions.PastTimeSlotException;
+
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
 import java.time.Duration;
@@ -39,11 +43,9 @@ public class TimeSlot implements Comparable<TimeSlot> {
     public TimeSlot(String timeSlotString) {
         requireNonNull(timeSlotString);
         checkArgument(isValidTimeSlot(timeSlotString), MESSAGE_CONSTRAINTS);
-
         String[] parts = timeSlotString.trim().split(" ");
-        this.date = LocalDate.parse(parts[0], DATE_FORMATTER);
-
         String[] times = parts[1].split("-");
+        this.date = LocalDate.parse(parts[0], DATE_FORMATTER);
         this.startTime = LocalTime.parse(times[0], TIME_FORMATTER);
         this.endTime = LocalTime.parse(times[1], TIME_FORMATTER);
         value = timeSlotString;
@@ -67,6 +69,26 @@ public class TimeSlot implements Comparable<TimeSlot> {
                 + "-" + endTime.format(TIME_FORMATTER);
 
         // We can skip validation checks as we trust the internal method logic
+    }
+
+    /**
+     * Check whether the timeslot is in the past
+     * @return a boolean value
+     */
+    public boolean isPast() {
+        if (this.date.isBefore(LocalDate.now())) {
+            return true;
+        } else if (this.date.isEqual(LocalDate.now())) {
+            return this.startTime.isBefore(LocalTime.now());
+        } else {
+            return false;
+        }
+    }
+
+    public void checkPast() throws PastTimeSlotException {
+        if (isPast()) {
+            throw new PastTimeSlotException(Messages.MESSAGE_PAST_TIMESLOT);
+        }
     }
 
     /**
