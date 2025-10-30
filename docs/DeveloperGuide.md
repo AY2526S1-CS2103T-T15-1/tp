@@ -114,7 +114,7 @@ Here are the other classes in `Logic` (omitted from the class diagram above) tha
 How the parsing works:
 * When called upon to parse a user command, the `AddressBookParser` class determines the command word and creates the appropriate parser (e.g., `AddCommandParser`, `DeleteCommandParser`, or simpler ones like `ClearCommandParser`, `ListCommandParser`). This specific parser uses the other utility classes shown above to parse the arguments (if any) and create a `XYZCommand` object (e.g., `AddCommand`) which the `AddressBookParser` returns back as a `Command` object.
 * Parsers for commands requiring specific arguments (like `AddCommandParser`) also provide detailed error messages if mandatory prefixes are missing, while `EditCommandParser` success message confirms with the user the edited fields.
-* All `XYZCommandParser` classes (e.g., `AddCommandParser`, `DeleteCommandParser` `ClearCommandParser`, ...) inherit from the `Parser` interface so that they can be treated similarly where possible e.g, during testing.
+* All `XYZCommandParser` classes (e.g., `AddCommandParser`, `DeleteCommandParser`, `ClearCommandParser`, ...) inherit from the `Parser` interface so that they can be treated similarly where possible e.g, during testing.
 
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
@@ -454,7 +454,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `*`      | admin                                      | force terminate EduTrack (CLI, identity confirmation)                | reclaim resources or enforce system policies                           |
 
 
-[//]: # (*{More to be added}*)
 
 ### Use cases
 
@@ -544,7 +543,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 4.
 
-*{More to be added}*
 
 ### Non-Functional Requirements
 
@@ -553,8 +551,9 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 3.  Searching for a student or appointment slot should return results in under 1.6s.
 4.  Should load interface within 2 seconds of launch.
 5.  Audit logs of tutors and admins should be maintained for at least 1 year.
+6.  Error messages must be clear and concise, and guide the user towards correcting their input.
+7.  The app should consume less than 300MB of memory during its operation.
 
-*{More to be added}*
 
 ### Glossary
 
@@ -567,9 +566,14 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 * **Student**: The student of a tutor
 * **Tutor**: A private hire tuition teacher
 * **User logs/Audit trail**: Recorded details of user usage such as the editing of student records
-
-
-
+* **Timeslot**: The specific period of time allocated to a student's lesson (e.g., 2025-10-12 1000-1200)
+* **Recurring lesson/Recurring timeslot**: A lesson or timeslot that automatically repeats at a fixed interval (e.g., weekly)
+* **Timeslot conflict**: A situation where two students have overlapping or identical lesson times
+* **Predicate**: A logical condition used by the system to filter or search for students (e.g., based on timeslot or name)
+* **Filter**: A command that limits the displayed student list based on specified criteria such as date, time, or subject
+* **Command**: A line of text entered by the user into the CLI to perform an action
+* **Command parser**: A component responsible for interpreting user input and converting it into a command that the system can execute
+* **Parameter prefix**: A short label used before command arguments (e.g., n/ for name, st/ for start time) to identify their purpose.
 
 
 --------------------------------------------------------------------------------------------------------------------
@@ -600,7 +604,6 @@ testers are expected to do more *exploratory* testing.
    1. Re-launch the app by double-clicking the jar file.<br>
        Expected: The most recent window size and location is retained.
 
-1. _{ more test cases …​ }_
 
 ### Deleting a person
 
@@ -617,7 +620,6 @@ testers are expected to do more *exploratory* testing.
    1. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
       Expected: Similar to previous.
 
-1. _{ more test cases …​ }_
 
 ### Saving data
 
@@ -625,4 +627,4 @@ testers are expected to do more *exploratory* testing.
 
    1. _{explain how to simulate a missing/corrupted file, and the expected behavior}_
 
-1. _{ more test cases …​ }_
+
