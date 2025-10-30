@@ -84,6 +84,7 @@ Adds a person to the address book.
 Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/TAG]…​`
 
 * The `ts/` (time slot) parameter is mandatory for all new contacts.
+* Do note that you will be unable to add timeslots that start in the past (relative to current time).
 * The application will automatically check for scheduling conflicts and duplicate phone numbers. You will be prevented from adding a student if their specified time slot overlaps with an existing slot (showing the conflicting student's name and slot) or if the phone number is already in use (showing the name of the student using that number).
 
 <box type="tip" seamless>
@@ -298,6 +299,12 @@ Assume current day is 2025-10-30, time is 15:30.
 * Conflict (Ethan Yeo): His timeslot (Oct 30 @ 10:00) was in the past and `recurring`. His next weekly slot was calculated to be **Nov 6 @ 10:00-12:00**. This slot directly conflicts with **Ben Lim**. The update failed, and the specific conflict was reported.
 
 * Ignored (Alice, Ben, George, Fiona): Their slots were already in the future, so clearpast did not affect them.
+
+**Note for testing: Do note that clearpast is relatively hard to test due to the restriction on past timeslots.**
+Here is the expected workflow for testing (if current time is 0900):
+* add n/ ... ts/current_date 0900-0902 (for the working product we will set it to 30 mins, but for the sake of testing, we allow no gap for timeslots). Rmb to set t/recurring depending on which scenario you are planning to test.
+* Wait for 1-2 minutes (test other features first etc)
+* Now the timeslot you just added is in the past, and can be cleared by clearpast, or brought forward if recurring tag is present, to either cause a conflict or be a future timeslot.
 
 ### Clearing all entries : `clear`
 

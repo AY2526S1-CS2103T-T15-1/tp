@@ -37,7 +37,7 @@ public class TimeslotTest {
 
     @Test
     public void constructor_shortDuration_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> new TimeSlot("2025-10-12 0800-0810"));
+        assertThrows(IllegalArgumentException.class, () -> new TimeSlot("2025-10-12 0800-0800"));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class TimeslotTest {
         assertFalse(TimeSlot.isValidTimeSlot("not-a-date 0800-0900"));
         assertFalse(TimeSlot.isValidTimeSlot("2025-10-12 9999-1200"));
         assertFalse(TimeSlot.isValidTimeSlot("2025-10-12 0900-0900"));
-        assertFalse(TimeSlot.isValidTimeSlot("2025-10-12 0850-0900")); // less than 30 min
+        //assertFalse(TimeSlot.isValidTimeSlot("2025-10-12 0850-0900")); // less than 30 min, but allowed for sake of PE
     }
 
     @Test
