@@ -4,9 +4,9 @@ title: "User Guide"
 pageNav: 3
 ---
 
-# AB-3 User Guide
+# EduTrack User Guide
 
-AddressBook Level 3 (AB3) is a **desktop app for managing contacts, optimized for use via a Command Line Interface** (CLI) while still having the benefits of a Graphical User Interface (GUI). If you can type fast, AB3 can get your contact management tasks done faster than traditional GUI apps.
+EduTrack is a **desktop app for private tutors to manage their students, optimized for use via a Command Line Interface** (CLI) while still having the benefits of a Graphical User Interface (GUI). If you can type fast, EduTrack can help you with student scheduling (among other management tasks) faster than traditional GUI apps, allowing you to focus on tecahing rather than mundane admin work.
 
 <page-nav-print />
 
@@ -19,18 +19,19 @@ AddressBook Level 3 (AB3) is a **desktop app for managing contacts, optimized fo
 
 2.  Download the latest `.jar` file from [here](https://github.com/AY2526S1-CS2103T-T15-1/tp/releases/tag/v1.4).
 
-3.  Copy the file to the folder you want to use as the _home folder_ for your AddressBook.
+3.  Copy the file to the folder you want to use as the _home folder_ for EduTrack.
 
 4.  Open a command terminal, `cd` into the folder you put the jar file in, and use the `java -jar addressbook.jar` command to run the application.<br>
-    A GUI similar to the below should appear in a few seconds. Note how the app contains some sample data.<br>
+    A GUI similar to the below should appear in a few seconds. Note how EduTrack already contains some sample students for ease of testing, however feel free to add ur own data. <br>
     ![Ui](images/Ui.png)
 
 5.  Type the command in the command box and press Enter to execute it. e.g. typing **`help`** and pressing Enter will open the help window.<br>
     Some example commands you can try:
+    Tip: if you are unsure about the format of a specific command, just enter the keyword (e.g. `add`), and the corresponding error message will show the correct format for that command.
 
-    * `list` : Lists all contacts which are sorted by time slot.
+    * `list` : Lists all contacts which are **sorted by time slot**.
 
-    * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01 t/Chemistry ts/2025-10-20 1400-1500` : Adds a contact named `John Doe` with a specified tag and time slot to the Address Book.
+    * `add n/Alice Tan p/91234567 e/alice.t@email.com a/1 Orchard Road ts/2025-11-05 1400-1600 t/Sec3Math` : Adds a contact named `Alice Tan` with a specified tag `Sec3Math` and time slot `2025-11-05 1400-1600`, amongst other fields, to the Address Book.
 
     * `delete 3` : Deletes the 3rd contact shown in the current list.
 
@@ -51,10 +52,10 @@ AddressBook Level 3 (AB3) is a **desktop app for managing contacts, optimized fo
 **Notes about the command format:**<br>
 
 * Words in `UPPER_CASE` are the parameters to be supplied by the user.<br>
-  e.g. in `add n/NAME`, `NAME` is a parameter which can be used as `add n/John Doe`.
+  e.g. in `add n/NAME`, `NAME` is a parameter which can be used as `add n/Alice Tan`.
 
 * Items in square brackets `[]` are optional.<br>
-  e.g. `n/NAME [t/TAG]` can be used as `n/John Doe t/friend` or as `n/John Doe`.
+  e.g. `n/NAME [t/TAG]` can be used as `n/Alice Tan t/friend` or as `n/Alice Tan`.
 
 * Items with `…`​ after them can be used multiple times including zero times.<br>
   e.g. `[t/TAG]…​` can be used as ` ` (i.e. 0 times), `t/friend`, `t/friend t/family` etc.
@@ -62,8 +63,8 @@ AddressBook Level 3 (AB3) is a **desktop app for managing contacts, optimized fo
 * Parameters can be in any order.<br>
   e.g. if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
-* Extraneous parameters for commands that do not take in parameters (such as `help`, `list`, `exit` and `clear`) will throw an error.<br>
-  e.g. entering `help 123` will result in an error message as `help` does not take any arguments.
+* Extraneous parameters for commands that do not take in parameters (such as `help`, `list`, `exit` and `clear`) throw an error, but whitepsace is allowed.<br>
+  e.g. if the command specifies `help `, it will be interpreted as `help`, but `help 123` will fail.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
   </box>
@@ -83,7 +84,7 @@ Adds a person to the address book.
 Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/TAG]…​`
 
 * The `ts/` (time slot) parameter is mandatory for all new contacts.
-* The application automatically checks for scheduling conflicts and prevents you from adding a contact whose time slot overlaps with an existing one.
+* The application will automatically check for scheduling conflicts and duplicate phone numbers. You will be prevented from adding a student if their specified time slot overlaps with an existing slot (showing the conflicting student's name and slot) or if the phone number is already in use (showing the name of the student using that number).
 
 <box type="tip" seamless>
 
@@ -91,11 +92,15 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/
 </box>
 
 Examples:
-* `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01 ts/2025-10-27 1000-1100`
-* `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal ts/2025-10-27 1100-1200`
+* `add n/Alice Tan p/91234567 e/alice.t@email.com a/1 Orchard Road ts/2025-11-05 1400-1600 t/Sec3Math` (Adds Alice Tan with one subject tag)
+* `add n/Ben Lim p/92345678 e/ben.l@email.com a/2 Clementi Ave ts/2025-11-06 1000-1200 t/JC1Chem t/NeedsHelp` (Adds Ben Lim with two tags)
+* `add n/George Png p/97890123 e/george.p@email.com a/7 Pasir Ris Drive ts/2025-11-10 0900-1100` (Adds George Png with no tags)
 
-Example of timeslot-conflict:
-![timeslot conflict with John Doe](images/timeslot-conflict.png)
+Example of timeslot-conflict (assuming Alice Tan was already added): `add n/New Student p/12341234 e/new@email.com a/Some Address ts/2025-11-05 1500-1700`
+![timeslot conflict with Alice Tan](images/timeslot-conflict-alicetan.png)
+
+Example of phone-conflict (assuming Alice Tan was already added): `add n/Another Student p/91234567 e/another@email.com a/Another Address ts/2025-11-11 1000-1200`
+![phone conflict with Alice Tan](images/phone-conflict-alicetan.png)
 
 ### Listing all persons : `list`
 
@@ -113,15 +118,18 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [ts/TIMESLOT] [t/TA
 * Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, …​
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
-* If you edit the time slot (`ts/`), the application will check for scheduling conflicts.
+* If you edit the time slot (`ts/`) or phone number (`p/`), the application will check for scheduling or phone number conflicts, providing specific details if a conflict occurs.
 * When editing tags, the existing tags of the person will be removed i.e. adding of tags is not cumulative.
 * You can remove all the person’s tags by typing `t/` without
   specifying any tags after it.
+* Upon successful edit, the application will confirm the changes by listing the fields that were modified.
 
 Examples:
-* `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
-* `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all the person's existing tags.
-* `edit 1 ts/2025-11-20 1500-1600` Edits the time slot of the 1st person.
+* `edit 1 p/91112222 e/new.charlie@email.com` (Edits phone and email of the 1st student, Charlie Goh)
+* `edit 2 t/Urgent` (Edits the tags of the 2nd student, Diana Heng, replacing `Sec3Math` and `recurring` with Urgent)
+* `edit 5 n/Alice Tan Updated ts/2025-11-05 1430-1630` (Edits the name and time slot of the 5th student, Alice Tan)
+
+![successful edit of Charlie](images/edit-success-message.png)
 
 ### Locating persons by name: `find`
 
@@ -129,17 +137,16 @@ Finds persons whose names contain any of the given keywords.
 
 Format: `find KEYWORD [MORE_KEYWORDS]`
 
-* The search is case-insensitive. e.g. `hans` will match `Hans`
-* The search is a substring match search. e.g. `Ha` will match `Hans` and `ming han`.
-* The order of the keywords does not matter. e.g. `Hans Bo` will match `Bo Hans`
+* The search is case-insensitive. e.g. `lice` will match `Alice`
+* The search looks for the keyword anywhere within the name (substring search). e.g. `lice` will match `Alice Pauline`
+* The order of the keywords does not matter. e.g. `Tan Ali` will match `Alice Tan`
 * Only the name is searched.
 * Persons matching at least one keyword will be returned (i.e. `OR` search).
-  e.g. `Hans Bo` will return `Hans Gruber`, `Bo Yang`
+  e.g. `Ali Ben` will return `Alice Tan`, `Ben Lim`.
 
 Examples:
-* `find John` returns `John` and `John Doe`
-* `find alex david` returns `Alex Yeoh`, `David Li`<br>
-  ![result for 'find alex david'](images/findAlexDavidResult.png)
+* `find Ali` returns `Alice Tan`
+* `find Tan Lim Goh` returns `Alice Tan`, `Ben Lim`, `Charlie Goh` <br>
 
 ### Locating persons by tag: `findtag`
 
@@ -151,8 +158,11 @@ Format: `findtag TAG [MORE_TAGS]…`
 * Persons matching at least one tag will be returned (i.e. `OR` search).
 
 Examples:
-* `findtag Math` will return contacts with tag `Math`
-* `findtag Math English` will return contacts with tag `Math` or tag `English`
+* `findtag Sec3Math` returns `Alice Tan`, `Diana Heng`, `Fiona Wee`.
+* `findtag recurring` returns `Diana Heng`.
+* `findtag recurring needshelp` returns `Diana Heng`, `Ben Lim`
+
+![multi-tag findtag](images/findtag_double.png)
 
 ### Finding persons by time slot : `findtimeslot`
 
@@ -163,14 +173,16 @@ Format: `findtimeslot [YYYY-MM-DD] [HHMM]`
 * At least one parameter (date or time) must be provided.
 * **Find by Date:** Lists all persons with a time slot on that specific date.
 * **Find by Time:** Lists all persons whose time slot starts at that specific time, regardless of date.
-* **Find by Date and Time:** Lists all persons with a time slot on that specific date *and* starting at that specific time.
+* **Find by Date and Time:** If both keywords are provided, lists all persons with a time slot on that specific date *and* starting at that specific time.
+* **Important**: Unlike `filtertimeslot`, this command finds exact matches for the start time / date. It does not search within a range.
 
 Examples:
-* `findtimeslot 2025-10-12` (Finds all contacts on 2025-10-12)
-![result for 'findtimeslot 2025-10-12'](images/findtimeslot-date.png)
-* `findtimeslot 1200` (Finds all contacts with appointments starting at 12:00)
-* `findtimeslot 2025-10-12 1200` (Finds all contacts on 2025-10-12 starting at 12:00)
-  ![result for 'findtimeslot 2025-10-12 1200'](images/findtimeslot-datetime.png)
+* `findtimeslot 2025-11-05` (Finds Alice Tan - matches date)
+* `findtimeslot 1000` (Finds Ben Lim - matches start time)
+* `findtimeslot 2025-11-06 1000` (Finds Ben Lim - matches both date AND start time)
+* `findtimeslot 2025-10-22 1600` (Finds no one - Charlie Goh matches the date but not the time; Diana Heng matches the time but not the date)
+
+![date_time search](images/findtimeslot_datetime.png)
 
 ### Filtering persons by time slot range : `filtertimeslot`
 
@@ -183,25 +195,21 @@ Format: `filtertimeslot [sd/START_DATE] [ed/END_DATE] [st/START_TIME] [et/END_TI
     * `ed/` (end date, e.g., `2025-10-28`)
     * `st/` (start time, e.g., `0800`)
     * `et/` (end time, e.g., `1200`)
+* Dates are `YYYY-MM-DD`, times are `HHMM`.
 * All fields are optional, but at least one must be present.
+* You can also use the keywords now or today for date prefixes (`sd/`, `ed/`) and now for time prefixes (`st/`, `et/`) to filter relative to the current system time. For example, `sd/now` filters for time slots starting from the current moment onwards.
 * If `sd/` is provided without `ed/`, it filters for all time slots on or after the start date.
 * If `ed/` is provided without `sd/`, it filters for all time slots on or before the end date.
 * If `st/` is provided without `et/`, it filters for all time slots on or after the start time.
 * If `et/` is provided without `st/`, it filters for all time slots on or before the end time.
 
-Examples:
-* `filtertimeslot sd/2025-10-27 ed/2025-10-27 st/0800 et/1200`
+Examples (assuming current date is 2025-10-30):
+* `filtertimeslot sd/2025-11-01 ed/2025-11-10` (Shows Alice Tan, Ben Lim, George Png)
+* `filtertimeslot st/1400` (Shows Charlie Goh, Diana Heng, Ethan Yeo. Alice Tan)
+* `filtertimeslot sd/today` (Shows Alice Tan, Ben Lim, Fiona Wee, George Png)
 
-  Result: Only contacts with time slots on 27 Oct 2025, between 08:00 and 12:00, are shown.
+![filtertimeslot_today](images/filtertimeslot_today.png)
 
-  ![result for 'filtertimeslot sd/2025-10-27 ed/2025-10-27 st/0800 et/1200'](images/filtertimeslot-allfields.png)
-* `filtertimeslot sd/2025-10-27 st/0800 et/1200`
-  Result: Only contacts with time slots on or after 27 Oct 2025, between 08:00 and 12:00, are shown.
-* `filtertimeslot sd/2025-10-20 ed/2025-10-21 st/0800`
-
-  Result: Only contacts with time slots between 20-21 Oct 2025, starting on or after 08:00, are shown.
-
-![result for 'filtertimeslot sd/2025-10-20 ed/2025-10-21 st/0800'](images/filtertimeslot-sd-ed-st.png)
 
 ### Deleting a person : `delete`
 
@@ -227,10 +235,20 @@ Format: `clearpast`
 * This command uses the current system time to determine which time slots are in the past.
 * Contacts tagged as `recurring` will **not** be deleted.
 * Instead, for `recurring` contacts, the time slot is automatically updated in 7-day intervals until the new slot falls in the future relative to the system time.
-* The update will fail with an error message if the new recurring time slot conflicts with an existing appointment.
+* The update will fail with an error message detailing the specific conflict (conflicting student's name and slot) if the new recurring time slot conflicts with an existing appointment.
+
+Example (assuming current date is 2025-10-30):
+
+Running clearpast will:
+
+* Delete Charlie Goh, Ethan Yeo (past, not recurring).
+
+* Update Diana Heng's slot to 2025-10-30 1600-1800 (past, recurring).
+
+* Leave Alice, Ben, Fiona, George untouched.
 
 Sample message shown to user in dialog box:
-![result for 'clearpast'](images/clearpast-message.png)
+![result for 'clearpast'](images/successful-clearpast.png)
 
 ### Clearing all entries : `clear`
 
@@ -246,17 +264,17 @@ Format: `exit`
 
 ### Saving the data
 
-AddressBook data are saved in the hard disk automatically after any command that changes the data. There is no need to save manually.
+The data in EduTrack is saved in the hard disk automatically after any command that changes the data. There is no need to save manually.
 
 ### Editing the data file
 
-AddressBook data are saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
+The data in EduTrack is saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
 
 <box type="warning" seamless>
 
 **Caution:**
-If your changes to the data file makes its format invalid, AddressBook will discard all data and start with an empty data file at the next run. Hence, it is recommended to take a backup of the file before editing it.<br>
-Furthermore, certain edits can cause the AddressBook to behave in unexpected ways (e.g., if a value entered is outside the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
+If your changes to the data file makes its format invalid, EduTrack will discard all data and start with an empty data file at the next run. Hence, it is recommended to take a backup of the file before editing it.<br>
+Furthermore, certain edits can cause EduTrack to behave in unexpected ways (e.g., if a value entered is outside the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
 </box>
 
 ### Archiving data files `[coming in v2.0]`
