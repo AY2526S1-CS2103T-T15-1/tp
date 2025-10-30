@@ -61,6 +61,9 @@ public class CommandTestUtil {
 
     public static final String PREAMBLE_WHITESPACE = "\t  \r  \n";
     public static final String PREAMBLE_NON_EMPTY = "NonEmptyPreamble";
+    public static final String FUTURE_TIMESLOT = " ts/2099-01-01 1000-1100";
+    public static final String FUTURE_TIMESLOT_AMY = " ts/2099-01-01 1000-1100";
+    public static final String FUTURE_TIMESLOT_BOB = " ts/2099-01-02 1000-1100";
 
     public static final EditCommand.EditPersonDescriptor DESC_AMY;
     public static final EditCommand.EditPersonDescriptor DESC_BOB;

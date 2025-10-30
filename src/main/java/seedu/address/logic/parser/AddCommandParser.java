@@ -8,6 +8,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TIMESLOT;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -46,6 +47,10 @@ public class AddCommandParser implements Parser<AddCommand> {
         Address address = ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get());
         Set<Tag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
         TimeSlot timeSlot = ParserUtil.parseTimeSlot(argMultimap.getValue(PREFIX_TIMESLOT).get());
+        LocalDateTime startTime = LocalDateTime.of(timeSlot.getDate(), timeSlot.getStartTime());
+        if (startTime.isBefore(LocalDateTime.now())) {
+            throw new ParseException("Cannot add a timeslot that starts in the past.");
+        }
         Person person = new Person(name, phone, email, address, timeSlot, tagList);
         return new AddCommand(person);
     }

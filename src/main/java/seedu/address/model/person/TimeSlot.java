@@ -1,10 +1,6 @@
 package seedu.address.model.person;
 
 import static java.util.Objects.requireNonNull;
-
-import seedu.address.logic.Messages;
-import seedu.address.model.person.exceptions.PastTimeSlotException;
-
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
 import java.time.Duration;
@@ -13,6 +9,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+
+import seedu.address.logic.Messages;
+import seedu.address.model.person.exceptions.PastTimeSlotException;
 
 /**
  * Represents a Person's lesson time slot in the address book.
@@ -43,9 +42,11 @@ public class TimeSlot implements Comparable<TimeSlot> {
     public TimeSlot(String timeSlotString) {
         requireNonNull(timeSlotString);
         checkArgument(isValidTimeSlot(timeSlotString), MESSAGE_CONSTRAINTS);
+
         String[] parts = timeSlotString.trim().split(" ");
-        String[] times = parts[1].split("-");
         this.date = LocalDate.parse(parts[0], DATE_FORMATTER);
+
+        String[] times = parts[1].split("-");
         this.startTime = LocalTime.parse(times[0], TIME_FORMATTER);
         this.endTime = LocalTime.parse(times[1], TIME_FORMATTER);
         value = timeSlotString;
@@ -85,6 +86,18 @@ public class TimeSlot implements Comparable<TimeSlot> {
         }
     }
 
+    /**
+     * Checks if this timeslot's end time is before the given time.
+     */
+    public boolean isPast(LocalDateTime now) {
+        LocalDateTime endDateTime = LocalDateTime.of(this.date, this.endTime);
+        return endDateTime.isBefore(now);
+    }
+
+    /**
+     * Helper that throws an exception
+     * @throws PastTimeSlotException
+     */
     public void checkPast() throws PastTimeSlotException {
         if (isPast()) {
             throw new PastTimeSlotException(Messages.MESSAGE_PAST_TIMESLOT);
@@ -147,14 +160,6 @@ public class TimeSlot implements Comparable<TimeSlot> {
 
     public LocalTime getEndTime() {
         return endTime;
-    }
-
-    /**
-     * Checks if this timeslot's end time is before the given time.
-     */
-    public boolean isPast(LocalDateTime now) {
-        LocalDateTime endDateTime = LocalDateTime.of(this.date, this.endTime);
-        return endDateTime.isBefore(now);
     }
 
     /**
