@@ -114,7 +114,7 @@ Here are the other classes in `Logic` (omitted from the class diagram above) tha
 How the parsing works:
 * When called upon to parse a user command, the `AddressBookParser` class determines the command word and creates the appropriate parser (e.g., `AddCommandParser`, `DeleteCommandParser`, or simpler ones like `ClearCommandParser`, `ListCommandParser`). This specific parser uses the other utility classes shown above to parse the arguments (if any) and create a `XYZCommand` object (e.g., `AddCommand`) which the `AddressBookParser` returns back as a `Command` object.
 * Parsers for commands requiring specific arguments (like `AddCommandParser`) also provide detailed error messages if mandatory prefixes are missing, while `EditCommandParser` success message confirms with the user the edited fields.
-* All `XYZCommandParser` classes (e.g., `AddCommandParser`, `DeleteCommandParser` `ClearCommandParser`, ...) inherit from the `Parser` interface so that they can be treated similarly where possible e.g, during testing.
+* All `XYZCommandParser` classes (e.g., `AddCommandParser`, `DeleteCommandParser`, `ClearCommandParser`, ...) inherit from the `Parser` interface so that they can be treated similarly where possible e.g, during testing.
 
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
@@ -566,7 +566,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 * **Student**: The student of a tutor
 * **Tutor**: A private hire tuition teacher
 * **User logs/Audit trail**: Recorded details of user usage such as the editing of student records
-* **Timeslot**: The specific period of time allocated to a student's lesson
+* **Timeslot**: The specific period of time allocated to a student's lesson (e.g., 2025-10-12 1000-1200)
 * **Recurring lesson/Recurring timeslot**: A lesson or timeslot that automatically repeats at a fixed interval (e.g., weekly)
 * **Timeslot conflict**: A situation where two students have overlapping or identical lesson times
 * **Predicate**: A logical condition used by the system to filter or search for students (e.g., based on timeslot or name)
@@ -574,6 +574,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 * **Command**: A line of text entered by the user into the CLI to perform an action
 * **Command parser**: A component responsible for interpreting user input and converting it into a command that the system can execute
 * **Parameter prefix**: A short label used before command arguments (e.g., n/ for name, st/ for start time) to identify their purpose.
+
 
 --------------------------------------------------------------------------------------------------------------------
 
