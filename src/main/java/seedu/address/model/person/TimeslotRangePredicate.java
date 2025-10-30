@@ -60,10 +60,10 @@ public class TimeslotRangePredicate implements Predicate<Person> {
         LocalTime personStart = personSlot.getStartTime();
         LocalTime personEnd = personSlot.getEndTime();
 
-        // The person's slot must NOT end before the filter's start time
-        boolean afterStartTime = startTime.map(start -> !personEnd.isBefore(start)).orElse(true);
-        // The person's slot must NOT start after the filter's end time
-        boolean beforeEndTime = endTime.map(end -> !personStart.isAfter(end)).orElse(true);
+        // Person's start time must be on or after the filter's start time
+        boolean afterStartTime = startTime.map(start -> !personStart.isBefore(start)).orElse(true);
+        // Person's end time must be on or before the filter's end time
+        boolean beforeEndTime = endTime.map(end -> !personEnd.isAfter(end)).orElse(true);
 
         return afterStartTime && beforeEndTime;
     }

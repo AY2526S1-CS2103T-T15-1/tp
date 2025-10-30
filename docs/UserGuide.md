@@ -186,7 +186,7 @@ Examples:
 
 ### Filtering persons by time slot range : `filtertimeslot`
 
-Filters the contact list to show only persons with time slots that fall within a specified date and/or time range.
+Filters the student list to show only students whose time slots fall entirely within a specified date and/or time range. This command acts as a "contains" filter.
 
 Format: `filtertimeslot [sd/START_DATE] [ed/END_DATE] [st/START_TIME] [et/END_TIME]`
 
@@ -197,16 +197,21 @@ Format: `filtertimeslot [sd/START_DATE] [ed/END_DATE] [st/START_TIME] [et/END_TI
     * `et/` (end time, e.g., `1200`)
 * Dates are `YYYY-MM-DD`, times are `HHMM`.
 * All fields are optional, but at least one must be present.
-* You can also use the keywords now or today for date prefixes (`sd/`, `ed/`) and now for time prefixes (`st/`, `et/`) to filter relative to the current system time. For example, `sd/now` filters for time slots starting from the current moment onwards.
-* If `sd/` is provided without `ed/`, it filters for all time slots on or after the start date.
-* If `ed/` is provided without `sd/`, it filters for all time slots on or before the end date.
-* If `st/` is provided without `et/`, it filters for all time slots on or after the start time.
-* If `et/` is provided without `st/`, it filters for all time slots on or before the end time.
+* **Special Keywords**: You can also use special keywords for date and time prefixes:
+    * `today` and `now` can be used for date prefixes (`sd/`, `ed/`) and will represent current day.
+    * `now` can be used for time prefixes (`st/`, `et/`) and will represent current time (nearest minute).
+    * `st/today` is not valid
+* **Filter Logic**: If a start or end prefix is not provided, the filter is open on that side.
+    * `st/1400` filters for slots that start and end between 14:00 and 23:59.
+    * `et/2000` filters for slots that start and end between 00:00 and 20:00.
+    * `sd/2025-10-31` filters for slots that start on or after 2025-10-31.
+    * `ed/2025/10-31` filters for slots that end on or before 2025-10-31.
 
 Examples (assuming current date is 2025-10-30):
-* `filtertimeslot sd/2025-11-01 ed/2025-11-10` (Shows Alice Tan, Ben Lim, George Png)
-* `filtertimeslot st/1400` (Shows Charlie Goh, Diana Heng, Ethan Yeo. Alice Tan)
-* `filtertimeslot sd/today` (Shows Alice Tan, Ben Lim, Fiona Wee, George Png)
+* `filtertimeslot st/1500 et/1800` (Shows Diana Heng and Charlie Goh).
+* `filtertimeslot sd/2025-11-01 ed/2025-11-10` (Shows Alice Tan, Ben Lim, George Png).
+* `filtertimeslot sd/today ed/now st/1600 et/1800` (Shows Diana Heng).
+* `filtertimeslot sd/today` (Shows Alice Tan, Ben Lim, Diana Heng, Fiona Wee, George Png).
 
 ![filtertimeslot_today](images/filtertimeslot_today.png)
 
