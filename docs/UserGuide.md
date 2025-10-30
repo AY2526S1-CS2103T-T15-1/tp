@@ -21,8 +21,8 @@ EduTrack is a **desktop app for private tutors to manage their students, optimiz
 
 3.  Copy the file to the folder you want to use as the _home folder_ for EduTrack.
 
-4.  Open a command terminal, `cd` into the folder you put the jar file in, and use the `java -jar addressbook.jar` command to run the application.<br>
-    A GUI similar to the below should appear in a few seconds. Note how EduTrack already contains some sample students for ease of testing, however feel free to add ur own data. <br>
+4.  Open a command terminal, `cd` into the folder you put the jar file in, and use the `java -jar edutrack.jar` command to run the application.<br>
+    A GUI similar to the below should appear in a few seconds. Note how EduTrack already contains some sample students for ease of testing. <br>
     ![Ui](images/Ui.png)
 
 5.  Type the command in the command box and press Enter to execute it. e.g. typing **`help`** and pressing Enter will open the help window.<br>
@@ -63,7 +63,7 @@ EduTrack is a **desktop app for private tutors to manage their students, optimiz
 * Parameters can be in any order.<br>
   e.g. if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
-* Extraneous parameters for commands that do not take in parameters (such as `help`, `list`, `exit` and `clear`) throw an error, but whitepsace is allowed.<br>
+* Extraneous parameters for commands that do not take in parameters (such as `help`, `list`, `exit` and `clear`) throw an error, but whitespace is allowed.<br>
   e.g. if the command specifies `help `, it will be interpreted as `help`, but `help 123` will fail.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
@@ -119,7 +119,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [ts/TIMESLOT] [t/TA
 
 * Persons must be displayed to show their index numbers.
 * Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, …​
-* At least one of the optional fields must be provided.
+* At least one of the optional fields must be provided, and the new overall value must be different from the old value. The command will show an error if no fields are provided or if the provided fields result in no overall change.
 * Existing values will be updated to the input values.
 * If you edit the time slot (`ts/`) or phone number (`p/`), the application will check for scheduling or phone number conflicts, providing specific details if a conflict occurs.
 * When editing tags, the existing tags of the person will be removed i.e. adding of tags is not cumulative.
@@ -178,6 +178,7 @@ Format: `findtimeslot [YYYY-MM-DD] [HHMM]`
 * **Find by Time:** Lists all persons whose time slot starts at that specific time, regardless of date.
 * **Find by Date and Time:** If both keywords are provided, lists all persons with a time slot on that specific date *and* starting at that specific time.
 * **Important**: Unlike `filtertimeslot`, this command finds exact matches for the start time / date. It does not search within a range.
+* The parser will reject any keywords that do not match these formats (e.g., `09:00` or `abcde` will show an error).
 
 Examples:
 * `findtimeslot 2025-11-05` (Finds Alice Tan - matches date)
@@ -208,7 +209,7 @@ Format: `filtertimeslot [sd/START_DATE] [ed/END_DATE] [st/START_TIME] [et/END_TI
     * `st/1400` filters for slots that start and end between 14:00 and 23:59.
     * `et/2000` filters for slots that start and end between 00:00 and 20:00.
     * `sd/2025-10-31` filters for slots that start on or after 2025-10-31.
-    * `ed/2025/10-31` filters for slots that end on or before 2025-10-31.
+    * `ed/2025-10-31` filters for slots that end on or before 2025-10-31.
 
 For easy reference, here is a list of people and timeslots we will use to illustrate this command.
 This is due to results being dependent on the current time of testing, which may cause confusion.
@@ -302,7 +303,7 @@ Assume current day is 2025-10-30, time is 15:30.
 
 **Note for testing: Do note that clearpast is relatively hard to test due to the restriction on past timeslots.**
 Here is the expected workflow for testing (if current time is 0900):
-* add n/ ... ts/current_date 0900-0902 (for the working product we will set it to 30 mins, but for the sake of testing, we allow no gap for timeslots). Rmb to set t/recurring depending on which scenario you are planning to test.
+* add n/ ... ts/current_date 0900-0902 (for the working product we will set it to 30 minutes, but for the sake of testing, we allow no gap for timeslots). Rmb to set t/recurring depending on which scenario you are planning to test.
 * Wait for 1-2 minutes (test other features first etc)
 * Now the timeslot you just added is in the past, and can be cleared by clearpast, or brought forward if recurring tag is present, to either cause a conflict or be a future timeslot.
 
@@ -324,7 +325,7 @@ The data in EduTrack is saved in the hard disk automatically after any command t
 
 ### Editing the data file
 
-The data in EduTrack is saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
+The data in EduTrack is saved automatically as a JSON file `[JAR file location]/data/edutrack.json`. Advanced users are welcome to update data directly by editing that data file.
 
 <box type="warning" seamless>
 
@@ -342,7 +343,7 @@ _Details coming soon ..._
 ## FAQ
 
 **Q**: How do I transfer my data to another Computer?<br>
-**A**: Install the app in the other computer and overwrite the empty data file it creates with the file that contains the data of your previous AddressBook home folder.
+**A**: Install the app in the other computer and overwrite the empty data file it creates with the file that contains the data of your previous EduTrack home folder.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -364,7 +365,7 @@ Action | Format, Examples
 **Find** | `find KEYWORD [MORE_KEYWORDS]…`<br> e.g., `find James Jake`
 **List** | `list`
 **Findtag**| `findtag TAG [MORE_TAGS]…` <br> e.g., `findtag Math English`
-**FindTimeSlot** | `findtimeslot [YYYY-MM-DD] [HHMM]` <br> e.g. `findtimeslot 2025-10-27 1400`
+**FindTimeslot** | `findtimeslot [YYYY-MM-DD] [HHMM]` <br> e.g. `findtimeslot 2025-10-27 1400`
 **Filtertimeslot** | `filtertimeslot [sd/START_DATE] [ed/END_DATE] [st/START_TIME] [et/END_TIME]` <br> e.g `filtertimeslot sd/2025-10-27 ed/2025-10-27 st/0800 et/1200`
 **Clearpast** | `clearpast`
 **Help** | `help`

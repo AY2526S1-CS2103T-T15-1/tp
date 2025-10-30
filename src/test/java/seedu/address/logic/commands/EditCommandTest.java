@@ -97,19 +97,12 @@ public class EditCommandTest {
     }
 
     @Test
-    public void execute_noFieldSpecifiedUnfilteredList_success() {
+    public void execute_noFieldSpecified_failure() { // Renamed
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, new EditPersonDescriptor());
-        Person personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
-        Person editedPerson = personToEdit; // No changes
-        EditPersonDescriptor descriptor = new EditPersonDescriptor(); // Empty descriptor
 
-        // --- USE HELPER ---
-        String expectedMessage = getExpectedSuccessMessage(personToEdit, editedPerson, descriptor);
-        // --- END HELPER ---
-
-        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
-
-        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        // --- UPDATED ASSERTION ---
+        assertCommandFailure(editCommand, model, EditCommand.MESSAGE_NOT_EDITED);
+        // --- END UPDATED ASSERTION ---
     }
 
     @Test
@@ -238,6 +231,20 @@ public class EditCommandTest {
                 + ALICE.getName();
         // Expect a command failure with the duplicate phone message
         assertCommandFailure(editCommand, model, expectedError);
+    }
+
+    @Test
+    public void execute_redundantFieldsSpecified_failure() {
+        // Get ALICE's details
+        Person personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        // Create a descriptor with ALICE's *own* name
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
+                .withName(personToEdit.getName().toString())
+                .build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+
+        // Expect the command to fail with MESSAGE_NOT_EDITED
+        assertCommandFailure(editCommand, model, EditCommand.MESSAGE_NOT_EDITED);
     }
 
     @Test
