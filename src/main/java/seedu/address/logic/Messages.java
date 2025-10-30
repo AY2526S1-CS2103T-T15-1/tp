@@ -21,6 +21,7 @@ public class Messages {
     public static final String MESSAGE_TIMESLOT_CONFLICT = "This time slot conflicts with another existing time slot!";
     public static final String MESSAGE_DUPLICATE_PHONE =
             "This phone number already exists in the address book.";
+    public static final String MESSAGE_PAST_TIMESLOT = "Timeslot cannot be in the past.";
 
     /**
      * Returns an error message indicating the duplicate prefixes.

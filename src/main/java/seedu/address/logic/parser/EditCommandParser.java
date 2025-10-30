@@ -9,6 +9,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TIMESLOT;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.person.TimeSlot;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -63,7 +65,18 @@ public class EditCommandParser implements Parser<EditCommand> {
         }
 
         if (argMultimap.getValue(PREFIX_TIMESLOT).isPresent()) {
-            editPersonDescriptor.setTimeSlot(ParserUtil.parseTimeSlot(argMultimap.getValue(PREFIX_TIMESLOT).get()));
+            // 1. Parse the timeslot
+            TimeSlot timeSlot = ParserUtil.parseTimeSlot(argMultimap.getValue(PREFIX_TIMESLOT).get());
+
+            // --- 2. ADD THIS CHECK ---
+            LocalDateTime startTime = LocalDateTime.of(timeSlot.getDate(), timeSlot.getStartTime());
+            if (startTime.isBefore(LocalDateTime.now())) {
+                throw new ParseException("Cannot edit a timeslot to start in the past.");
+            }
+            // --- END OF NEW CHECK ---
+
+            // 3. Set if check passes
+            editPersonDescriptor.setTimeSlot(timeSlot);
         }
 
         parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editPersonDescriptor::setTags);

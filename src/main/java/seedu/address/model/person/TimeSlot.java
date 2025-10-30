@@ -10,6 +10,9 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+import seedu.address.logic.Messages;
+import seedu.address.model.person.exceptions.PastTimeSlotException;
+
 /**
  * Represents a Person's lesson time slot in the address book.
  * Guarantees: immutable; is valid as declared in {@link #isValidTimeSlot(String)}
@@ -70,6 +73,38 @@ public class TimeSlot implements Comparable<TimeSlot> {
     }
 
     /**
+     * Check whether the timeslot is in the past
+     * @return a boolean value
+     */
+    public boolean isPast() {
+        if (this.date.isBefore(LocalDate.now())) {
+            return true;
+        } else if (this.date.isEqual(LocalDate.now())) {
+            return this.startTime.isBefore(LocalTime.now());
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if this timeslot's end time is before the given time.
+     */
+    public boolean isPast(LocalDateTime now) {
+        LocalDateTime endDateTime = LocalDateTime.of(this.date, this.endTime);
+        return endDateTime.isBefore(now);
+    }
+
+    /**
+     * Helper that throws an exception
+     * @throws PastTimeSlotException
+     */
+    public void checkPast() throws PastTimeSlotException {
+        if (isPast()) {
+            throw new PastTimeSlotException(Messages.MESSAGE_PAST_TIMESLOT);
+        }
+    }
+
+    /**
      * Returns true if a given string is a valid time slot.
      */
     public static boolean isValidTimeSlot(String test) {
@@ -125,14 +160,6 @@ public class TimeSlot implements Comparable<TimeSlot> {
 
     public LocalTime getEndTime() {
         return endTime;
-    }
-
-    /**
-     * Checks if this timeslot's end time is before the given time.
-     */
-    public boolean isPast(LocalDateTime now) {
-        LocalDateTime endDateTime = LocalDateTime.of(this.date, this.endTime);
-        return endDateTime.isBefore(now);
     }
 
     /**
