@@ -96,10 +96,12 @@ Examples:
 * `add n/Ben Lim p/92345678 e/ben.l@email.com a/2 Clementi Ave ts/2025-11-06 1000-1200 t/JC1Chem t/NeedsHelp` (Adds Ben Lim with two tags)
 * `add n/George Png p/97890123 e/george.p@email.com a/7 Pasir Ris Drive ts/2025-11-10 0900-1100` (Adds George Png with no tags)
 
-Example of timeslot-conflict (assuming Alice Tan was already added): `add n/New Student p/12341234 e/new@email.com a/Some Address ts/2025-11-05 1500-1700`
+Example of timeslot-conflict (assuming Alice Tan was already added): 
+`add n/New Student p/12341234 e/new@email.com a/Some Address ts/2025-11-05 1500-1700`
 ![timeslot conflict with Alice Tan](images/timeslot-conflict-alicetan.png)
 
-Example of phone-conflict (assuming Alice Tan was already added): `add n/Another Student p/91234567 e/another@email.com a/Another Address ts/2025-11-11 1000-1200`
+Example of phone-conflict (assuming Alice Tan was already added): 
+`add n/Another Student p/91234567 e/another@email.com a/Another Address ts/2025-11-11 1000-1200`
 ![phone conflict with Alice Tan](images/phone-conflict-alicetan.png)
 
 ### Listing all persons : `list`
@@ -207,14 +209,40 @@ Format: `filtertimeslot [sd/START_DATE] [ed/END_DATE] [st/START_TIME] [et/END_TI
     * `sd/2025-10-31` filters for slots that start on or after 2025-10-31.
     * `ed/2025/10-31` filters for slots that end on or before 2025-10-31.
 
-Examples (assuming current date is 2025-10-30):
-* `filtertimeslot st/1500 et/1800` (Shows Diana Heng and Charlie Goh).
-* `filtertimeslot sd/2025-11-01 ed/2025-11-10` (Shows Alice Tan, Ben Lim, George Png).
-* `filtertimeslot sd/today ed/now st/1600 et/1800` (Shows Diana Heng).
-* `filtertimeslot sd/today` (Shows Alice Tan, Ben Lim, Diana Heng, Fiona Wee, George Png).
+For easy reference, here is a list of people and timeslots we will use to illustrate this command.
+This is due to results being dependent on the current time of testing, which may cause confusion.
 
-![filtertimeslot_today](images/filtertimeslot_today.png)
+| Name        | Timeslot               |
+|-------------|------------------------|
+| Charlie Goh | 2025-10-22 15:00-17:00 |
+| Diana Heng  | 2025-10-23 16:00-18:00 |
+| Ethan Yeo   | 2025-10-30 10:00-12:00 |
+| Alice Tan   | 2025-11-05 14:00-16:00 |
+| Ben Lim     | 2025-11-06 10:00-12:00 |
+| George Png  | 2025-11-10 09:00-11:00 |
+| Fiona Wee   | 2025-11-12 11:00-13:00 |
 
+Examples (assuming current date is 2025-10-30 and current time is 15:30):
+* `filtertimeslot st/1500 et/1800` 
+    * **Result**: Shows `Charlie Goh` and `Diana Heng`.
+    * **Why**: Only Charlie's and Diana's slots are **fully contained** within 15:00 and 18:00.
+* `filtertimeslot sd/2025-11-01 ed/2025-11-10`
+    * **Result**: Shows `Alice Tan`, `Ben Lim` and `George Png`.
+* `filtertimeslot sd/2025-11-05 ed/2025-11-12 st/1300 et/1700`
+    * **Result**: Shows `Alice Tan`.
+    * **Why**: Only Alice's slot is between the two given dates, and contained within the given timeslots.
+* `filtertimeslot sd/now` (or `sd/today`)
+    * **Result**: Shows `Ethan Yeo`, `Alice Tan`, `Ben Lim`, `George Png` and `Fiona Wee`.
+    * **Why**: This shows all slots on or after today's date (2025-10-30). It finds today + all future appointments.
+* `filtertimeslot ed/now`
+    * **Result**: Shows `Charlie Goh`, `Diana Heng` and `Ethan Yeo`.
+    * **Why**: This shows all slots on or before today's date (2025-10-30).
+* `filtertimeslot st/now`
+    * **Result**: Shows `Diana Heng`.
+    * **Why**: "Now" is 15:30. This finds slots that start and end after 15:30. Only Diana's slot (16:00-18:00) on any day matches.
+* `filtertimeslot sd/now st/now`
+    * **Result**: No students found.
+    * **Why**: This finds all slots on or after today (Oct 30) **AND** starting at or after 15:30. None of the future students (Alice, Ben, etc.) have slots starting this late in the day, so they are filtered out by the `st/now` time check.
 
 ### Deleting a person : `delete`
 
@@ -242,18 +270,34 @@ Format: `clearpast`
 * Instead, for `recurring` contacts, the time slot is automatically updated in 7-day intervals until the new slot falls in the future relative to the system time.
 * The update will fail with an error message detailing the specific conflict (conflicting student's name and slot) if the new recurring time slot conflicts with an existing appointment.
 
-Example (assuming current date is 2025-10-30):
+Same as above, we will use the below data to showcase our command.
+Assume current day is 2025-10-30, time is 15:30.
 
-Running clearpast will:
+| Name        | Timeslot               | Tags      | Status       |
+|-------------|------------------------|-----------|--------------|
+| Charlie Goh | 2025-10-22 15:00-17:00 |           | Past         |
+| Diana Heng  | 2025-10-23 16:00-18:00 | recurring | Past         |
+| Ethan Yeo   | 2025-10-30 10:00-12:00 | recurring | Past (Today) |
+| Alice Tan   | 2025-11-05 14:00-16:00 |           | Future       |
+| Ben Lim     | 2025-11-06 10:00-12:00 |           | Future       |
+| George Png  | 2025-11-10 09:00-11:00 |           | Future       |
+| Fiona Wee   | 2025-11-12 11:00-13:00 |           | Future       |
 
-* Delete Charlie Goh, Ethan Yeo (past, not recurring).
+**Result displayed**:
+* ClearPast command successful. 
+* Deleted 1 past contact(s): Charlie Goh 
+* Updated 1 recurring contact(s): Diana Heng 
+* Could not update 1 recurring contact(s) due to conflicts: Ethan Yeo (Conflict: This time slot conflicts with: Ben Lim [2025-11-06 1000-1200])
 
-* Update Diana Heng's slot to 2025-10-30 1600-1800 (past, recurring).
+**Why this happened**:
 
-* Leave Alice, Ben, Fiona, George untouched.
+* Deleted (Charlie Goh): His timeslot (Oct 22) was in the past and he was not `recurring`.
 
-Sample message shown to user in dialog box:
-![result for 'clearpast'](images/successful-clearpast.png)
+* Updated (Diana Heng): Her timeslot (Oct 23) was in the past and `recurring`. Her next weekly slot (Oct 30 @ 16:00) was in the future (relative to 15:30) and had no conflicts, so she was updated.
+
+* Conflict (Ethan Yeo): His timeslot (Oct 30 @ 10:00) was in the past and `recurring`. His next weekly slot was calculated to be **Nov 6 @ 10:00-12:00**. This slot directly conflicts with **Ben Lim**. The update failed, and the specific conflict was reported.
+
+* Ignored (Alice, Ben, George, Fiona): Their slots were already in the future, so clearpast did not affect them.
 
 ### Clearing all entries : `clear`
 
@@ -312,8 +356,9 @@ Action | Format, Examples
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [ts/TIMESLOT] [t/TAG]…​`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]…`<br> e.g., `find James Jake`
 **List** | `list`
-**Help** | `help`
 **Findtag**| `findtag TAG [MORE_TAGS]…` <br> e.g., `findtag Math English`
 **FindTimeSlot** | `findtimeslot [YYYY-MM-DD] [HHMM]` <br> e.g. `findtimeslot 2025-10-27 1400`
 **Filtertimeslot** | `filtertimeslot [sd/START_DATE] [ed/END_DATE] [st/START_TIME] [et/END_TIME]` <br> e.g `filtertimeslot sd/2025-10-27 ed/2025-10-27 st/0800 et/1200`
 **Clearpast** | `clearpast`
+**Help** | `help`
+**Exit** | `exit`
