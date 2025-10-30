@@ -269,8 +269,8 @@ public class EditCommandTest {
                                 + "' -> '" + editedPerson.getAddress() + "'"),
                         descriptor.getTimeSlot().map(val -> "Timeslot: '" + personToEdit.getTimeSlot()
                                 + "' -> '" + editedPerson.getTimeSlot() + "'"),
-                        descriptor.getTags().map(val -> "Tags: '" + personToEdit.getTags()
-                                + "' -> '" + editedPerson.getTags() + "'")
+                        descriptor.getTags().map(val -> "Tags: '" + formatTagsForDisplay(personToEdit.getTags())
+                                + "' -> '" + formatTagsForDisplay(editedPerson.getTags()) + "'")
                 )
                 .filter(java.util.Optional::isPresent)
                 .map(java.util.Optional::get)
@@ -287,4 +287,12 @@ public class EditCommandTest {
                 + "\n" + changesSummary;
     }
 
+    /**
+     * Formats a Set of Tags for display, without the outer Set brackets.
+     */
+    private String formatTagsForDisplay(java.util.Set<seedu.address.model.tag.Tag> tags) {
+        final StringBuilder builder = new StringBuilder();
+        tags.forEach(builder::append);
+        return builder.toString();
+    }
 }

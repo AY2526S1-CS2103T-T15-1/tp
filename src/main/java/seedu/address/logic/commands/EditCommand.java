@@ -106,6 +106,17 @@ public class EditCommand extends Command {
     }
 
     /**
+     * Formats a Set of Tags for display, without the outer Set brackets.
+     * e.g., [friends] [owesMoney]
+     */
+    private String formatTagsForDisplay(Set<Tag> tags) {
+        final StringBuilder builder = new StringBuilder();
+        // Assumes Tag.toString() returns [tagName]
+        tags.forEach(builder::append);
+        return builder.toString();
+    }
+
+    /**
      * Builds a string describing the fields that were changed.
      *
      * @param personToEdit The original person object.
@@ -126,8 +137,8 @@ public class EditCommand extends Command {
                                 + "' -> '" + editedPerson.getAddress() + "'"),
                         descriptor.getTimeSlot().map(val -> "Timeslot: '" + personToEdit.getTimeSlot()
                                 + "' -> '" + editedPerson.getTimeSlot() + "'"),
-                        descriptor.getTags().map(val -> "Tags: '" + personToEdit.getTags()
-                                + "' -> '" + editedPerson.getTags() + "'")
+                        descriptor.getTags().map(val -> "Tags: '" + formatTagsForDisplay(personToEdit.getTags())
+                                + "' -> '" + formatTagsForDisplay(editedPerson.getTags()) + "'")
                 )
                 .filter(Optional::isPresent) // Filter out any empty Optionals (fields not edited)
                 .map(Optional::get) // Get the change string from the Optional
