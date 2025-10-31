@@ -18,26 +18,66 @@ import seedu.address.model.tag.Tag;
  * Contains utility methods for populating {@code AddressBook} with sample data.
  */
 public class SampleDataUtil {
+//    public static Person[] getSamplePersons() {
+//        return new Person[] {
+//            new Person(new Name("Alex Yeoh"), new Phone("87438807"), new Email("alexyeoh@example.com"),
+//                new Address("Blk 30 Geylang Street 29, #06-40"), new TimeSlot("2025-10-12 1600-1800"),
+//                getTagSet("friends")),
+//            new Person(new Name("Bernice Yu"), new Phone("99272758"), new Email("berniceyu@example.com"),
+//                new Address("Blk 30 Lorong 3 Serangoon Gardens, #07-18"),
+//                    new TimeSlot("2025-10-12 1600-1800"), getTagSet("colleagues", "friends")),
+//            new Person(new Name("Charlotte Oliveiro"), new Phone("93210283"), new Email("charlotte@example.com"),
+//                new Address("Blk 11 Ang Mo Kio Street 74, #11-04"), new TimeSlot("2025-10-12 1600-1800"),
+//                getTagSet("neighbours")),
+//            new Person(new Name("David Li"), new Phone("91031282"), new Email("lidavid@example.com"),
+//                new Address("Blk 436 Serangoon Gardens Street 26, #16-43"),
+//                    new TimeSlot("2025-10-12 1600-1800"), getTagSet("family")),
+//            new Person(new Name("Irfan Ibrahim"), new Phone("92492021"), new Email("irfan@example.com"),
+//                new Address("Blk 47 Tampines Street 20, #17-35"), new TimeSlot("2025-10-12 1600-1800"),
+//                getTagSet("classmates")),
+//            new Person(new Name("Roy Balakrishnan"), new Phone("92624417"), new Email("royb@example.com"),
+//                new Address("Blk 45 Aljunied Street 85, #11-31"), new TimeSlot("2025-10-12 1600-1800"),
+//                getTagSet("colleagues"))
+//        };
+//    }
+
     public static Person[] getSamplePersons() {
         return new Person[] {
-            new Person(new Name("Alex Yeoh"), new Phone("87438807"), new Email("alexyeoh@example.com"),
-                new Address("Blk 30 Geylang Street 29, #06-40"), new TimeSlot("2025-10-12 1600-1800"),
-                getTagSet("friends")),
-            new Person(new Name("Bernice Yu"), new Phone("99272758"), new Email("berniceyu@example.com"),
-                new Address("Blk 30 Lorong 3 Serangoon Gardens, #07-18"),
-                    new TimeSlot("2025-10-12 1600-1800"), getTagSet("colleagues", "friends")),
-            new Person(new Name("Charlotte Oliveiro"), new Phone("93210283"), new Email("charlotte@example.com"),
-                new Address("Blk 11 Ang Mo Kio Street 74, #11-04"), new TimeSlot("2025-10-12 1600-1800"),
-                getTagSet("neighbours")),
-            new Person(new Name("David Li"), new Phone("91031282"), new Email("lidavid@example.com"),
-                new Address("Blk 436 Serangoon Gardens Street 26, #16-43"),
-                    new TimeSlot("2025-10-12 1600-1800"), getTagSet("family")),
-            new Person(new Name("Irfan Ibrahim"), new Phone("92492021"), new Email("irfan@example.com"),
-                new Address("Blk 47 Tampines Street 20, #17-35"), new TimeSlot("2025-10-12 1600-1800"),
-                getTagSet("classmates")),
-            new Person(new Name("Roy Balakrishnan"), new Phone("92624417"), new Email("royb@example.com"),
-                new Address("Blk 45 Aljunied Street 85, #11-31"), new TimeSlot("2025-10-12 1600-1800"),
-                getTagSet("colleagues"))
+                // 1. Past, non-recurring (for clearpast delete)
+                new Person(new Name("Charlie Goh"), new Phone("93456789"), new Email("charlie.g@email.com"),
+                        new Address("3 Jurong East"), new TimeSlot("2025-10-22 1500-1700"),
+                        getTagSet("Sec4Physics")),
+
+                // 2. Past, recurring (for clearpast update)
+                new Person(new Name("Diana Heng"), new Phone("94567890"), new Email("diana.h@email.com"),
+                        new Address("4 Bishan Street"), new TimeSlot("2025-10-23 1600-1800"),
+                        getTagSet("Sec3Math", "recurring")),
+
+                // 3. Past-Today, recurring (for clearpast conflict)
+                // Assumes "now" is 2025-10-30 15:30. This slot is past.
+                new Person(new Name("Ethan Yeo"), new Phone("95678901"), new Email("ethan.y@email.com"),
+                        new Address("5 Serangoon Way"), new TimeSlot("2025-10-30 1000-1200"),
+                        getTagSet("JC2Physics", "recurring")),
+
+                // 4. Future (causes conflict for Ethan's update)
+                new Person(new Name("Ben Lim"), new Phone("92345678"), new Email("ben.l@email.com"),
+                        new Address("2 Clementi Ave"), new TimeSlot("2025-11-06 1000-1200"),
+                        getTagSet("JC1Chem", "NeedsHelp")),
+
+                // 5. Future
+                new Person(new Name("Alice Tan"), new Phone("91234567"), new Email("alice.t@email.com"),
+                        new Address("1 Orchard Road"), new TimeSlot("2025-11-05 1400-1600"),
+                        getTagSet("Sec3Math")),
+
+                // 6. Future (no tags)
+                new Person(new Name("George Png"), new Phone("97890123"), new Email("george.p@email.com"),
+                        new Address("7 Pasir Ris Drive"), new TimeSlot("2025-11-10 0900-1100"),
+                        getTagSet()),
+
+                // 7. Future
+                new Person(new Name("Fiona Wee"), new Phone("96789012"), new Email("fiona.w@email.com"),
+                        new Address("6 Tampines Link"), new TimeSlot("2025-11-12 1100-1300"),
+                        getTagSet("Sec3Math"))
         };
     }
 
