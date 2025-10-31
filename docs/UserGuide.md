@@ -6,7 +6,7 @@ pageNav: 3
 
 # EduTrack User Guide
 
-EduTrack is a **desktop app for private tutors to manage their students, optimized for use via a Command Line Interface** (CLI) while still having the benefits of a Graphical User Interface (GUI). If you can type fast, EduTrack can help you with student scheduling (among other management tasks) faster than traditional GUI apps, allowing you to focus on tecahing rather than mundane admin work.
+EduTrack is a **desktop app for private tutors to manage their students, optimized for use via a Command Line Interface** (CLI) while still having the benefits of a Graphical User Interface (GUI). If you can type fast, EduTrack can help you with student scheduling (among other management tasks) faster than traditional GUI apps, allowing you to focus on teaching rather than mundane admin work.
 
 <page-nav-print />
 
