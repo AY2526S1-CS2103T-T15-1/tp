@@ -619,7 +619,7 @@ testers are expected to do more *exploratory* testing.
 
 Do note that clearpast is relatively hard to test due to the restriction on past timeslots.**
 Here is the expected workflow for testing (if current time is 0900):
-* add n/ ... ts/current_date 0900-0902 (for the working product we will set it to 30 minutes, but for the sake of testing, we allow no gap for timeslots). Rmb to set t/recurring depending on which scenario you are planning to test.
+* add n/ ... ts/current_date 0900-0902 (for the working product we will set it to 30 minutes, but for the sake of testing, we allow no gap for timeslots). Remember to set t/recurring depending on which scenario you are planning to test.
 * Wait for 1-2 minutes (test other features first etc)
 * Now the timeslot you just added is in the past, and can be cleared by clearpast, or brought forward if recurring tag is present, to either cause a conflict or be a future timeslot.
 
