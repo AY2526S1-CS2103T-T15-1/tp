@@ -174,6 +174,7 @@ Finds contacts that match at least one of the given tags.
 Format: `findtag TAG [MORE_TAGS]…`
 
 * The search is case-insensitive.
+* The search is substring-based, meaning that if a tag contains the keyword anywhere in it, it will be considered a match.
 * Persons matching at least one tag will be returned (i.e. `OR` search).
 
 Examples:
