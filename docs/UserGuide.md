@@ -90,7 +90,7 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/
 
 <box type="tip" seamless>
 
-**Note:** A person can have any number of tags (including 0)
+**Note:** A person can have any number of tags (including 0). Duplicate tags are treated as a single tag — repeated tags will not affect search results.
 </box>
 
 <box type="tip" seamless>
