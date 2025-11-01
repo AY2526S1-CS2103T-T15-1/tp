@@ -54,7 +54,6 @@
         "implemented-clearpast-feature": "[Implemented] clearpast feature",
         "general-design-improvements": "General Design Improvements",
         "proposed-undo-redo-feature": "[Proposed] Undo/redo feature",
-        "proposed-data-archiving": "[Proposed] Data archiving",
         "documentation-logging-testing-configuration-dev-ops": "Documentation, logging, testing, configuration, dev-ops",
         "appendix-requirements": "Appendix: Requirements",
         "product-scope": "Product scope",
@@ -65,8 +64,7 @@
         "appendix-instructions-for-manual-testing": "Appendix: Instructions for manual testing",
         "launch-and-shutdown": "Launch and shutdown",
         "deleting-a-person": "Deleting a person",
-        "extra-notes-on-testing-clearpast": "Extra notes on testing clearpast",
-        "saving-data": "Saving data"
+        "extra-notes-on-testing-clearpast": "Extra notes on testing clearpast"
       },
       "headingKeywords": {}
     },
