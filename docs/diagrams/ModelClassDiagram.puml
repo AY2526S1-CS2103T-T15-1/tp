@@ -45,6 +45,9 @@ Person *--> "1"Email
 Person *--> "1"Address
 Person *--> "1"Timeslot
 
+Timeslot *--> "1"Date
+Timeslot *--> "1"StartTime
+Timeslot *--> "1"EndTime
 
 Person -[hidden]up--> I
 UniquePersonList -[hidden]right-> I

@@ -17,7 +17,7 @@ EduTrack is a **desktop app for private tutors to manage their students, optimiz
 1.  Ensure you have Java `17` or above installed in your Computer.<br>
     **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
-2.  Download the latest `.jar` file from [here](https://github.com/AY2526S1-CS2103T-T15-1/tp/releases/tag/v1.4).
+2.  Download the latest `.jar` file from [here](https://github.com/AY2526S1-CS2103T-T15-1/tp/releases/tag/v1.6).
 
 3.  Copy the file to the folder you want to use as the _home folder_ for EduTrack.
 
@@ -87,9 +87,17 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/
 * Do note that you will be unable to add timeslots that start in the past (relative to current time).
 * The application will automatically check for scheduling conflicts and duplicate phone numbers. You will be prevented from adding a student if their specified time slot overlaps with an existing slot (showing the conflicting student's name and slot) or if the phone number is already in use (showing the name of the student using that number).
 
+
 <box type="tip" seamless>
 
 **Note:** A person can have any number of tags (including 0)
+</box>
+
+<box type="tip" seamless>
+
+**Important:** The tag `recurring` (and its case variants like `Recurring`) is a special tag.
+* While most tags are just for filtering, the `recurring` tag has a special function:
+* Students tagged with t/recurring will be ignored by the `clearpast` command. This is useful for contacts (like recurring clients) whose past timeslots you do not want to be automatically cleared.
 </box>
 
 Examples:
@@ -126,6 +134,14 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [ts/TIMESLOT] [t/TA
 * You can remove all the person’s tags by typing `t/` without
   specifying any tags after it.
 * Upon successful edit, the application will confirm the changes by listing the fields that were modified.
+
+
+<box type="tip" seamless>
+
+**Tip** Remember, you can add the special t/recurring tag using the edit command.
+* `edit 2 t/recurring`
+* This will protect the contact from having their past time slots cleared by the `clearpast` command.
+</box>
 
 Examples:
 * `edit 1 p/91112222 e/new.charlie@email.com` (Edits phone and email of the 1st student, Charlie Goh)
@@ -268,9 +284,10 @@ Clears contacts with time slots that are in the past.
 Format: `clearpast`
 
 * This command uses the current system time to determine which time slots are in the past.
-* Contacts tagged as `recurring` will **not** be deleted.
+* Contacts tagged as `recurring` will **not** be deleted. Do note that the search is case-insensitive (e.g. a student with t/Recurring will also be updated).
 * Instead, for `recurring` contacts, the time slot is automatically updated in 7-day intervals until the new slot falls in the future relative to the system time.
-* The update will fail with an error message detailing the specific conflict (conflicting student's name and slot) if the new recurring time slot conflicts with an existing appointment.
+* The update will fail with an error message detailing the specific conflict (conflicting student's name and slot) if the new recurring time slot (that has been brought into the future) conflicts with an existing appointment.
+* Do note that our `clearpast` operation is only able to support weekly updates (students with lessons once a week).
 
 Same as above, we will use the below data to showcase our command.
 Assume current day is 2025-10-30, time is 15:30.
@@ -358,15 +375,15 @@ _Details coming soon ..._
 
 Action | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Add** | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 ts/2025-10-27 1400-1600 t/friend t/colleague`
+**Add** | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/TAG]…​` <br> e.g., `add n/Alice Tan p/91234567 e/alice.t@email.com a/1 Orchard Road ts/2025-11-05 1400-1600 t/Sec3Math`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [ts/TIMESLOT] [t/TAG]…​`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]…`<br> e.g., `find James Jake`
 **List** | `list`
-**Findtag**| `findtag TAG [MORE_TAGS]…` <br> e.g., `findtag Math English`
-**FindTimeslot** | `findtimeslot [YYYY-MM-DD] [HHMM]` <br> e.g. `findtimeslot 2025-10-27 1400`
-**Filtertimeslot** | `filtertimeslot [sd/START_DATE] [ed/END_DATE] [st/START_TIME] [et/END_TIME]` <br> e.g `filtertimeslot sd/2025-10-27 ed/2025-10-27 st/0800 et/1200`
-**Clearpast** | `clearpast`
+**Find by Tag**| `findtag TAG [MORE_TAGS]…` <br> e.g., `findtag Math English`
+**Find by Timeslot** | `findtimeslot [YYYY-MM-DD] [HHMM]` <br> e.g. `findtimeslot 2025-10-27 1400`
+**Filter by Timeslot** | `filtertimeslot [sd/START_DATE] [ed/END_DATE] [st/START_TIME] [et/END_TIME]` <br> e.g `filtertimeslot sd/2025-10-27 ed/2025-10-27 st/0800 et/1200`
+**Clear past Timeslots** | `clearpast`
 **Help** | `help`
 **Exit** | `exit`
