@@ -31,7 +31,6 @@ import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.TimeSlot;
 import seedu.address.model.person.exceptions.DuplicatePersonException;
-import seedu.address.model.person.exceptions.DuplicatePhoneException;
 import seedu.address.model.person.exceptions.TimeSlotConflictException;
 import seedu.address.model.tag.Tag;
 
@@ -58,7 +57,7 @@ public class EditCommand extends Command {
             + PREFIX_TIMESLOT + "2025-10-12 1600-1800";
 
     public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited Person: %1$s";
-    public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
+    public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided and different from the original.";
     public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book.";
 
     private final Index index;
@@ -104,9 +103,6 @@ public class EditCommand extends Command {
             throw new CommandException(e.getMessage());
         } catch (DuplicatePersonException e) {
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);
-        } catch (DuplicatePhoneException e) {
-            throw new CommandException(e.getMessage());
-            // --- END ---
         }
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
         String editedFields = buildEditedFieldsString(personToEdit, editedPerson, editPersonDescriptor);
