@@ -84,7 +84,7 @@ Adds a person to the address book.
 Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/TAG]…​`
 
 * The `ts/` (time slot) parameter is mandatory for all new contacts.
-* Do note that you will be unable to add timeslots that start in the past (relative to current time).
+* Do note that you can only add timeslots that start in the future (relative to the current time).
 * The application will automatically check for scheduling conflicts and duplicate phone numbers. You will be prevented from adding a student if their specified time slot overlaps with an existing slot (showing the conflicting student's name and slot) or if the phone number is already in use (showing the name of the student using that number).
 
 
