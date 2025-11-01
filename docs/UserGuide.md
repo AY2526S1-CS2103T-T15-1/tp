@@ -145,7 +145,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [ts/TIMESLOT] [t/TA
 
 Examples:
 * `edit 1 p/91112222 e/new.charlie@email.com` (Edits phone and email of the 1st student, Charlie Goh)
-* `edit 2 t/Urgent` (Edits the tags of the 2nd student, Diana Heng, replacing `Sec3Math` and `recurring` with Urgent)
+* `edit 2 t/Urgent` (Edits the tags of the 2nd student, Diana Heng, replacing `Sec3Math` and `recurring` with `Urgent`)
 * `edit 5 n/Alice Tan Updated ts/2025-11-05 1430-1630` (Edits the name and time slot of the 5th student, Alice Tan)
 
 ![successful edit of Charlie](images/edit-success-message.png)
