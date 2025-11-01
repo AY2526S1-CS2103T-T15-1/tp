@@ -131,8 +131,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [ts/TIMESLOT] [t/TA
 * Existing values will be updated to the input values.
 * If you edit the time slot (`ts/`) or phone number (`p/`), the application will check for scheduling or phone number conflicts, providing specific details if a conflict occurs.
 * When editing tags, the existing tags of the person will be removed i.e. adding of tags is not cumulative.
-* You can remove all the person’s tags by typing `t/` without
-  specifying any tags after it.
+* You can remove all the person’s tags by typing `t/` without specifying any tags after it. The tag prefix 't/' alone is allowed, but cannot be combined with any other tags (e.g. 't/ t/math' or 't/math t/' are invalid)
 * Upon successful edit, the application will confirm the changes by listing the fields that were modified.
 
 
