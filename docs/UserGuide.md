@@ -84,13 +84,13 @@ Adds a person to the address book.
 Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/TAG]…​`
 
 * The `ts/` (time slot) parameter is mandatory for all new contacts.
-* Do note that you will be unable to add timeslots that start in the past (relative to current time).
+* Do note that you can only add timeslots that start in the future (relative to the current time).
 * The application will automatically check for scheduling conflicts and duplicate phone numbers. You will be prevented from adding a student if their specified time slot overlaps with an existing slot (showing the conflicting student's name and slot) or if the phone number is already in use (showing the name of the student using that number).
 
 
 <box type="tip" seamless>
 
-**Note:** A person can have any number of tags (including 0)
+**Note:** A person can have any number of tags (including 0). Duplicate tags are treated as a single tag — repeated tags will not affect search results.
 </box>
 
 <box type="tip" seamless>
@@ -131,8 +131,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [ts/TIMESLOT] [t/TA
 * Existing values will be updated to the input values.
 * If you edit the time slot (`ts/`) or phone number (`p/`), the application will check for scheduling or phone number conflicts, providing specific details if a conflict occurs.
 * When editing tags, the existing tags of the person will be removed i.e. adding of tags is not cumulative.
-* You can remove all the person’s tags by typing `t/` without
-  specifying any tags after it.
+* You can remove all the person’s tags by typing `t/` without specifying any tags after it. The tag prefix 't/' alone is allowed, but cannot be combined with any other tags (e.g. 't/ t/math' or 't/math t/' are invalid)
 * Upon successful edit, the application will confirm the changes by listing the fields that were modified.
 
 
@@ -145,7 +144,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [ts/TIMESLOT] [t/TA
 
 Examples:
 * `edit 1 p/91112222 e/new.charlie@email.com` (Edits phone and email of the 1st student, Charlie Goh)
-* `edit 2 t/Urgent` (Edits the tags of the 2nd student, Diana Heng, replacing `Sec3Math` and `recurring` with Urgent)
+* `edit 2 t/Urgent` (Edits the tags of the 2nd student, Diana Heng, replacing `Sec3Math` and `recurring` with `Urgent`)
 * `edit 5 n/Alice Tan Updated ts/2025-11-05 1430-1630` (Edits the name and time slot of the 5th student, Alice Tan)
 
 ![successful edit of Charlie](images/edit-success-message.png)
@@ -174,6 +173,7 @@ Finds contacts that match at least one of the given tags.
 Format: `findtag TAG [MORE_TAGS]…`
 
 * The search is case-insensitive.
+* The search is substring-based, meaning that if a tag contains the keyword anywhere in it, it will be considered a match.
 * Persons matching at least one tag will be returned (i.e. `OR` search).
 
 Examples:

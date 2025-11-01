@@ -49,7 +49,7 @@ public class AddCommandParser implements Parser<AddCommand> {
         TimeSlot timeSlot = ParserUtil.parseTimeSlot(argMultimap.getValue(PREFIX_TIMESLOT).get());
         LocalDateTime startTime = LocalDateTime.of(timeSlot.getDate(), timeSlot.getStartTime());
         if (startTime.isBefore(LocalDateTime.now())) {
-            throw new ParseException("Cannot add a timeslot that starts in the past.");
+            throw new ParseException("You can only add timeslots that start in the future.");
         }
         Person person = new Person(name, phone, email, address, timeSlot, tagList);
         return new AddCommand(person);
