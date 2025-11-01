@@ -14,9 +14,7 @@ import javafx.collections.transformation.SortedList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.person.Person;
-import seedu.address.model.person.exceptions.DuplicateEmailException;
 import seedu.address.model.person.exceptions.DuplicatePersonException;
-import seedu.address.model.person.exceptions.DuplicatePhoneException;
 import seedu.address.model.person.exceptions.TimeSlotConflictException;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
@@ -146,16 +144,6 @@ public class ModelManager implements Model {
             throw new DuplicatePersonException();
         }
 
-        Optional<Person> phoneConflict = findDuplicatePhone(person, null); // Changed method name
-        if (phoneConflict.isPresent()) {
-            throw new DuplicatePhoneException(phoneConflict.get()); // Pass person to exception
-        }
-
-        Optional<Person> emailConflict = findDuplicateEmail(person, null);
-        if (emailConflict.isPresent()) {
-            throw new DuplicateEmailException(emailConflict.get());
-        }
-
         Optional<Person> conflict = addressBook.getConflictingPerson(person.getTimeSlot());
         if (conflict.isPresent()) {
             throw new TimeSlotConflictException(conflict.get());
@@ -184,20 +172,6 @@ public class ModelManager implements Model {
             }
             storage.removeSlot(target.getTimeSlot());
             storage.addSlot(editedPerson.getTimeSlot());
-        }
-
-        if (!target.getPhone().equals(editedPerson.getPhone())) {
-            Optional<Person> phoneConflict = findDuplicatePhone(editedPerson, target); // Changed method name
-            if (phoneConflict.isPresent()) {
-                throw new DuplicatePhoneException(phoneConflict.get()); // Pass person to exception
-            }
-        }
-
-        if (!target.getEmail().equals(editedPerson.getEmail())) {
-            Optional<Person> emailConflict = findDuplicateEmail(editedPerson, target);
-            if (emailConflict.isPresent()) {
-                throw new DuplicateEmailException(emailConflict.get());
-            }
         }
 
         // If we are here, either timeslot didn't change, or it did and it was successful.
