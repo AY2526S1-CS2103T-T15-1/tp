@@ -431,7 +431,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ### Use cases
 
-**Use case: Delete a person**
+**Use case 1: Delete a person**
 
 **MSS**
 
@@ -450,7 +450,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
       Use case resumes at step 2.
 
 
-**Use case: Add a person**
+**Use case 2: Add a person**
 
 **MSS**
 
@@ -488,7 +488,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
     Use case ends.
 
 
-**Use case: Edit a person**
+**Use case 3: Edit a person**
 
 **MSS**
 
@@ -516,7 +516,7 @@ Here are the improved use cases for your `DeveloperGuide.md`, updated to reflect
 
 ---
 
-### Use case: Find persons by tag
+**Use case 4: Find persons by tag**
 
 **MSS**
 
@@ -537,7 +537,7 @@ Here are the improved use cases for your `DeveloperGuide.md`, updated to reflect
 
 ---
 
-### Use case: Find persons by time slot
+**Use case 5: Find persons by time slot**
 
 **MSS**
 
@@ -565,7 +565,7 @@ Here are the improved use cases for your `DeveloperGuide.md`, updated to reflect
 
 ---
 
-### Use case: Filter persons by time slot range
+**Use case 6: Filter persons by time slot range**
 
 **MSS**
 
@@ -593,7 +593,7 @@ Here are the improved use cases for your `DeveloperGuide.md`, updated to reflect
 
 ---
 
-### Use case: Clear all past time slots
+**Use case 7: Clear all past time slots**
 
 **MSS**
 
