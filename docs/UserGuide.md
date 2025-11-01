@@ -216,7 +216,7 @@ Format: `filtertimeslot [sd/START_DATE] [ed/END_DATE] [st/START_TIME] [et/END_TI
     * `st/` (start time, e.g., `0800`)
     * `et/` (end time, e.g., `1200`)
 * Dates are `YYYY-MM-DD`, times are `HHMM`.
-* All fields are optional, but at least one must be present.
+* All fields are optional, but at least one must be present. However, duplicate prefixes (`sd/` twice) is not allowed.
 * **Special Keywords**: You can also use special keywords for date and time prefixes:
     * `today` and `now` can be used for date prefixes (`sd/`, `ed/`) and will represent current day.
     * `now` can be used for time prefixes (`st/`, `et/`) and will represent current time (nearest minute).

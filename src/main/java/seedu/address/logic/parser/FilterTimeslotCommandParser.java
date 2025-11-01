@@ -44,6 +44,14 @@ public class FilterTimeslotCommandParser implements Parser<FilterTimeslotCommand
                 ArgumentTokenizer.tokenize(args, PREFIX_START_DATE, PREFIX_END_DATE,
                         PREFIX_START_TIME, PREFIX_END_TIME);
 
+        try {
+            argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_START_DATE, PREFIX_END_DATE,
+                    PREFIX_START_TIME, PREFIX_END_TIME);
+        } catch (ParseException pe) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT,
+                    FilterTimeslotCommand.MESSAGE_USAGE), pe);
+        }
+
         if (!argMultimap.getPreamble().isEmpty()) {
             throw new ParseException(
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, FilterTimeslotCommand.MESSAGE_USAGE));
