@@ -123,7 +123,7 @@ public class AddressBook implements ReadOnlyAddressBook {
         requireNonNull(personToIgnore);
         for (Person person : persons) {
             // Ignore the personToIgnore AND check for conflict
-            if (!person.isSamePerson(personToIgnore)
+            if (!person.hasSameDetails(personToIgnore)
                     && person.getTimeSlot() != null
                     && person.getTimeSlot().overlaps(timeSlot)) {
                 return Optional.of(person);

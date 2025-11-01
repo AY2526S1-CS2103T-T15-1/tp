@@ -14,6 +14,7 @@ import javafx.collections.transformation.SortedList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.exceptions.DuplicateEmailException;
 import seedu.address.model.person.exceptions.DuplicatePersonException;
 import seedu.address.model.person.exceptions.DuplicatePhoneException;
 import seedu.address.model.person.exceptions.TimeSlotConflictException;
@@ -150,6 +151,11 @@ public class ModelManager implements Model {
             throw new DuplicatePhoneException(phoneConflict.get()); // Pass person to exception
         }
 
+        Optional<Person> emailConflict = findDuplicateEmail(person, null);
+        if (emailConflict.isPresent()) {
+            throw new DuplicateEmailException(emailConflict.get());
+        }
+
         Optional<Person> conflict = addressBook.getConflictingPerson(person.getTimeSlot());
         if (conflict.isPresent()) {
             throw new TimeSlotConflictException(conflict.get());
@@ -165,7 +171,7 @@ public class ModelManager implements Model {
     public void setPerson(Person target, Person editedPerson) {
         requireAllNonNull(target, editedPerson);
 
-        if (!target.isSamePerson(editedPerson) && hasPerson(editedPerson)) {
+        if (!target.hasSameDetails(editedPerson) && hasPerson(editedPerson)) {
             throw new DuplicatePersonException();
         }
 
@@ -184,6 +190,13 @@ public class ModelManager implements Model {
             Optional<Person> phoneConflict = findDuplicatePhone(editedPerson, target); // Changed method name
             if (phoneConflict.isPresent()) {
                 throw new DuplicatePhoneException(phoneConflict.get()); // Pass person to exception
+            }
+        }
+
+        if (!target.getEmail().equals(editedPerson.getEmail())) {
+            Optional<Person> emailConflict = findDuplicateEmail(editedPerson, target);
+            if (emailConflict.isPresent()) {
+                throw new DuplicateEmailException(emailConflict.get());
             }
         }
 
@@ -248,7 +261,7 @@ public class ModelManager implements Model {
         requireNonNull(personToCheck);
         for (Person existingPerson : addressBook.getPersonList()) {
             // Skip the person being ignored (if any)
-            if (personToIgnore != null && existingPerson.isSamePerson(personToIgnore)) {
+            if (personToIgnore != null && existingPerson.hasSameDetails(personToIgnore)) {
                 continue;
             }
             // Check if phone numbers are the same
@@ -259,4 +272,24 @@ public class ModelManager implements Model {
         return Optional.empty(); // No duplicates found
     }
 
+    /**
+     * Finds if the given person's email conflicts with any existing person
+     * in the address book, optionally ignoring one person.
+     *
+     * @param personToCheck The person whose email to check.
+     * @param personToIgnore The person to ignore during the check (can be null for add).
+     * @return An Optional containing the conflicting person if found, otherwise empty.
+     */
+    private Optional<Person> findDuplicateEmail(Person personToCheck, Person personToIgnore) {
+        requireNonNull(personToCheck);
+        for (Person existingPerson : addressBook.getPersonList()) {
+            if (personToIgnore != null && existingPerson.hasSameDetails(personToIgnore)) {
+                continue;
+            }
+            if (existingPerson.getEmail().equals(personToCheck.getEmail())) {
+                return Optional.of(existingPerson);
+            }
+        }
+        return Optional.empty();
+    }
 }

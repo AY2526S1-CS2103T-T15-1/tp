@@ -20,6 +20,7 @@ import seedu.address.commons.core.GuiSettings;
 import seedu.address.logic.Messages;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.exceptions.DuplicateEmailException;
 import seedu.address.model.person.exceptions.DuplicatePersonException;
 import seedu.address.model.person.exceptions.DuplicatePhoneException;
 import seedu.address.model.person.exceptions.TimeSlotConflictException;
@@ -218,6 +219,29 @@ public class ModelManagerTest {
         String expectedError = "This phone number already exists in the address book, assigned to: "
                 + ALICE.getName();
         assertThrows(DuplicatePhoneException.class, expectedError, () -> modelManager.setPerson(BENSON, editedBenson));
+    }
+
+    @Test
+    public void addPerson_duplicateEmail_throwsDuplicateEmailException() {
+        // Create BOB but give him ALICE's email
+        Person conflictingPerson = new PersonBuilder(BOB)
+                .withEmail(ALICE.getEmail().value) // ALICE's phone
+                .build();
+        String expectedError = "This email already exists in the address book, assigned to: "
+                + ALICE.getName();
+        // Use the 2-argument assertThrows (since DuplicateEmailException has no message)
+        assertThrows(DuplicateEmailException.class, expectedError, () -> modelManager.addPerson(conflictingPerson));
+    }
+
+    @Test
+    public void setPerson_duplicateEmail_throwsDuplicateEmailException() {
+        // Try to edit BENSON to have ALICE's email
+        Person editedBenson = new PersonBuilder(BENSON)
+                .withEmail(ALICE.getEmail().value) // ALICE's phone
+                .build();
+        String expectedError = "This email already exists in the address book, assigned to: "
+                + ALICE.getName();
+        assertThrows(DuplicateEmailException.class, expectedError, () -> modelManager.setPerson(BENSON, editedBenson));
     }
 
     @Test
