@@ -26,6 +26,7 @@ public class TimeSlot implements Comparable<TimeSlot> {
                     + "where start time is before end time and the duration is at least "
                     + MIN_DURATION_MINUTES + " minutes.\n"
                     + "Example: 2025-10-12 1600-1800";
+    public static final String MESSAGE_INVALID_DATE = "Invalid date: %1$s does not exist.";
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HHmm");
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
@@ -42,14 +43,47 @@ public class TimeSlot implements Comparable<TimeSlot> {
      */
     public TimeSlot(String timeSlotString) {
         requireNonNull(timeSlotString);
-        checkArgument(isValidTimeSlot(timeSlotString), MESSAGE_CONSTRAINTS);
 
+        // 1. Check basic format
         String[] parts = timeSlotString.trim().split(" ");
-        this.date = LocalDate.parse(parts[0], DATE_FORMATTER);
+        if (parts.length != 2) {
+            throw new IllegalArgumentException(MESSAGE_CONSTRAINTS);
+        }
 
+        // 2. Parse date (with specific error)
+        try {
+            this.date = LocalDate.parse(parts[0], DATE_FORMATTER);
+        } catch (DateTimeParseException e) {
+            String errorMsg = e.getMessage();
+            if (errorMsg.contains("Invalid value") || errorMsg.contains("Invalid date")) {
+                throw new IllegalArgumentException(String.format(MESSAGE_INVALID_DATE, parts[0]), e);
+            } else {
+                throw new IllegalArgumentException(MESSAGE_CONSTRAINTS, e);
+            }
+        }
+
+        // 3. Parse times
         String[] times = parts[1].split("-");
-        this.startTime = LocalTime.parse(times[0], TIME_FORMATTER);
-        this.endTime = LocalTime.parse(times[1], TIME_FORMATTER);
+        if (times.length != 2) {
+            throw new IllegalArgumentException(MESSAGE_CONSTRAINTS);
+        }
+        try {
+            this.startTime = LocalTime.parse(times[0], TIME_FORMATTER);
+            this.endTime = LocalTime.parse(times[1], TIME_FORMATTER);
+
+            // 4. Validate time logic
+            if (!startTime.isBefore(endTime)) {
+                // You could add a more specific message here if needed
+                throw new IllegalArgumentException(MESSAGE_CONSTRAINTS);
+            }
+            Duration duration = Duration.between(startTime, endTime);
+            if (duration.toMinutes() < MIN_DURATION_MINUTES) {
+                throw new IllegalArgumentException(MESSAGE_CONSTRAINTS);
+            }
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(MESSAGE_CONSTRAINTS, e);
+        }
+
         value = timeSlotString;
     }
 
@@ -112,42 +146,11 @@ public class TimeSlot implements Comparable<TimeSlot> {
         if (test == null) {
             return false;
         }
-
-        String[] parts = test.trim().split(" ");
-        if (parts.length != 2) {
-            return false;
-        }
-
-        // Validate date
         try {
-            LocalDate.parse(parts[0], DATE_FORMATTER);
-        } catch (DateTimeParseException e) {
-            return false;
+            new TimeSlot(test);
+        } catch (IllegalArgumentException e) {
+            return false; // Constructor threw an error, so it's invalid
         }
-
-        // Validate times
-        String[] times = parts[1].split("-");
-        if (times.length != 2) {
-            return false;
-        }
-
-        try {
-            LocalTime start = LocalTime.parse(times[0], TIME_FORMATTER);
-            LocalTime end = LocalTime.parse(times[1], TIME_FORMATTER);
-
-            if (!start.isBefore(end)) {
-                return false;
-            }
-
-            Duration duration = Duration.between(start, end);
-            if (duration.toMinutes() < MIN_DURATION_MINUTES) {
-                return false;
-            }
-
-        } catch (DateTimeParseException e) {
-            return false;
-        }
-
         return true;
     }
 

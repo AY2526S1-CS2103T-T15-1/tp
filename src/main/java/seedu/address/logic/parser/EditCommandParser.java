@@ -48,7 +48,8 @@ public class EditCommandParser implements Parser<EditCommand> {
 
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL,
                 PREFIX_ADDRESS, PREFIX_TIMESLOT);
-
+        verifyNoEmbeddedSlashes(argMultimap,
+                PREFIX_PHONE, PREFIX_EMAIL, PREFIX_TIMESLOT, PREFIX_ADDRESS, PREFIX_TAG);
         EditPersonDescriptor editPersonDescriptor = new EditPersonDescriptor();
 
         if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
@@ -98,4 +99,22 @@ public class EditCommandParser implements Parser<EditCommand> {
         return Optional.of(ParserUtil.parseTags(tagSet));
     }
 
+    /**
+     * Verifies that the values for the given prefixes do not contain a '/' character.
+     *
+     * @param argMultimap The multimap to check.
+     * @param prefixesToCheck The prefixes whose values should be checked (e.g., all *except* n/ and t/).
+     * @throws ParseException if an embedded slash is found.
+     */
+    private void verifyNoEmbeddedSlashes(ArgumentMultimap argMultimap, Prefix... prefixesToCheck)
+            throws ParseException {
+        for (Prefix prefix : prefixesToCheck) {
+            Optional<String> value = argMultimap.getValue(prefix);
+            if (value.isPresent() && value.get().contains("/")) {
+                throw new ParseException(
+                        String.format("Error in %s field: "
+                                        + "This may be caused by an unknown prefix (e.g., 'r/').", prefix.getPrefix()));
+            }
+        }
+    }
 }

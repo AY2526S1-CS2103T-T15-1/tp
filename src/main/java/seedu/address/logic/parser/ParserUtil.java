@@ -139,10 +139,12 @@ public class ParserUtil {
     public static TimeSlot parseTimeSlot(String timeSlot) throws ParseException {
         requireNonNull(timeSlot);
         String trimmedTimeSlot = timeSlot.trim();
-        if (!TimeSlot.isValidTimeSlot(trimmedTimeSlot)) {
-            throw new ParseException(TimeSlot.MESSAGE_CONSTRAINTS);
+        try {
+            return new TimeSlot(trimmedTimeSlot);
+        } catch (IllegalArgumentException e) {
+            // Pass the specific message from the TimeSlot constructor
+            throw new ParseException(e.getMessage());
         }
-        return new TimeSlot(trimmedTimeSlot);
     }
 
     // --- NEW METHODS ---
@@ -159,7 +161,12 @@ public class ParserUtil {
         try {
             return LocalDate.parse(trimmedDate, DateTimeFormatter.ISO_LOCAL_DATE);
         } catch (DateTimeParseException e) {
-            throw new ParseException("Date should be in YYYY-MM-DD format.");
+            String errorMsg = e.getMessage();
+            if (errorMsg.contains("Invalid value") || errorMsg.contains("Invalid date")) {
+                throw new ParseException(String.format(TimeSlot.MESSAGE_INVALID_DATE, trimmedDate), e);
+            } else {
+                throw new ParseException("Date should be in YYYY-MM-DD format.", e);
+            }
         }
     }
 

@@ -9,7 +9,11 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TIMESLOT;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import seedu.address.logic.commands.AddCommand;
@@ -39,6 +43,7 @@ public class AddCommandParser implements Parser<AddCommand> {
 
         checkRequiredPrefixes(argMultimap, AddCommand.MESSAGE_USAGE,
                 PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TIMESLOT);
+        verifyNoEmbeddedSlashes(argMultimap, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TIMESLOT, PREFIX_TAG);
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL,
                 PREFIX_ADDRESS, PREFIX_TIMESLOT);
         Name name = ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
@@ -68,12 +73,11 @@ public class AddCommandParser implements Parser<AddCommand> {
      */
     private void checkRequiredPrefixes(ArgumentMultimap argMultimap, String usageMessage, Prefix... prefixes)
             throws ParseException {
+        if (!argMultimap.getPreamble().isEmpty()) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, usageMessage));
+        }
         if (!arePrefixesPresent(argMultimap, prefixes)) {
             // Check for preamble error first
-            if (!argMultimap.getPreamble().isEmpty()) {
-                throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, usageMessage));
-            }
-
             // Find the first missing prefix and report it
             Prefix missingPrefix = findFirstMissingPrefix(argMultimap, prefixes);
             throw new ParseException("Missing prefix: " + missingPrefix.getPrefix() + "\n" + usageMessage);
@@ -92,4 +96,22 @@ public class AddCommandParser implements Parser<AddCommand> {
         return null; // Should not be reached if arePrefixesPresent is false
     }
 
+    /**
+     * Verifies that the values for the given prefixes do not contain a '/' character.
+     * @param argMultimap The multimap to check.
+     * @param prefixesToCheck The prefixes whose values should be checked (e.g., all *except* n/ and t/).
+     * @throws ParseException if an embedded slash is found.
+     */
+    private void verifyNoEmbeddedSlashes(ArgumentMultimap argMultimap, Prefix... prefixesToCheck)
+            throws ParseException {
+        for (Prefix prefix : prefixesToCheck) {
+            Optional<String> value = argMultimap.getValue(prefix);
+            if (value.isPresent() && value.get().contains("/")) {
+                throw new ParseException(
+                        String.format("Error in %s field: "
+                                        + "This may be caused by an unknown prefix (e.g., 'r/').",
+                                prefix.getPrefix()));
+            }
+        }
+    }
 }
