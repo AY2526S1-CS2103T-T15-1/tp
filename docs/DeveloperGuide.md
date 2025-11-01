@@ -82,6 +82,9 @@ The `UI` component,
 * keeps a reference to the `Logic` component, because the `UI` relies on the `Logic` to execute commands.
 * depends on some classes in the `Model` component, as it displays `Person` object residing in the `Model`.
 
+
+
+
 ### Logic component
 
 **API** : [`Logic.java`](https://github.com/AY2526S1-CS2103T-T15-1/tp/tree/master/src/main/java/seedu/address/logic/Logic.java)
@@ -176,16 +179,6 @@ The following sequence diagram shows how a `filtertimeslot` operation goes throu
 
 #### Design considerations:
 
-**Aspect: How to parse the find parameter**
-
-* **Alternative 1 (current choice):** Use substring matching to find matching persons. 
-    * Pros: Greater leeway. Allows users to find matching persons more easily. For example, `find john` will show results for the person with name `Johnathan`.
-    * Cons: Find results will not be as helpful. Matching the parameter with persons is not strict, which may introduce many redundant results depending on length of the input parameter. 
-
-* **Alternative 2:** Use prefix matching to find matching persons.
-    * Pros: Greater precision. Users will be able to receive more relevant results from their input parameter. For example, `find marc` will return `Marc Tan` but not `Demarco Lee` or `Marceline Ong`.
-    * Cons: Much less leeway for users. If users are uncertain about a person's name, they might not be able to find the person with their input parameter.
-
 **Aspect: How to parse the filter parameters:**
 
 * **Alternative 1 (current choice):** Use flexible, optional prefixes (e.g., `sd/`, `st/`, `et/`).
@@ -237,10 +230,6 @@ At the end of the operation, `clearpast` forces the UI to refresh and re-sort by
 The following activity diagram summarizes the logic flow for the `clearpast` command:
 
 <puml src="diagrams/HighLevelClearPastActivityDiagram.puml" alt="HighLevelClearPastActivityDiagram"></puml>
-
-Detailed Logic Flow for `clearpast`
-
-<puml src="diagrams/ClearPastActivityDiagram.puml" alt="ClearPastActivityDiagram"></puml>
 
 #### Design considerations:
 
@@ -382,13 +371,6 @@ The following activity diagram summarizes what happens when a user executes a ne
   * Pros: Will use less memory (e.g. for `delete`, just save the person being deleted).
   * Cons: We must ensure that the implementation of each individual command are correct.
 
-_{more aspects and alternatives to be added}_
-
-### \[Proposed\] Data archiving
-
-_{Explain here how the data archiving feature will be implemented}_
-
-
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Documentation, logging, testing, configuration, dev-ops**
@@ -423,35 +405,27 @@ _{Explain here how the data archiving feature will be implemented}_
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …​                                 | I want to …​                                                      | So that I can…​                                                     |
-|----------|--------------------------------------------|----------------------------------------------------------------------|------------------------------------------------------------------------|
-| `* * *`  | new user                                   | see usage instructions                                               | refer to instructions when I forget how to use the App                 |
-| `* * *`  | user                                       | add a new person                                                     |                                                                        |
-| `* * *`  | user                                       | delete a person                                                      | remove entries that I no longer need                                   |
-| `* * *`  | user                                       | find a person by name                                                | locate details of persons without having to go through the entire list |
-| `* *`    | user                                       | hide private contact details                                         | minimize chance of someone else seeing them by accident                |
-| `*`      | user with many persons in the address book | sort persons by name                                                 | locate a person easily                                                 |
-| `***`    | tutor                                      | open EduTrack                                                        | start managing my students and lessons quickly                         |
-| `***`    | tutor                                      | exit EduTrack                                                        | stop using it and free system resources                                |
-| `**`     | tutor                                      | minimize or switch EduTrack (background)                             | return later and continue exactly where I left off                     |
-| `**`     | tutor                                      | resume EduTrack from background                                      | continue entering or reviewing student data without losing progress    |
-| `*`      | tutor                                      | receive notifications while EduTrack is running in the background    | stay informed about upcoming lessons or reminders                      |
-| `***`    | tutor                                      | add a new student (CLI) with name, email, phone number, and subjects | quickly store my students’ details                                     |
-| `***`    | tutor                                      | delete a student record (CLI)                                        | remove students who no longer attend my lessons                        |
-| `*`      | tutor                                      | update a student’s information (CLI)                                 | correct or add new details like email or subject enrollment            |
-| `***`    | tutor                                      | view detailed student information (CLI)                              | see all contact info, enrolled subjects, and progress notes            |
-| `***`    | tutor                                      | view student list in compact format (CLI)                            | quickly browse all students without scrolling through long records     |
-| `***`    | tutor                                      | access help/usage guide (CLI)                                        | know all available commands and how to use them efficiently            |
-| `***`    | tutor                                      | search for a student by name or keyword (CLI)                        | quickly locate a student without going through the entire list         |
-| `*`      | tutor                                      | filter students starting with a given letter (CLI)                   | easily browse students alphabetically                                  |
-| `**`     | tutor                                      | assign students to groups (e.g., Year 1, Math, Physics) (CLI)        | organize students by class, subject, or other category                 |
-| `**`     | tutor                                      | filter and view students within one group (CLI)                      | quickly focus on a subset of students                                  |
-| `*`      | tutor                                      | delete all student records (CLI)                                     | clear the system before a new semester or year (confirmation required) |
-| `*`      | tutor                                      | export student data to CSV or JSON (CLI)                             | integrate with other tools or share student info with colleagues       |
-| `*`      | admin                                      | view usage logs / audit trail (CLI, identity confirmation)           | track changes made to student records for accountability               |
-| `*`      | admin                                      | back up all student data (CLI, identity confirmation)                | ensure student info is safe and can be restored if necessary           |
-| `*`      | admin                                      | restore student data from backup (CLI, identity confirmation)        | recover from accidental deletion or system failure                     |
-| `*`      | admin                                      | force terminate EduTrack (CLI, identity confirmation)                | reclaim resources or enforce system policies                           |
+| Priority | As a …                      | I want to …                                                                | So that I can…                                                               |
+|----------|-----------------------------|----------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| `***`    | busy tutor                  | add a new student with contact info, time slot, and tags                   | quickly store lesson details without wasting time on manual records          |
+| `***`    | busy tutor                  | view all my students sorted by their time slots                            | see my upcoming lessons at a glance                                          |
+| `***`    | busy tutor                  | use the `filtertimeslot` command to show only students within a time range | plan my teaching day efficiently without scrolling through unrelated entries |
+| `***`    | busy tutor                  | clear past appointments automatically using `clearpast`                    | keep my student list focused on current and upcoming sessions                |
+| `**`     | busy tutor                  | find students by name, tag, or time slot                                   | locate a specific student or class quickly without searching manually        |
+| `**`     | busy tutor                  | edit a student’s details when their contact info or schedule changes       | keep my records updated without re-adding the student                        |
+| `*`      | busy tutor                  | open the help command when I forget a command format                       | avoid wasting time guessing syntax                                           |
+| `***`    | careless tutor              | receive conflict warnings when adding or editing overlapping time slots    | avoid double-booking myself by accident                                      |
+| `***`    | careless tutor              | get feedback when I enter duplicate phone numbers                          | ensure no student record is entered twice by mistake                         |
+| `**`     | careless tutor              | clear past lessons while keeping recurring ones                            | maintain recurring classes without losing future slots                       |
+| `*`      | careless tutor              | rely on automatic saving after each command                                | avoid losing data if I forget to save manually                               |
+| `***`    | tutor with regular students | tag students as “recurring” or by subject group                            | easily organize and find my regular students                                 |
+| `***`    | tutor with regular students | automatically update recurring time slots via `clearpast`                  | ensure future sessions are rescheduled automatically                         |
+| `**`     | tutor with regular students | filter students by subject tag using `findtag`                             | focus on students in the same subject group                                  |
+| `*`      | tutor with regular students | edit multiple tags at once                                                 | adjust class groupings easily when students change subjects                  |
+| `**`     | new tutor                   | list all sample data on startup                                            | learn how the app works with examples before adding real data                |
+| `**`     | new tutor                   | view command usage instructions                                            | learn new commands without needing to refer to the manual constantly         |
+| `*`      | new tutor                   | exit the app cleanly                                                       | close EduTrack without worrying about unsaved changes                        |
+
 
 
 
@@ -538,16 +512,121 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 4.
 
+Here are the improved use cases for your `DeveloperGuide.md`, updated to reflect your application's precise logic, error messages, and command outputs based on our conversation.
+
+---
+
+### Use case: Find persons by tag
+
+**MSS**
+
+1.  User requests to list persons.
+2.  EduTrack shows a list of persons.
+3.  User requests to find persons by a specific tag (e.g., `findtag Sec3Math`).
+4.  EduTrack filters the list and shows only the persons who have the matching tag. A success message is shown, e.g., `3 persons listed! with tag(s): [Sec3Math]`.
+    Use case ends.
+
+**Extensions**
+
+* 3a. User provides the command with no keywords (e.g., `findtag`).
+    * 3a1. EduTrack shows an error message: `Invalid command format! findtag: Finds all persons...`.
+      Use case resumes at step 2.
+* 4a. No persons are found with the given tag.
+    * 4a1. EduTrack shows a message `0 persons listed! with tag(s): []` and displays an empty list.
+      Use case ends.
+
+---
+
+### Use case: Find persons by time slot
+
+**MSS**
+
+1.  User requests to list persons.
+2.  EduTrack shows a list of persons.
+3.  User requests to find persons with a time slot on a specific date and time (e.g., `findtimeslot 2025-11-06 1000`).
+4.  EduTrack performs an **AND** search, filtering the list to show only persons who have a time slot on that date **AND** starting at that time.
+5.  EduTrack shows a success message, e.g., `1 persons listed! with timeslot starting on/at: [2025-11-06, 1000]`.
+    Use case ends.
+
+**Extensions**
+
+* 3a. User provides only date keywords (e.g., `findtimeslot 2025-11-05 2025-11-06`).
+    * 4a1. EduTrack performs an **OR** search, showing persons matching *either* date.
+      Use case resumes at step 5.
+* 3b. User provides only time keywords (e.g., `findtimeslot 1000 1400`).
+    * 4b1. EduTrack performs an **OR** search, showing persons whose slot starts at *either* time.
+      Use case resumes at step 5.
+* 3c. User provides an invalid keyword format (e.g., `findtimeslot 7837e832e` or `findtimeslot 10:00`).
+    * 3c1. EduTrack shows a specific error message: `Invalid keyword: '7837e832e'. Keywords must be a valid date (YYYY-MM-DD) or a valid time (HHMM).`.
+      Use case resumes at step 2.
+* 5a. No persons are found.
+    * 5a1. EduTrack shows a message `0 persons listed! with timeslot starting on/at: [2025-11-06, 0900]` and displays an empty list.
+      Use case ends.
+
+---
+
+### Use case: Filter persons by time slot range
+
+**MSS**
+
+1.  User requests to list persons.
+2.  EduTrack shows a list of persons.
+3.  User requests to filter the list by a time slot range (e.g., `filtertimeslot st/1500 et/1800`).
+4.  EduTrack filters the list, showing only persons whose time slots are **fully contained** within the specified range (i.e., start time $\geq$ `st/` and end time $\leq$ `et/`).
+5.  EduTrack shows a success message detailing the filter, e.g., `2 persons listed! with timeslots starting from 15:00 and ending by 18:00`.
+    Use case ends.
+
+**Extensions**
+
+* 3a. User provides a keyword for a date prefix (e.g., `filtertimeslot sd/now` or `filtertimeslot ed/today`).
+    * 4a1. EduTrack parses `now` or `today` into the current system date and applies the filter.
+      Use case resumes at step 4.
+* 3b. User provides an invalid date format (e.g., `sd/20-11-2025`).
+    * 3b1. EduTrack shows an error message, e.g., `Date should be in YYYY-MM-DD format.`
+      Use case resumes at step 2.
+* 3c. User provides an invalid date range (e.g., `sd/2025-11-20 ed/2025-11-19`).
+    * 3c1. EduTrack shows an error message: `Start date must be before or on end date.`.
+      Use case resumes at step 2.
+* 5a. No persons are found within the filter range.
+    * 5a1. EduTrack shows a message `0 persons listed! with timeslots...` and displays an empty list.
+      Use case ends.
+
+---
+
+### Use case: Clear all past time slots
+
+**MSS**
+
+1.  User requests to clear all past time slots by running `clearpast`.
+2.  EduTrack gets the current system time (`now`).
+3.  EduTrack identifies all contacts with time slots ending before `now`.
+4.  For each identified contact:
+    * If the contact does **not** have the `t/recurring` tag, it is **deleted** from the address book.
+    * If the contact **has** the `t/recurring` tag, EduTrack calculates the next weekly occurrence. It then attempts to update the contact to this new time slot.
+5.  EduTrack shows a multi-part success message summarizing the actions, e.g.:
+    `ClearPast command successful.`
+    `Deleted 1 past contact(s): Charlie Goh`
+    `Updated 1 recurring contact(s): Diana Heng`
+    `Could not update 1 recurring contact(s) due to conflicts: Ethan Yeo (Conflict: This time slot conflicts with: Ben Lim [2025-11-06 1000-1200])`.
+    Use case ends.
+
+**Extensions**
+
+* 1a. User provides unexpected arguments to the command (e.g., `clearpast 1` or `clearpast extra`).
+    * 1a1. EduTrack shows an error message: `Invalid command format! clearpast: Clears all past timeslots...`.
+      Use case ends.
+* 5a. No past time slots are found.
+    * 5a1. EduTrack shows the message: `No past time slots found to clear or update.`.
+      Use case ends.
 
 ### Non-Functional Requirements
 
 1.  Should work on any _mainstream OS_ as long as it has Java `17` or above installed.
 2.  Should be able to hold up to 1000 contacts without a noticeable sluggishness in performance for typical usage.
 3.  Searching for a student or appointment slot should return results in under 1.6s.
-4.  Should load interface within 2 seconds of launch.
-5.  Audit logs of tutors and admins should be maintained for at least 1 year.
-6.  Error messages must be clear and concise, and guide the user towards correcting their input.
-7.  The app should consume less than 300MB of memory during its operation.
+4.  Should load interface within 5 seconds of launch.
+5. Error messages must be clear and concise, and guide the user towards correcting their input.
+6. The app should consume less than 600MB of memory during its operation.
 
 
 ### Glossary
@@ -623,10 +702,5 @@ Here is the expected workflow for testing (if current time is 0900):
 * Wait for 1-2 minutes (test other features first etc)
 * Now the timeslot you just added is in the past, and can be cleared by clearpast, or brought forward if recurring tag is present, to either cause a conflict or be a future timeslot.
 
-### Saving data
-
-1. Dealing with missing/corrupted data files
-
-   1. _{explain how to simulate a missing/corrupted file, and the expected behavior}_
 
 

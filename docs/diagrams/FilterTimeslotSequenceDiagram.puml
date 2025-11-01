@@ -1,5 +1,6 @@
 @startuml
 !theme plain
+hide footbox
 actor User
 participant Logic
 participant FilterTimeslotCommandParser

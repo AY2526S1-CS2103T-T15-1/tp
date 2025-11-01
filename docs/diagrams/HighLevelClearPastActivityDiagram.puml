@@ -1,5 +1,8 @@
 @startuml
-!theme plain
+skinparam activityStartColor black
+skinparam activityEndColor black
+skinparam activityEndShape circle
+
 start
 :Get current time (now);
 :Get copy of person list;
