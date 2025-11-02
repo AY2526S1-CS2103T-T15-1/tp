@@ -58,7 +58,7 @@ public class ModelManager implements Model {
      */
     public ModelManager(ReadOnlyAddressBook addressBook, ReadOnlyUserPrefs userPrefs) {
         this(addressBook, userPrefs, new StorageManager(
-                new JsonAddressBookStorage(Path.of("data", "addressbook.json")),
+                new JsonAddressBookStorage(Path.of("data", "edutrack.json")),
                 new JsonUserPrefsStorage(Path.of("data", "userprefs.json"))
         ));
     }
@@ -68,7 +68,7 @@ public class ModelManager implements Model {
      */
     public ModelManager() {
         this(new AddressBook(), new UserPrefs(), new StorageManager(
-            new JsonAddressBookStorage(Path.of("data", "addressbook.json")),
+            new JsonAddressBookStorage(Path.of("data", "edutrack.json")),
             new JsonUserPrefsStorage(Path.of("data", "userprefs.json"))){
         });
     }

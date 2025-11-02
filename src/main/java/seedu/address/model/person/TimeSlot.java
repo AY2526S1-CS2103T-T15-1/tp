@@ -25,7 +25,7 @@ public class TimeSlot implements Comparable<TimeSlot> {
             "TimeSlot should be in the format YYYY-MM-DD HHMM-HHMM, "
                     + "where start time is before end time and the duration is at least "
                     + MIN_DURATION_MINUTES + " minutes.\n"
-                    + "Example: 2025-10-12 1600-1800";
+                    + "Example: 2025-11-12 1600-1800";
     public static final String MESSAGE_INVALID_DATE = "Invalid date: %1$s does not exist.";
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HHmm");
