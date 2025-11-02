@@ -13,14 +13,14 @@ import seedu.address.model.person.exceptions.PersonNotFoundException;
 
 /**
  * A list of persons that enforces uniqueness between its elements and does not allow nulls.
- * A person is considered unique by comparing using {@code Person#isSamePerson(Person)}. As such, adding and updating of
- * persons uses Person#isSamePerson(Person) for equality so as to ensure that the person being added or updated is
+ * A person is considered unique by comparing using {@code Person#hasSameDetails(Person)}. As such, adding and updating of
+ * persons uses Person#hasSameDetails(Person) for equality so as to ensure that the person being added or updated is
  * unique in terms of identity in the UniquePersonList. However, the removal of a person uses Person#equals(Object) so
  * as to ensure that the person with exactly the same fields will be removed.
  *
  * Supports a minimal set of list operations.
  *
- * @see Person#isSamePerson(Person)
+ * @see Person#hasSameDetails(Person)
  */
 public class UniquePersonList implements Iterable<Person> {
 
@@ -49,7 +49,7 @@ public class UniquePersonList implements Iterable<Person> {
      */
     public boolean contains(Person toCheck) {
         requireNonNull(toCheck);
-        return internalList.stream().anyMatch(toCheck::isSamePerson);
+        return internalList.stream().anyMatch(toCheck::hasSameDetails);
     }
 
     /**
@@ -78,7 +78,7 @@ public class UniquePersonList implements Iterable<Person> {
             throw new PersonNotFoundException();
         }
 
-        if (!target.isSamePerson(editedPerson) && contains(editedPerson)) {
+        if (!target.hasSameDetails(editedPerson) && contains(editedPerson)) {
             throw new DuplicatePersonException();
         }
 
@@ -161,7 +161,7 @@ public class UniquePersonList implements Iterable<Person> {
     private boolean personsAreUnique(List<Person> persons) {
         for (int i = 0; i < persons.size() - 1; i++) {
             for (int j = i + 1; j < persons.size(); j++) {
-                if (persons.get(i).isSamePerson(persons.get(j))) {
+                if (persons.get(i).hasSameDetails(persons.get(j))) {
                     return false;
                 }
             }
