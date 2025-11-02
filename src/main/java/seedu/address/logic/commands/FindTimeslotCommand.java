@@ -2,12 +2,12 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.text.MessageFormat;
+
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.model.Model;
 import seedu.address.model.person.TimeslotStartTimeContainsKeywordsPredicate;
-
-import java.text.MessageFormat;
 
 /**
  * Finds and lists all persons in address book whose timeslot start time matches any of the argument keywords.

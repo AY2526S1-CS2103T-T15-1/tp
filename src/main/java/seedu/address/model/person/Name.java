@@ -9,15 +9,10 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
  */
 public class Name {
 
+    public static final String VALIDATION_REGEX = "[^\\s].*";
     private static final int MAX_LENGTH = 50;
     public static final String MESSAGE_CONSTRAINTS =
-            "Names cannot be blank or contain only spaces, " + "and not exceed " + MAX_LENGTH + " characters";;
-
-    /*
-     * The first character of the address must not be a whitespace,
-     * otherwise " " (a blank string) becomes a valid input.
-     */
-    public static final String VALIDATION_REGEX = "[^\\s].*";
+            "Names cannot be blank or contain only spaces, " + "and not exceed " + MAX_LENGTH + " characters";
 
     public final String fullName;
 

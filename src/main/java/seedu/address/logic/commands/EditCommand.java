@@ -57,7 +57,8 @@ public class EditCommand extends Command {
             + PREFIX_TIMESLOT + "2025-10-12 1600-1800";
 
     public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited Person: %1$s";
-    public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided and different from the original.";
+    public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided "
+            + "and different from the original.";
     public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book.";
 
     private final Index index;

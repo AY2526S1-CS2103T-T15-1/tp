@@ -9,16 +9,10 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
  */
 public class Address {
 
-    private static final int MAX_LENGTH = 50;
-    public static final String MESSAGE_CONSTRAINTS = "Addresses can take any values, " +
-            "but cannot exceed " + MAX_LENGTH + " characters, and it should not be blank";
-
-    /*
-     * The first character of the address must not be a whitespace,
-     * otherwise " " (a blank string) becomes a valid input.
-     */
     public static final String VALIDATION_REGEX = "[^\\s].*";
-
+    private static final int MAX_LENGTH = 50;
+    public static final String MESSAGE_CONSTRAINTS = "Addresses can take any values, but cannot exceed " + MAX_LENGTH
+            + " characters, and it should not be blank";
     public final String value;
 
     /**
