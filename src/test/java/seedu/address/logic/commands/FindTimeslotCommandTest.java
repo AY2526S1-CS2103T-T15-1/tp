@@ -58,8 +58,8 @@ public class FindTimeslotCommandTest {
         String keywords = "";
         String expectedMessage = MessageFormat.format(
                 Messages.MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND, 0, "findtimeslot")
-                + " with timeslot starting on/at: [" + keywords + "]";
-        TimeslotStartTimeContainsKeywordsPredicate predicate = preparePredicate(" ");
+                + ", found by time matching: []";
+        TimeslotStartTimeContainsKeywordsPredicate predicate = preparePredicate(keywords);
         FindTimeslotCommand command = new FindTimeslotCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
@@ -75,14 +75,11 @@ public class FindTimeslotCommandTest {
         String keywords = "2025-10-12";
         String expectedMessage = MessageFormat.format(
                 Messages.MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND, 1, "findtimeslot")
-                + " with timeslot starting on/at: [" + keywords + "]";
+                + ", found by date matching: [" + keywords + "]";
         TimeslotStartTimeContainsKeywordsPredicate predicate = preparePredicate("2025-10-12");
         FindTimeslotCommand command = new FindTimeslotCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
-
-        // Verify that the filtered list contains the expected persons
-        // This would depend on your actual test data setup
     }
 
     @Test
@@ -91,7 +88,7 @@ public class FindTimeslotCommandTest {
         String keywords = "0900";
         String expectedMessage = MessageFormat.format(
                 Messages.MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND, 0, "findtimeslot")
-                + " with timeslot starting on/at: [" + keywords + "]";
+                + ", found by time matching: [" + keywords + "]";
         TimeslotStartTimeContainsKeywordsPredicate predicate = preparePredicate("0900");
         FindTimeslotCommand command = new FindTimeslotCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
@@ -104,7 +101,7 @@ public class FindTimeslotCommandTest {
         String keywords = "2025-10-12, 0900, 1400";
         String expectedMessage = MessageFormat.format(
                 Messages.MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND, 0, "findtimeslot")
-                + " with timeslot starting on/at: [" + keywords + "]";
+                + ", found by date and time matching: [" + keywords + "]";
         TimeslotStartTimeContainsKeywordsPredicate predicate = preparePredicate("2025-10-12", "0900", "1400");
         FindTimeslotCommand command = new FindTimeslotCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
@@ -116,7 +113,7 @@ public class FindTimeslotCommandTest {
         String keywords = "9999-12-31";
         String expectedMessage = MessageFormat.format(
                 Messages.MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND, 0, "findtimeslot")
-                + " with timeslot starting on/at: [" + keywords + "]";
+                + ", found by date matching: [" + keywords + "]";
         TimeslotStartTimeContainsKeywordsPredicate predicate = preparePredicate("9999-12-31");
         FindTimeslotCommand command = new FindTimeslotCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);

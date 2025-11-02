@@ -45,6 +45,25 @@ public class TimeslotStartTimeContainsKeywordsPredicate implements Predicate<Per
         }
     }
 
+    /**
+     * Generates a human-readable string describing the types of keywords being searched for.
+     * Assumes keywords are pre-validated by the parser.
+     *
+     * @return A string like "by date", "by time", or "by date and time".
+     */
+    public String getSearchTypeDescription() {
+        boolean hasDateKeyword = keywords.stream().anyMatch(k -> k.contains("-"));
+        boolean hasTimeKeyword = keywords.stream().anyMatch(k -> !k.contains("-"));
+
+        if (hasDateKeyword && hasTimeKeyword) {
+            return "by date and time";
+        } else if (hasDateKeyword) {
+            return "by date";
+        } else {
+            return "by time";
+        }
+    }
+
     @Override
     public boolean equals(Object other) {
         return other == this

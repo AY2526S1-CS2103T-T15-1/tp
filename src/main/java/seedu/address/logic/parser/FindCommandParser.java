@@ -26,11 +26,6 @@ public class FindCommandParser implements Parser<FindCommand> {
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
         }
 
-        if (trimmedArgs.startsWith("timeslot")) {
-            throw new ParseException(
-                    "Did you mean: findtimeslot " + trimmedArgs.substring("timeslot".length()).trim() + "?");
-        }
-
         String[] nameKeywords = trimmedArgs.split("\\s+");
 
         return new FindCommand(new NameContainsKeywordsPredicate(Arrays.asList(nameKeywords)));

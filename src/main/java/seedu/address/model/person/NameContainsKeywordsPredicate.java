@@ -22,6 +22,13 @@ public class NameContainsKeywordsPredicate implements Predicate<Person> {
                 .anyMatch(keyword -> StringUtil.containsWordIgnoreCase(person.getName().fullName, keyword));
     }
 
+    /**
+     * Returns the list of keywords.
+     */
+    public List<String> getKeywords() {
+        return keywords;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {
