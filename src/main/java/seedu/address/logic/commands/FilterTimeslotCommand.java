@@ -6,6 +6,8 @@ import seedu.address.logic.Messages;
 import seedu.address.model.Model;
 import seedu.address.model.person.TimeslotRangePredicate;
 
+import java.text.MessageFormat;
+
 /**
  * Filters and lists all persons in address book whose timeslot overlaps with the specified range.
  */
@@ -33,7 +35,7 @@ public class FilterTimeslotCommand extends Command {
         requireNonNull(model);
         model.updateFilteredPersonList(predicate);
         String filterDescription = predicate.getFilterDescription();
-        String resultMessage = String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW,
+        String resultMessage = MessageFormat.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW,
                 model.getFilteredPersonList().size())
                 + " " + filterDescription;
         return new CommandResult(resultMessage);
