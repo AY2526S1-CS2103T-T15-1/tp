@@ -6,7 +6,7 @@ pageNav: 3
 
 # EduTrack User Guide
 
-EduTrack is a **desktop app for private tutors to manage their students, optimized for use via a Command Line Interface** (CLI) while still having the benefits of a Graphical User Interface (GUI). If you can type fast, EduTrack can help you with student scheduling (among other management tasks) faster than traditional GUI apps, allowing you to focus on teaching rather than mundane admin work.
+EduTrack is a **desktop application designed for private tutors who provide one-to-one tuition**. It helps manage student information and schedules efficiently, and is **optimized for use through a Command Line Interface (CLI)** while still providing the convenience of a **Graphical User Interface (GUI)**. If you’re a fast typist, EduTrack enables you to handle student scheduling and other administrative tasks **more quickly than traditional GUI-based apps**, so you can spend less time on management and more time focusing on teaching.
 
 <page-nav-print />
 
@@ -31,7 +31,7 @@ EduTrack is a **desktop app for private tutors to manage their students, optimiz
 
     * `list` : Lists all contacts which are **sorted by time slot**.
 
-    * `add n/Alice Tan p/91234567 e/alice.t@email.com a/1 Orchard Road ts/2025-11-05 1400-1600 t/Sec3Math` : Adds a contact named `Alice Tan` with a specified tag `Sec3Math` and time slot `2025-11-05 1400-1600`, amongst other fields, to the Address Book.
+    * `add n/Alice Tan p/91234567 e/alice.t@email.com a/1 Orchard Road ts/2025-11-05 1400-1600 t/Sec3Math` : Adds a contact named `Alice Tan` with a specified tag `Sec3Math` and time slot `2025-11-05 1400-1600`, amongst other fields, to EduTrack.
 
     * `delete 3` : Deletes the 3rd contact shown in the current list.
 
@@ -83,10 +83,12 @@ Adds a person to the address book.
 
 Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/TAG]…​`
 
-* The `ts/` (time slot) parameter is mandatory for all new contacts.
-* Do note that you can only add timeslots that start in the future (relative to the current time).
-* The application will automatically check for scheduling conflicts and duplicate phone numbers. You will be prevented from adding a student if their specified time slot overlaps with an existing slot (showing the conflicting student's name and slot) or if the phone number is already in use (showing the name of the student using that number).
-
+* **Duplicate names** are allowed in EduTrack, as it is common for multiple students to share the same name. 
+* **Duplicate phone numbers** are also permitted, since siblings may provide the same parent’s contact number. 
+* **Duplicate email addresses** are allowed for the same reason, as siblings may share a parent’s email address. 
+* The `ts/` (time slot) parameter is **mandatory** when adding a new student. 
+* You can only add time slots that start in the future (relative to the current date and time). 
+* EduTrack automatically checks for **scheduling conflicts**. Since the system currently supports only 1-to-1 tuition, you will not be able to add a student whose time slot overlaps with an existing one. The application will display the name and time slot of the conflicting student if such a conflict occurs.
 
 <box type="tip" seamless>
 
@@ -109,19 +111,15 @@ Example of timeslot-conflict (assuming Alice Tan was already added):
 `add n/New Student p/12341234 e/new@email.com a/Some Address ts/2025-11-05 1500-1700`
 ![timeslot conflict with Alice Tan](images/timeslot-conflict-alicetan.png)
 
-Example of phone-conflict (assuming Alice Tan was already added): 
-`add n/Another Student p/91234567 e/another@email.com a/Another Address ts/2025-11-11 1000-1200`
-![phone conflict with Alice Tan](images/phone-conflict-alicetan.png)
-
 ### Listing all persons : `list`
 
-Shows a list of all persons in the address book, **sorted by their time slot**.
+Shows a list of all persons in EduTrack, **sorted by their time slot**.
 
 Format: `list`
 
 ### Editing a person : `edit`
 
-Edits an existing person in the address book.
+Edits an existing person in EduTrack.
 
 Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [ts/TIMESLOT] [t/TAG]…​`
 
@@ -264,7 +262,7 @@ Examples (assuming current date is 2025-10-30 and current time is 15:30):
 
 ### Deleting a person : `delete`
 
-Deletes the specified person from the address book.
+Deletes the specified person from EduTrack.
 
 Format: `delete INDEX`
 
@@ -274,7 +272,7 @@ Format: `delete INDEX`
 * The index **must be a positive integer** 1, 2, 3, …​
 
 Examples:
-* `list` followed by `delete 2` deletes the 2nd person in the address book.
+* `list` followed by `delete 2` deletes the 2nd person in EduTrack.
 * `find Betsy` followed by `delete 1` deletes the 1st person in the results of the `find` command.
 
 ### Clearing past appointments : `clearpast`
@@ -326,7 +324,7 @@ Here is the expected workflow for testing (if current time is 0900):
 
 ### Clearing all entries : `clear`
 
-Clears all entries from the address book.
+Clears all entries from EduTrack.
 
 Format: `clear`
 
