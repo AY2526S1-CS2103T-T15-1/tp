@@ -7,6 +7,8 @@ import seedu.address.logic.Messages;
 import seedu.address.model.Model;
 import seedu.address.model.person.TimeslotStartTimeContainsKeywordsPredicate;
 
+import java.text.MessageFormat;
+
 /**
  * Finds and lists all persons in address book whose timeslot start time matches any of the argument keywords.
  * Keyword matching is case insensitive
@@ -32,7 +34,7 @@ public class FindTimeslotCommand extends Command {
         requireNonNull(model);
         model.updateFilteredPersonList(predicate);
         String keywords = String.join(", ", predicate.getKeywords());
-        String resultMessage = String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW,
+        String resultMessage = MessageFormat.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW,
                 model.getFilteredPersonList().size())
                 + " with timeslot starting on/at: [" + keywords + "]";
         return new CommandResult(resultMessage);

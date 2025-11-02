@@ -24,7 +24,7 @@ public class TimeSlot implements Comparable<TimeSlot> {
     public static final String MESSAGE_CONSTRAINTS =
             "TimeSlot should be in the format YYYY-MM-DD HHMM-HHMM, "
                     + "where start time is before end time and the duration is at least "
-                    + MIN_DURATION_MINUTES + " minutes.\n"
+                    + MIN_DURATION_MINUTES + " minute.\n"
                     + "Example: 2025-11-12 1600-1800";
     public static final String MESSAGE_INVALID_DATE = "Invalid date: %1$s does not exist.";
 
