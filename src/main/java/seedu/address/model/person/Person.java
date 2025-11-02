@@ -77,7 +77,8 @@ public class Person {
         return otherPerson != null
                 && this.getName().equals(otherPerson.getName())
                 && this.getPhone().equals(otherPerson.getPhone())
-                && this.getEmail().equals(otherPerson.getEmail());
+                && this.getEmail().equals(otherPerson.getEmail())
+                && this.getAddress().equals(otherPerson.getAddress());
     }
 
     /**

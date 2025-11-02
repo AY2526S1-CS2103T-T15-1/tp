@@ -137,7 +137,7 @@ public class ClearPastCommand extends Command {
             return new CommandResult(MESSAGE_NO_CHANGES);
         }
 
-        StringBuilder result = new StringBuilder(MESSAGE_SUCCESS);
+        StringBuilder result = new StringBuilder();
         if (!deletedNames.isEmpty()) {
             result.append(String.format(MESSAGE_DELETED,
                     deletedNames.size(), String.join(", ", deletedNames)));

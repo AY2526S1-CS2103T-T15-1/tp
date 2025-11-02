@@ -9,7 +9,10 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
  */
 public class Tag {
 
-    public static final String MESSAGE_CONSTRAINTS = "Tag names should be non-empty and alphanumeric. The tag prefix 't/' alone is allowed, but cannot be combined with any other tags (e.g. 't/ t/math' or 't/math t/' are invalid).";
+    private static final int MAX_LENGTH = 25;
+    public static final String MESSAGE_CONSTRAINTS = "Tag names should be non-empty, alphanumeric " +
+            "and not exceed " + MAX_LENGTH + " characters." + " The tag prefix 't/' alone is allowed, " +
+            "but cannot be combined with any other tags (e.g. 't/ t/math' or 't/math t/' are invalid).";
     public static final String VALIDATION_REGEX = "\\p{Alnum}+";
 
     public final String tagName;
@@ -29,7 +32,7 @@ public class Tag {
      * Returns true if a given string is a valid tag name.
      */
     public static boolean isValidTagName(String test) {
-        return test.matches(VALIDATION_REGEX);
+        return test.matches(VALIDATION_REGEX) && test.length() <= MAX_LENGTH;
     }
 
     @Override
