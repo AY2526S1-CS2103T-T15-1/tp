@@ -883,5 +883,15 @@ The test case below is **time-sensitive**. You will need to copy and paste the `
     1.  **Test case:** `clear 123`
     2.  **Expected:** Error message: `Invalid command format! clear: ...`
 
+### Planned Enhancements
+
+**Team Size:** 5
+
+1.  **Support for Multiple Lessons per Person:** The current data model supports only a one-to-one relationship between a `Person` and a `TimeSlot`. This will be refactored to a one-to-many relationship, allowing a single `Person` to be associated with a list of `TimeSlot` objects. Business logic will be added to ensure these timeslots do not overlap.
+2.  **Support for Multi-Person Timeslots (Group Tuition):** The data model will be enhanced to support a many-to-many relationship, allowing multiple `Person` objects to be associated with a single `TimeSlot`.
+3.  **Unique, Immutable Student ID:** We plan to implement a system to generate a unique, non-editable Student ID (e.g., `S-0001`) for every `Person` created.
+    * **Justification:** This ID will serve as the stable primary key for each student. This prevents data ambiguity when two students have the same name and ensures data integrity if a student's name changes. This ID will be crucial for stable integration with other systems, such as payment portals or external academic record databases.
+4.  **Timeslots Spanning Across Midnight:** The `TimeSlot` model will be re-designed to support start and end `LocalDateTime` objects instead of just `LocalDate` and `LocalTime`. This will allow a `TimeSlot` to correctly span across calendar days (e.g., 23:00 on Monday to 01:00 on Tuesday).
+5.  **Flexible Recurrence Intervals:** The recurrence logic is currently hardcoded for weekly intervals (e.g., the `clearpast` command advances a `t/recurring` lesson in intervals of 7 days until it is no longer in the past). This will be refactored to support more versatile intervals, such as daily, bi-weekly, and monthly.
 
 

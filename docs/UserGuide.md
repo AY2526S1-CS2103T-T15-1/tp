@@ -370,6 +370,14 @@ _Details coming soon ..._
 
 1.  **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
 2.  **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
+3.  **One Timeslot per Person:** A person can only be scheduled for one timeslot. You cannot add a second lesson for the same person (e.g., one on Monday and one on Wednesday). You must delete the person, before adding a new person with the same details and edited timeslot.
+4.  **One Person per Timeslot:** The application does not support group lessons. Only one person can be assigned to a single timeslot.
+5.  **Timeslots Must Be on the Same Day:** A timeslot cannot cross midnight (e.g., `ts/2300-0100` is invalid). The latest possible end time is `2359`. 
+6.  **Name Field Parsing:** The app supports special characters like `/` in names (e.g., `Karthik s/o Murugan`), however any text containing an *unknown* prefix (like `r/` for remarks that do not exist) before a *known* prefix will be considered part of the name.
+    * **Example:** `add n/Tom r/good p/91234567`
+    * **Result:** The person's name will be saved as `Tom r/good`.
+    * **Workaround:** Always ensure correct, known prefixes are used in the commands.
+7.  **Recurring Tag is Weekly Only:** The application supports a `t/recurring` tag. Other commands (like `clearpast`) use this tag to manage repeating lessons. However, this tag *only* signifies a **weekly** recurrence. It is not possible to set up monthly or bi-weekly recurring lessons.
 
 --------------------------------------------------------------------------------------------------------------------
 
