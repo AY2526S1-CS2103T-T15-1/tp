@@ -226,7 +226,7 @@ public class ClearPastCommandTest {
             return ClearPastCommand.MESSAGE_NO_CHANGES;
         }
 
-        StringBuilder result = new StringBuilder(ClearPastCommand.MESSAGE_SUCCESS);
+        StringBuilder result = new StringBuilder();
         if (!deletedNames.isEmpty()) {
             result.append(String.format(ClearPastCommand.MESSAGE_DELETED,
                     deletedNames.size(), String.join(", ", deletedNames)));

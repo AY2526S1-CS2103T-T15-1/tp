@@ -2,11 +2,11 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.text.MessageFormat;
+
 import seedu.address.logic.Messages;
 import seedu.address.model.Model;
 import seedu.address.model.person.TimeslotRangePredicate;
-
-import java.text.MessageFormat;
 
 /**
  * Filters and lists all persons in address book whose timeslot overlaps with the specified range.

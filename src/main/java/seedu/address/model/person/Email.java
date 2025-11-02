@@ -11,7 +11,8 @@ public class Email {
 
     private static final String SPECIAL_CHARACTERS = "+_.-";
     private static final int MAX_LENGTH = 50;
-    public static final String MESSAGE_CONSTRAINTS = "Emails should not exceed " + MAX_LENGTH + "characters, be of the format local-part@domain "
+    public static final String MESSAGE_CONSTRAINTS = "Emails should not exceed " + MAX_LENGTH
+            + " characters, be of the format local-part@domain "
             + "and adhere to the following constraints:\n"
             + "1. The local-part should only contain alphanumeric characters and these special characters, excluding "
             + "the parentheses, (" + SPECIAL_CHARACTERS + "). The local-part may not start or end with any special "

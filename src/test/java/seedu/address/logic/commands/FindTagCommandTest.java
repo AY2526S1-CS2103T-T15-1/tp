@@ -9,6 +9,7 @@ import static seedu.address.testutil.TypicalPersons.BENSON;
 import static seedu.address.testutil.TypicalPersons.DANIEL;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -73,7 +74,7 @@ public class FindTagCommandTest {
 
     @Test
     public void execute_zeroKeywords_noPersonFound() {
-        String expectedMessage = String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, 0) + " with tag(s): []";
+        String expectedMessage = MessageFormat.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, 0) + " with tag(s): []";
         TagContainsKeywordsPredicate predicate = new TagContainsKeywordsPredicate(Collections.emptyList());
         FindTagCommand command = new FindTagCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
@@ -91,7 +92,7 @@ public class FindTagCommandTest {
         FindTagCommand command = new FindTagCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
 
-        String expectedMessage = String.format(
+        String expectedMessage = MessageFormat.format(
                 Messages.MESSAGE_PERSONS_LISTED_OVERVIEW,
                 expectedModel.getFilteredPersonList().size());
         expectedMessage += " with tag(s): " + keywords;
@@ -104,7 +105,7 @@ public class FindTagCommandTest {
     public void execute_singleKeyword_findsPersons() {
         // We use TypicalPersons data here. ALICE, BENSON, and DANIEL have the 'friends' tag.
         String keywords = "friends";
-        String expectedMessage = String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, 3)
+        String expectedMessage = MessageFormat.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, 3)
                 + " with tag(s): [" + keywords + "]";
         TagContainsKeywordsPredicate predicate = new TagContainsKeywordsPredicate(Collections.singletonList(keywords));
         FindTagCommand command = new FindTagCommand(predicate);
@@ -121,7 +122,7 @@ public class FindTagCommandTest {
         // BENSON has 'owesMoney', ALICE and DANIEL have 'friends'.
         // The predicate finds contacts that match *any* keyword.
         String keywords = "owesMoney, friends";
-        String expectedMessage = String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, 3)
+        String expectedMessage = MessageFormat.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, 3)
                 + " with tag(s): [" + keywords + "]";
         TagContainsKeywordsPredicate predicate = new TagContainsKeywordsPredicate(
                 Arrays.asList("owesMoney", "friends"));
@@ -136,7 +137,7 @@ public class FindTagCommandTest {
     @Test
     public void execute_noMatchingKeywords_noPersonFound() {
         String keywords = "nonexistent, tag";
-        String expectedMessage = String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, 0)
+        String expectedMessage = MessageFormat.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, 0)
                 + " with tag(s): [" + keywords + "]";
         TagContainsKeywordsPredicate predicate = new TagContainsKeywordsPredicate(Arrays.asList("nonexistent", "tag"));
         FindTagCommand command = new FindTagCommand(predicate);

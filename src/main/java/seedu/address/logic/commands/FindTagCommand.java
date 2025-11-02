@@ -2,12 +2,12 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.text.MessageFormat;
+
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.model.Model;
 import seedu.address.model.person.TagContainsKeywordsPredicate;
-
-import java.text.MessageFormat;
 
 /**
  * Finds and lists all persons in address book whose tags match any of the argument keywords.
