@@ -37,4 +37,13 @@ public class FindCommandParserTest {
         assertParseSuccess(parser, " \n Alice \n \t Bob  \t", expectedFindCommand);
     }
 
+    @Test
+    public void parse_findWithTimeslotKeyword_showsWarningMessage() {
+        FindCommandParser parser = new FindCommandParser();
+        String userInput = "timeslot 2025-10-22";
+        String expectedMessage = "Did you mean: findtimeslot 2025-10-22?";
+
+        assertParseFailure(parser, userInput, expectedMessage);
+    }
+
 }

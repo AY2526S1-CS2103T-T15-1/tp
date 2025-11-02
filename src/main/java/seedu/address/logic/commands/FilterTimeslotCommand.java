@@ -35,8 +35,8 @@ public class FilterTimeslotCommand extends Command {
         requireNonNull(model);
         model.updateFilteredPersonList(predicate);
         String filterDescription = predicate.getFilterDescription();
-        String resultMessage = MessageFormat.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW,
-                model.getFilteredPersonList().size())
+        String resultMessage = MessageFormat.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND,
+                model.getFilteredPersonList().size(), "filtertimeslot")
                 + " " + filterDescription;
         return new CommandResult(resultMessage);
     }

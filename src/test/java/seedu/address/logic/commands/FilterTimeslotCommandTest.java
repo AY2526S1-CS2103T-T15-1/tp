@@ -3,7 +3,7 @@ package seedu.address.logic.commands;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static seedu.address.logic.Messages.MESSAGE_PERSONS_LISTED_OVERVIEW;
+import static seedu.address.logic.Messages.MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
 import java.text.MessageFormat;
@@ -59,7 +59,8 @@ public class FilterTimeslotCommandTest {
         TimeslotRangePredicate predicate = new TimeslotRangePredicate(
                 Optional.of(LocalDate.of(2030, 1, 1)), Optional.empty(),
                 Optional.empty(), Optional.empty());
-        String expectedMessage = MessageFormat.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 0)
+        String expectedMessage = MessageFormat.format(
+                MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND, 0, "filtertimeslot")
                 + " " + predicate.getFilterDescription();
         FilterTimeslotCommand command = new FilterTimeslotCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
