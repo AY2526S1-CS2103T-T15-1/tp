@@ -59,5 +59,6 @@ public class FindTimeslotCommandParserTest {
         assertParseFailure(parser, "09:00",
                 String.format(FindTimeslotCommandParser.MESSAGE_INVALID_KEYWORD, "09:00"));
     }
+
 }
 

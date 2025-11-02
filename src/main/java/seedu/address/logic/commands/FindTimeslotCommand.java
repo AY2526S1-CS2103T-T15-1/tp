@@ -34,8 +34,8 @@ public class FindTimeslotCommand extends Command {
         requireNonNull(model);
         model.updateFilteredPersonList(predicate);
         String keywords = String.join(", ", predicate.getKeywords());
-        String resultMessage = MessageFormat.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW,
-                model.getFilteredPersonList().size())
+        String resultMessage = MessageFormat.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND,
+                model.getFilteredPersonList().size(), "findtimeslot")
                 + " with timeslot starting on/at: [" + keywords + "]";
         return new CommandResult(resultMessage);
     }
