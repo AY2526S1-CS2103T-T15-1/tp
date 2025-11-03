@@ -21,6 +21,10 @@ Class Phone
 Class Tag
 Class Timeslot
 
+Class Date
+    Class StartTime
+    Class EndTime
+
 Class I #FFFFFF
 }
 
