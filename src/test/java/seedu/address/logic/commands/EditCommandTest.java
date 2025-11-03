@@ -13,7 +13,6 @@ import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.logic.commands.CommandTestUtil.showPersonAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_PERSON;
-import static seedu.address.testutil.TypicalPersons.ALICE;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
 import java.nio.file.Paths;
@@ -214,23 +213,6 @@ public class EditCommandTest {
 
         // different descriptor -> returns false
         assertFalse(standardCommand.equals(new EditCommand(INDEX_FIRST_PERSON, DESC_BOB)));
-    }
-
-    @Test
-    public void execute_duplicatePhone_failure() {
-        // Model contains ALICE (94351253) and BENSON (98765432)
-
-        // Descriptor to change BENSON's phone to ALICE's phone
-        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
-                .withPhone(ALICE.getPhone().value) // ALICE's phone
-                .build();
-
-        // Create the command targeting BENSON (INDEX_SECOND_PERSON)
-        EditCommand editCommand = new EditCommand(INDEX_SECOND_PERSON, descriptor);
-        String expectedError = "This phone number already exists in the address book, assigned to: "
-                + ALICE.getName();
-        // Expect a command failure with the duplicate phone message
-        assertCommandFailure(editCommand, model, expectedError);
     }
 
     @Test

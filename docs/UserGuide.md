@@ -85,7 +85,10 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/
 
 * **Duplicate names** are allowed in EduTrack, as it is common for multiple students to share the same name. 
 * **Duplicate phone numbers** are also permitted, since siblings may provide the same parent’s contact number. 
-* **Duplicate email addresses** are allowed for the same reason, as siblings may share a parent’s email address. 
+* **Duplicate email addresses** are allowed for the same reason, as siblings may share a parent’s email address.
+* * **Duplicate home addresses** are allowed for the same reason, as siblings may share the same home address.
+* However, if two persons have the same name, phone, email and address, they will be flagged as duplicates.
+* There is a length limit imposed on fields (50 for names, email and address, 20 for phone, and 25 for tags).
 * The `ts/` (time slot) parameter is **mandatory** when adding a new student. 
 * You can only add time slots that start in the future (relative to the current date and time). 
 * EduTrack automatically checks for **scheduling conflicts**. Since the system currently supports only 1-to-1 tuition, you will not be able to add a student whose time slot overlaps with an existing one. The application will display the name and time slot of the conflicting student if such a conflict occurs.
@@ -127,10 +130,10 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [ts/TIMESLOT] [t/TA
 * Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, …​
 * At least one of the optional fields must be provided, and the new overall value must be different from the old value. The command will show an error if no fields are provided or if the provided fields result in no overall change.
 * Existing values will be updated to the input values.
-* If you edit the time slot (`ts/`) or phone number (`p/`), the application will check for scheduling or phone number conflicts, providing specific details if a conflict occurs.
+* If you edit the time slot (`ts/`), the application will check for scheduling conflicts, providing specific details if a conflict occurs.
 * Tag names should be non-empty and alphanumeric. When editing tags, the existing tags of the person will be removed i.e. adding of tags is not cumulative.
 * You can remove all the person’s tags by typing `t/` without specifying any tags after it. The tag prefix 't/' alone is allowed, but cannot be combined with any other tags (e.g. 't/ t/math' or 't/math t/' are invalid)
-* Upon successful edit, the application will confirm the changes by listing the fields that were modified.
+* Upon successful edit (at least 1 field has been modified), the application will confirm the changes by listing the fields that were modified, including redundant changes. For example, if `John Doe` has phone `1234`, and we run edit 1 n/John Doe p/12345, both of these changes will be reflected in our success message.
 
 
 <box type="tip" seamless>
@@ -260,6 +263,8 @@ Examples (assuming current date is 2025-10-30 and current time is 15:30):
     * **Result**: No students found.
     * **Why**: This finds all slots on or after today (Oct 30) **AND** starting at or after 15:30. None of the future students (Alice, Ben, etc.) have slots starting this late in the day, so they are filtered out by the `st/now` time check.
 
+![filtertimeslot_all_fields](images/filtertimeslot_sample.png)
+
 ### Deleting a person : `delete`
 
 Deletes the specified person from EduTrack.
@@ -301,7 +306,6 @@ Assume current day is 2025-10-30, time is 15:30.
 | Fiona Wee   | 2025-11-12 11:00-13:00 |           | Future       |
 
 **Result displayed**:
-* ClearPast command successful. 
 * Deleted 1 past contact(s): Charlie Goh 
 * Updated 1 recurring contact(s): Diana Heng 
 * Could not update 1 recurring contact(s) due to conflicts: Ethan Yeo (Conflict: This time slot conflicts with: Ben Lim [2025-11-06 1000-1200])
@@ -314,13 +318,13 @@ Assume current day is 2025-10-30, time is 15:30.
 
 * Conflict (Ethan Yeo): His timeslot (Oct 30 @ 10:00) was in the past and `recurring`. His next weekly slot was calculated to be **Nov 6 @ 10:00-12:00**. This slot directly conflicts with **Ben Lim**. The update failed, and the specific conflict was reported.
 
-* Ignored (Alice, Ben, George, Fiona): Their slots were already in the future, so clearpast did not affect them.
+* Ignored (Alice, Ben, George, Fiona): Their slots were already in the future, so `clearpast` did not affect them.
 
-**Note for testing: Do note that clearpast is relatively hard to test due to the restriction on past timeslots.**
+**Note for testing: Do note that `clearpast` is relatively hard to test due to the restriction on past timeslots.**
 Here is the expected workflow for testing (if current time is 0900):
-* add n/ ... ts/current_date 0900-0902 (for the working product we will set it to 30 minutes, but for the sake of testing, we allow no gap for timeslots). Rmb to set t/recurring depending on which scenario you are planning to test.
+* add n/ ... ts/current_date 0900-0902 (for the working product we will set it to 30 minutes, but for the sake of testing, we allow a gap of minimum 1 minute for timeslots). Remember to set t/recurring depending on which scenario you are planning to test.
 * Wait for 1-2 minutes (test other features first etc)
-* Now the timeslot you just added is in the past, and can be cleared by clearpast, or brought forward if recurring tag is present, to either cause a conflict or be a future timeslot.
+* Now the timeslot you just added is in the past, and can be cleared by `clearpast`, or brought forward if recurring tag is present, to either cause a conflict or be a future timeslot.
 
 ### Clearing all entries : `clear`
 
@@ -366,6 +370,14 @@ _Details coming soon ..._
 
 1.  **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
 2.  **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
+3.  **One Timeslot per Person:** A person can only be scheduled for one timeslot. You cannot add a second lesson for the same person (e.g., one on Monday and one on Wednesday). You must delete the person, before adding a new person with the same details and edited timeslot.
+4.  **One Person per Timeslot:** The application does not support group lessons. Only one person can be assigned to a single timeslot.
+5.  **Timeslots Must Be on the Same Day:** A timeslot cannot cross midnight (e.g., `ts/2300-0100` is invalid). The latest possible end time is `2359`. 
+6.  **Name Field Parsing:** The app supports special characters like `/` in names (e.g., `Karthik s/o Murugan`), however any text containing an *unknown* prefix (like `r/` for remarks that do not exist) before a *known* prefix will be considered part of the name.
+    * **Example:** `add n/Tom r/good p/91234567`
+    * **Result:** The person's name will be saved as `Tom r/good`.
+    * **Workaround:** Always ensure correct, known prefixes are used in the commands.
+7.  **Recurring Tag is Weekly Only:** The application supports a `t/recurring` tag. Other commands (like `clearpast`) use this tag to manage repeating lessons. However, this tag *only* signifies a **weekly** recurrence. It is not possible to set up monthly or bi-weekly recurring lessons.
 
 --------------------------------------------------------------------------------------------------------------------
 

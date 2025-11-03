@@ -651,56 +651,247 @@ Here are the improved use cases for your `DeveloperGuide.md`, updated to reflect
 
 
 --------------------------------------------------------------------------------------------------------------------
+-----
 
 ## **Appendix: Instructions for manual testing**
 
 Given below are instructions to test the app manually.
 
-<box type="info" seamless>
+\<box type="info" seamless\>
 
 **Note:** These instructions only provide a starting point for testers to work on;
-testers are expected to do more *exploratory* testing.
+testers are expected to do more *exploratory* testing. The sample data loaded on startup is used for these test cases.
 
-</box>
+\</box\>
 
 ### Launch and shutdown
 
-1. Initial launch
+1.  **Initial launch**
 
-   1. Download the jar file and copy into an empty folder
+    1.  Download the jar file and copy it into an empty folder.
+    2.  Double-click the jar file.
+    3.  **Expected:** Shows the GUI with a set of sample contacts. The window size may not be optimum.
 
-   1. Double-click the jar file Expected: Shows the GUI with a set of sample contacts. The window size may not be optimum.
+2.  **Saving window preferences**
 
-1. Saving window preferences
+    1.  Resize the window to an optimum size. Move the window to a different location. Close the window.
+    2.  Re-launch the app by double-clicking the jar file.
+    3.  **Expected:** The most recent window size and location is retained.
 
-   1. Resize the window to an optimum size. Move the window to a different location. Close the window.
+### Adding a person (`add`)
 
-   1. Re-launch the app by double-clicking the jar file.<br>
-       Expected: The most recent window size and location is retained.
+1.  **Adding a person with a time slot conflict**
 
+    1.  **Prerequisites:** Sample data is loaded. Note Alice Tan's slot: `2025-11-05 1400-1600`.
+    2.  **Test case:** `add n/New Student p/12345678 e/new@email.com a/New Address ts/2025-11-05 1500-1700` (This slot overlaps with Alice Tan)
+    3.  **Expected:** No person is added. An error message is shown in the result display, identifying the conflict: `This time slot conflicts with: Alice Tan [2025-11-05 1400-1600]`.
 
-### Deleting a person
+2.  **Adding a person with invalid fields**
 
-1. Deleting a person while all persons are being shown
+    1.  **Test case (invalid time):** `add n/New Student p/12345678 e/new@email.com a/New Address ts/2025-11-05 1500-1400`
+    2.  **Expected:** No person is added. Error message about invalid time slot range.
+    3.  **Test case (missing name):** `add p/12345678 e/new@email.com a/New Address ts/2025-11-05 1500-1700`
+    4.  **Expected:** No person is added. Error message about missing `n/` prefix.
 
-   1. Prerequisites: List all persons using the `list` command. Multiple persons in the list.
+### Locating by tag (`findtag`)
 
-   1. Test case: `delete 1`<br>
-      Expected: First contact is deleted from the list. Details of the deleted contact shown in the status message. Timestamp in the status bar is updated.
+1.  **Find by a single tag**
 
-   1. Test case: `delete 0`<br>
-      Expected: No person is deleted. Error details shown in the status message. Status bar remains the same.
+    1.  **Prerequisites:** Sample data is loaded.
+    2.  **Test case:** `findtag Sec3Math`
+    3.  **Expected:** The list filters to show 3 persons: `Diana Heng`, `Alice Tan`, and `Fiona Wee`.
 
-   1. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
-      Expected: Similar to previous.
+2.  **Find by multiple tags (OR search)**
 
-### Extra notes on testing clearpast
+    1.  **Prerequisites:** Sample data is loaded.
+    2.  **Test case:** `findtag recurring NeedsHelp`
+    3.  **Expected:** The list filters to show 3 persons: `Diana Heng` and `Ethan Yeo` (for `recurring`) and `Ben Lim` (for `NeedsHelp`).
 
-Do note that clearpast is relatively hard to test due to the restriction on past timeslots.**
-Here is the expected workflow for testing (if current time is 0900):
-* add n/ ... ts/current_date 0900-0902 (for the working product we will set it to 30 minutes, but for the sake of testing, we allow no gap for timeslots). Remember to set t/recurring depending on which scenario you are planning to test.
-* Wait for 1-2 minutes (test other features first etc)
-* Now the timeslot you just added is in the past, and can be cleared by clearpast, or brought forward if recurring tag is present, to either cause a conflict or be a future timeslot.
+3.  **Find by tag (case-insensitive and substring)**
 
+    1.  **Prerequisites:** Sample data is loaded.
+    2.  **Test case:** `findtag sec3`
+    3.  **Expected:** The list filters to show 3 persons: `Diana Heng`, `Alice Tan`, and `Fiona Wee`.
+
+4.  **Find by tag (no results)**
+
+    1.  **Prerequisites:** Sample data is loaded.
+    2.  **Test case:** `findtag NonExistentTag`
+    3.  **Expected:** The list is empty. Status message indicates `0 persons listed!`.
+
+5.  **Invalid `findtag` command**
+
+    1.  **Test case:** `findtag` (no arguments)
+    2.  **Expected:** Error message: `Invalid command format! findtag: ...`
+
+### Finding by time slot (`findtimeslot`)
+
+1.  **Find by date**
+
+    1.  **Prerequisites:** Sample data is loaded.
+    2.  **Test case:** `findtimeslot 2025-10-30`
+    3.  **Expected:** Shows `Ethan Yeo`.
+
+2.  **Find by time (multiple results)**
+
+    1.  **Prerequisites:** Sample data is loaded.
+    2.  **Test case:** `findtimeslot 1000`
+    3.  **Expected:** Shows `Ethan Yeo` and `Ben Lim` (both start at 10:00).
+
+3.  **Find by date and time (AND search)**
+
+    1.  **Prerequisites:** Sample data is loaded.
+    2.  **Test case:** `findtimeslot 2025-11-06 1000`
+    3.  **Expected:** Shows `Ben Lim` only.
+
+4.  **Find by date and time (no results)**
+
+    1.  **Prerequisites:** Sample data is loaded.
+    2.  **Test case:** `findtimeslot 2025-10-22 1600`
+    3.  **Expected:** Empty list. (Charlie matches the date but not the time; Diana matches the time but not the date).
+
+5.  **Invalid `findtimeslot` command**
+
+    1.  **Test case:** `findtimeslot 10:00`
+    2.  **Expected:** Error message: `Invalid keyword: '10:00'. Keywords must be a valid date (YYYY-MM-DD) or a valid time (HHMM).`
+    3.  **Test case:** `findtimeslot` (no arguments)
+    4.  **Expected:** Error message: `Invalid command format! ... At least one parameter (date or time) must be provided.`
+
+### Filtering by time slot range (`filtertimeslot`)
+
+1.  **Filter by time range**
+
+    1.  **Prerequisites:** Sample data is loaded.
+    2.  **Test case:** `filtertimeslot st/1500 et/1800`
+    3.  **Expected:** Shows `Charlie Goh` (15:00-17:00) and `Diana Heng` (16:00-18:00), as their slots are *fully contained* within the range.
+
+2.  **Filter by date range**
+
+    1.  **Prerequisites:** Sample data is loaded.
+    2.  **Test case:** `filtertimeslot sd/2025-11-01 ed/2025-11-10`
+    3.  **Expected:** Shows `Alice Tan` (Nov 5), `Ben Lim` (Nov 6), and `George Png` (Nov 10).
+
+3.  **Filter by combined date and time**
+
+    1.  **Prerequisites:** Sample data is loaded.
+    2.  **Test case:** `filtertimeslot sd/2025-11-05 ed/2025-11-12 st/1300 et/1700`
+    3.  **Expected:** Shows `Alice Tan` (Nov 5, 14:00-16:00). Fiona Wee (Nov 12, 11:00-13:00) is excluded by the time range.
+
+4.  **Filter using `now` or `today`**
+
+    1.  **Prerequisites:** Note the current system date and time.
+    2.  **Test case:** `filtertimeslot sd/today`
+    3.  **Expected:** Shows all students with time slots on or after the current system date.
+    4.  **Test case:** `filtertimeslot st/now`
+    5.  **Expected:** Shows all students (regardless of date) whose time slots start and end *after* the current system time.
+
+5.  **Invalid `filtertimeslot` command**
+
+    1.  **Test case:** `filtertimeslot` (no arguments)
+    2.  **Expected:** Error message: `Invalid command format! ... At least one prefix must be provided.`
+    3.  **Test case:** `filtertimeslot sd/2025-11-10 ed/2025-11-01`
+    4.  **Expected:** Error message: `Start date must be before or on end date.`
+    5.  **Test case:** `filtertimeslot st/1400 et/1200`
+    6.  **Expected:** Error message: `Start time must be before end time.`
+
+__________________________________________
+
+### Clearing past appointments (`clearpast`)
+
+\<box type="info" seamless\>
+
+**Note on testing `clearpast`:**
+
+This command is challenging to test because the application **prevents you from adding time slots that are already in the past**.
+
+To test this feature, you must add contacts with time slots scheduled for the **near future** (e.g., starting in 1-2 minutes). You must then **wait** for those time slots to end, turning them into "past" appointments. Only then can you run `clearpast` to observe the results.
+
+The test case below is **time-sensitive**. You will need to copy and paste the `add` commands quickly.
+\</box\>
+
+1.  **Test setup (Full Scenario)**
+
+    1.  Note your current system date and time. For this example, let's assume it's `2025-11-02 15:30:00`.
+    2.  First, add a "blocker" contact for *next week*. This contact will be the conflict target for one of our recurring students.
+        * `add n/Future Blocker p/333 e/block@e.com a/block ts/2025-11-09 15:31-15:33 t/TestBlock`
+    3.  **Quickly**, add the following three contacts. Their time slots are set 1-2 minutes in the future and will all be in the past in about 4-5 minutes.
+        * **(For Delete):** `add n/Past Student p/111 e/past@e.com a/past ts/2025-11-02 15:31-15:32 t/TestDelete`
+        * **(For Update - OK):** `add n/Update Student p/222 e/rec@e.com a/rec ts/2025-11-02 15:32-15:33 t/recurring t/TestUpdate` (Next week's slot, `2025-11-09 15:32-15:33`, is free).
+        * **(For Update - Conflict):** `add n/Conflict Student p/444 e/old@e.com a/old ts/2025-11-02 15:31-15:33 t/recurring t/TestConflict` (Next week's slot, `2025-11-09 15:31-15:33`, conflicts with `Future Blocker`).
+
+2.  **Wait for the slots to pass**
+
+    * Wait for your system time to pass `2025-11-02 15:33:00` (e.g., wait 4-5 minutes). All three students added in step 1.3 are now in the past.
+
+3.  **Test case: Execute `clearpast`**
+
+    1.  Run the command: `clearpast`
+    2.  **Expected:** A composite success message should appear, similar to:
+        * `Deleted 1 past contact(s): Past Student`
+        * `Updated 1 recurring contact(s): Update Student`
+        * `Could not update 1 recurring contact(s) due to conflicts: Conflict Student (Conflict: This time slot conflicts with: Future Blocker [2025-11-09 15:31-15:33])`
+
+4.  **Test case: Verify state with `list`**
+
+    1.  Run the command: `list`
+    2.  **Expected:**
+        * `Past Student` is gone.
+        * `Update Student` is still present, but their time slot is now in the future (e.g., `2025-11-09 15:32-15:33`).
+        * `Conflict Student` is still present with their *old* past time slot (`2025-11-02 15:31-15:33`), as the update failed.
+        * `Future Blocker` is unaffected.
+
+5.  **Invalid `clearpast` command**
+
+    1.  **Test case:** `clearpast 123`
+    2.  **Expected:** Error message: `Invalid command format! clearpast: Clears all past timeslots...`
+
+### Deleting a person (`delete`)
+
+1.  **Deleting a person while all persons are being shown**
+    1.  **Prerequisites:** List all persons using the `list` command. Multiple persons in the list.
+    2.  **Test case:** `delete 1`
+    3.  **Expected:** The first contact in the *currently displayed list* is deleted. Details of the deleted contact are shown in the result display.
+    4.  **Test case:** `delete 0`
+    5.  **Expected:** No person is deleted. Error details shown: `The person index provided is invalid`.
+    6.  **Other incorrect delete commands to try:** `delete`, `delete x`, `...` (where x is larger than the list size)
+    7.  **Expected:** Similar error message about an invalid index.
+
+### Editing a person (`edit`)
+
+1.  **Editing tags (removing all)**
+
+    1.  **Prerequisites:** Sample data is loaded. Note Diana Heng (index 2) has tags `Sec3Math` and `recurring`.
+    2.  **Test case:** `edit 2 t/`
+    3.  **Expected:** Diana Heng's tags are removed. The success message confirms the edit, and her card in the UI now shows no tags.
+
+2.  **Editing time slot (causing conflict)**
+
+    1.  **Prerequisites:** Sample data is loaded. Note Alice Tan's slot (index 5) is `2025-11-05 1400-1600` and Ben Lim's (index 4) is `2025-11-06 1000-1200`.
+    2.  **Test case:** `edit 5 ts/2025-11-06 1100-1300` (This overlaps with Ben Lim)
+    3.  **Expected:** Alice Tan is not edited. Error message: `This time slot conflicts with: Ben Lim [2025-11-06 1000-1200]`.
+
+### Clearing all entries (`clear`)
+
+1.  **Clear all**
+
+    1.  **Prerequisites:** The list is populated with sample data.
+    2.  **Test case:** `clear`
+    3.  **Expected:** All contacts are deleted. The list is now empty.
+
+2.  **Invalid clear command**
+
+    1.  **Test case:** `clear 123`
+    2.  **Expected:** Error message: `Invalid command format! clear: ...`
+
+### Planned Enhancements
+
+**Team Size:** 5
+
+1.  **Support for Multiple Lessons per Person:** The current data model supports only a one-to-one relationship between a `Person` and a `TimeSlot`. This will be refactored to a one-to-many relationship, allowing a single `Person` to be associated with a list of `TimeSlot` objects. Business logic will be added to ensure these timeslots do not overlap.
+2.  **Support for Multi-Person Timeslots (Group Tuition):** The data model will be enhanced to support a many-to-many relationship, allowing multiple `Person` objects to be associated with a single `TimeSlot`.
+3.  **Unique, Immutable Student ID:** We plan to implement a system to generate a unique, non-editable Student ID (e.g., `S-0001`) for every `Person` created.
+    * **Justification:** This ID will serve as the stable primary key for each student. This prevents data ambiguity when two students have the same name and ensures data integrity if a student's name changes. This ID will be crucial for stable integration with other systems, such as payment portals or external academic record databases.
+4.  **Timeslots Spanning Across Midnight:** The `TimeSlot` model will be re-designed to support start and end `LocalDateTime` objects instead of just `LocalDate` and `LocalTime`. This will allow a `TimeSlot` to correctly span across calendar days (e.g., 23:00 on Monday to 01:00 on Tuesday).
+5.  **Flexible Recurrence Intervals:** The recurrence logic is currently hardcoded for weekly intervals (e.g., the `clearpast` command advances a `t/recurring` lesson in intervals of 7 days until it is no longer in the past). This will be refactored to support more versatile intervals, such as daily, bi-weekly, and monthly.
 
 

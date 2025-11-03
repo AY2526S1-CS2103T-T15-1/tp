@@ -2,6 +2,8 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.text.MessageFormat;
+
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.model.Model;
@@ -32,9 +34,11 @@ public class FindTimeslotCommand extends Command {
         requireNonNull(model);
         model.updateFilteredPersonList(predicate);
         String keywords = String.join(", ", predicate.getKeywords());
-        String resultMessage = String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW,
-                model.getFilteredPersonList().size())
-                + " with timeslot starting on/at: [" + keywords + "]";
+        String searchTypeMessage = predicate.getSearchTypeDescription();
+        String resultMessage = MessageFormat.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND,
+                model.getFilteredPersonList().size(), "findtimeslot")
+                + ", found " + searchTypeMessage
+                + " matching: [" + keywords + "]";
         return new CommandResult(resultMessage);
     }
 

@@ -3,7 +3,7 @@ package seedu.address.logic.commands;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static seedu.address.logic.Messages.MESSAGE_PERSONS_LISTED_OVERVIEW;
+import static seedu.address.logic.Messages.MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.testutil.TypicalPersons.BENSON;
 import static seedu.address.testutil.TypicalPersons.CARL;
@@ -12,8 +12,10 @@ import static seedu.address.testutil.TypicalPersons.ELLE;
 import static seedu.address.testutil.TypicalPersons.FIONA;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -58,8 +60,12 @@ public class FindCommandTest {
 
     @Test
     public void execute_zeroKeywords_noPersonFound() {
-        String expectedMessage = String.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 0);
-        NameContainsKeywordsPredicate predicate = preparePredicate(" ");
+        String keywords = " ";
+        String expectedMessage = MessageFormat.format(
+                MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND, 0, "find")
+                + ", found by name matching: ["
+                + Arrays.stream(keywords.split("\\s+")).collect(Collectors.joining(", ")) + "]";
+        NameContainsKeywordsPredicate predicate = preparePredicate(keywords);
         FindCommand command = new FindCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
@@ -68,8 +74,11 @@ public class FindCommandTest {
 
     @Test
     public void execute_multipleKeywords_multiplePersonsFound() {
-        String expectedMessage = String.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 3);
-        NameContainsKeywordsPredicate predicate = preparePredicate("Kurz Elle Kunz");
+        String keywords = "Kurz Elle Kunz";
+        String expectedMessage = MessageFormat.format(
+                MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND, 3, "find")
+                + ", found by name matching: [Kurz, Elle, Kunz]";
+        NameContainsKeywordsPredicate predicate = preparePredicate(keywords);
         FindCommand command = new FindCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
@@ -78,8 +87,11 @@ public class FindCommandTest {
 
     @Test
     public void execute_multiplePartialKeywords_multiplePersonsFound() {
-        String expectedMessage = String.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 3);
-        NameContainsKeywordsPredicate predicate = preparePredicate("urz Ell Kun");
+        String keywords = "urz Ell Kun";
+        String expectedMessage = MessageFormat.format(
+                MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND, 3, "find")
+                + ", found by name matching: [urz, Ell, Kun]";
+        NameContainsKeywordsPredicate predicate = preparePredicate(keywords);
         FindCommand command = new FindCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
@@ -88,8 +100,11 @@ public class FindCommandTest {
 
     @Test
     public void execute_wrongKeyword_noPersonsFound() {
-        String expectedMessage = String.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 0);
-        NameContainsKeywordsPredicate predicate = preparePredicate("dominic");
+        String keywords = "dominic";
+        String expectedMessage = MessageFormat.format(
+                MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND, 0, "find")
+                + ", found by name matching: [dominic]";
+        NameContainsKeywordsPredicate predicate = preparePredicate(keywords);
         FindCommand command = new FindCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
@@ -98,8 +113,11 @@ public class FindCommandTest {
 
     @Test
     public void execute_oneKeyword_multiplePersonsFound() {
-        String expectedMessage = String.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 2);
-        NameContainsKeywordsPredicate predicate = preparePredicate("Meier");
+        String keywords = "Meier";
+        String expectedMessage = MessageFormat.format(
+                MESSAGE_PERSONS_LISTED_OVERVIEW_WITH_COMMAND, 2, "find")
+                + ", found by name matching: [Meier]";
+        NameContainsKeywordsPredicate predicate = preparePredicate(keywords);
         FindCommand command = new FindCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);

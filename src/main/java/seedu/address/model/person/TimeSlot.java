@@ -1,7 +1,6 @@
 package seedu.address.model.person;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.commons.util.AppUtil.checkArgument;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -18,19 +17,16 @@ import seedu.address.model.person.exceptions.PastTimeSlotException;
  * Guarantees: immutable; is valid as declared in {@link #isValidTimeSlot(String)}
  */
 public class TimeSlot implements Comparable<TimeSlot> {
-
+    public static final String MESSAGE_INVALID_DATE = "Invalid date: %1$s does not exist.";
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HHmm");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
     // for the sake of testing, min_duration is 1
     private static final int MIN_DURATION_MINUTES = 1;
     public static final String MESSAGE_CONSTRAINTS =
             "TimeSlot should be in the format YYYY-MM-DD HHMM-HHMM, "
                     + "where start time is before end time and the duration is at least "
-                    + MIN_DURATION_MINUTES + " minutes.\n"
+                    + MIN_DURATION_MINUTES + " minute.\n"
                     + "Example: 2025-11-12 1600-1800";
-    public static final String MESSAGE_INVALID_DATE = "Invalid date: %1$s does not exist.";
-
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HHmm");
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
-
     public final LocalDate date;
     public final LocalTime startTime;
     public final LocalTime endTime;
