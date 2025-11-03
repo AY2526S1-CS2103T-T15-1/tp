@@ -17,7 +17,7 @@ EduTrack is a **desktop application designed for private tutors who provide one-
 1.  Ensure you have Java `17` or above installed in your Computer.<br>
     **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
-2.  Download the latest `.jar` file from [here](https://github.com/AY2526S1-CS2103T-T15-1/tp/releases/tag/v1.6).
+2.  Download the latest `.jar` file from [here](https://github.com/AY2526S1-CS2103T-T15-1/tp/releases/tag/v1.6.1).
 
 3.  Copy the file to the folder you want to use as the _home folder_ for EduTrack.
 
@@ -31,7 +31,7 @@ EduTrack is a **desktop application designed for private tutors who provide one-
 
     * `list` : Lists all contacts which are **sorted by time slot**.
 
-    * `add n/Alice Tan p/91234567 e/alice.t@email.com a/1 Orchard Road ts/2025-11-05 1400-1600 t/Sec3Math` : Adds a contact named `Alice Tan` with a specified tag `Sec3Math` and time slot `2025-11-05 1400-1600`, amongst other fields, to EduTrack.
+    * `add n/Alice Tan p/91234567 e/alice.t@email.com a/1 Orchard Road ts/2025-12-05 1400-1600 t/Sec3Math` : Adds a contact named `Alice Tan` with a specified tag `Sec3Math` and time slot `2025-11-05 1400-1600`, amongst other fields, to EduTrack.
 
     * `delete 3` : Deletes the 3rd contact shown in the current list.
 
@@ -86,7 +86,7 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/
 * **Duplicate names** are allowed in EduTrack, as it is common for multiple students to share the same name. 
 * **Duplicate phone numbers** are also permitted, since siblings may provide the same parent’s contact number. 
 * **Duplicate email addresses** are allowed for the same reason, as siblings may share a parent’s email address.
-* * **Duplicate home addresses** are allowed for the same reason, as siblings may share the same home address.
+* **Duplicate home addresses** are allowed for the same reason, as siblings may share the same home address.
 * However, if two persons have the same name, phone, email and address, they will be flagged as duplicates.
 * There is a length limit imposed on fields (50 for names, email and address, 20 for phone, and 25 for tags).
 * The `ts/` (time slot) parameter is **mandatory** when adding a new student. 
@@ -106,12 +106,12 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/
 </box>
 
 Examples:
-* `add n/Alice Tan p/91234567 e/alice.t@email.com a/1 Orchard Road ts/2025-11-05 1400-1600 t/Sec3Math` (Adds Alice Tan with one subject tag)
-* `add n/Ben Lim p/92345678 e/ben.l@email.com a/2 Clementi Ave ts/2025-11-06 1000-1200 t/JC1Chem t/NeedsHelp` (Adds Ben Lim with two tags)
-* `add n/George Png p/97890123 e/george.p@email.com a/7 Pasir Ris Drive ts/2025-11-10 0900-1100` (Adds George Png with no tags)
+* `add n/Alice Tan p/91234567 e/alice.t@email.com a/1 Orchard Road ts/2025-12-05 1400-1600 t/Sec3Math` (Adds Alice Tan with one subject tag)
+* `add n/Ben Lim p/92345678 e/ben.l@email.com a/2 Clementi Ave ts/2025-12-06 1000-1200 t/JC1Chem t/NeedsHelp` (Adds Ben Lim with two tags)
+* `add n/George Png p/97890123 e/george.p@email.com a/7 Pasir Ris Drive ts/2025-12-10 0900-1100` (Adds George Png with no tags)
 
 Example of timeslot-conflict (assuming Alice Tan was already added): 
-`add n/New Student p/12341234 e/new@email.com a/Some Address ts/2025-11-05 1500-1700`
+`add n/New Student p/12341234 e/new@email.com a/Some Address ts/2025-12-05 1500-1700`
 ![timeslot conflict with Alice Tan](images/timeslot-conflict-alicetan.png)
 
 ### Listing all persons : `list`
@@ -146,7 +146,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [ts/TIMESLOT] [t/TA
 Examples:
 * `edit 1 p/91112222 e/new.charlie@email.com` (Edits phone and email of the 1st student, Charlie Goh)
 * `edit 2 t/Urgent` (Edits the tags of the 2nd student, Diana Heng, replacing `Sec3Math` and `recurring` with `Urgent`)
-* `edit 5 n/Alice Tan Updated ts/2025-11-05 1430-1630` (Edits the name and time slot of the 5th student, Alice Tan)
+* `edit 5 n/Alice Tan Updated ts/2025-12-05 1430-1630` (Edits the name and time slot of the 5th student, Alice Tan)
 
 ![successful edit of Charlie](images/edit-success-message.png)
 
@@ -361,20 +361,21 @@ Furthermore, certain edits can cause EduTrack to behave in unexpected ways (e.g.
 **A**: Install the app in the other computer and overwrite the empty data file it creates with the file that contains the data of your previous EduTrack home folder.
 
 --------------------------------------------------------------------------------------------------------------------
-
 ## Known issues
 
 1.  **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
 2.  **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
 3.  **One Timeslot per Person:** A person can only be scheduled for one timeslot. You cannot add a second lesson for the same person (e.g., one on Monday and one on Wednesday). You must delete the person, before adding a new person with the same details and edited timeslot.
 4.  **One Person per Timeslot:** The application does not support group lessons. Only one person can be assigned to a single timeslot.
-5.  **Timeslots Must Be on the Same Day:** A timeslot cannot cross midnight (e.g., `ts/2300-0100` is invalid). The latest possible end time is `2359`. 
+5.  **Timeslots Must Be on the Same Day:** A timeslot cannot cross midnight (e.g., `ts/2300-0100` is invalid). The latest possible end time is `2359`.
 6.  **Name Field Parsing:** The app supports special characters like `/` in names (e.g., `Karthik s/o Murugan`), however any text containing an *unknown* prefix (like `r/` for remarks that do not exist) before a *known* prefix will be considered part of the name.
     * **Example:** `add n/Tom r/good p/91234567`
     * **Result:** The person's name will be saved as `Tom r/good`.
     * **Workaround:** Always ensure correct, known prefixes are used in the commands.
 7.  **Recurring Tag is Weekly Only:** The application supports a `t/recurring` tag. Other commands (like `clearpast`) use this tag to manage repeating lessons. However, this tag *only* signifies a **weekly** recurrence. It is not possible to set up monthly or bi-weekly recurring lessons.
 8.  **Phone Numbers Only Accept Digits:** The application only accepts phone numbers containing digits (0-9). Special characters such as `+`, `(`, `)`, and spaces are not allowed. This is a design choice, as the app is intended for a local tuition context where international prefixes are not required.
+9.  **One Phone Number per Person:** The application supports only one phone number per person. It is not possible to store multiple numbers, such as a student's number and a parent's contact number.
+10. **Tag Editing Overwrites:** The `edit` command's tag `t/` prefix replaces *all* existing tags for a person[cite: 114]. It is not possible to add or remove a single tag; you must re-type all tags you wish the person to have.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -382,15 +383,15 @@ Furthermore, certain edits can cause EduTrack to behave in unexpected ways (e.g.
 
 Action | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Add** | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/TAG]…​` <br> e.g., `add n/Alice Tan p/91234567 e/alice.t@email.com a/1 Orchard Road ts/2025-11-05 1400-1600 t/Sec3Math`
+**Add** | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/TAG]…​` <br> e.g., `add n/Alice Tan p/91234567 e/alice.t@email.com a/1 Orchard Road ts/2025-12-05 1400-1600 t/Sec3Math`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [ts/TIMESLOT] [t/TAG]…​`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]…`<br> e.g., `find James Jake`
 **List** | `list`
 **Find by Tag**| `findtag TAG [MORE_TAGS]…` <br> e.g., `findtag Math English`
-**Find by Timeslot** | `findtimeslot [YYYY-MM-DD] [HHMM]` <br> e.g. `findtimeslot 2025-10-27 1400`
-**Filter by Timeslot** | `filtertimeslot [sd/START_DATE] [ed/END_DATE] [st/START_TIME] [et/END_TIME]` <br> e.g `filtertimeslot sd/2025-10-27 ed/2025-10-27 st/0800 et/1200`
+**Find by Timeslot** | `findtimeslot [YYYY-MM-DD] [HHMM]` <br> e.g. `findtimeslot 2025-11-27 1400`
+**Filter by Timeslot** | `filtertimeslot [sd/START_DATE] [ed/END_DATE] [st/START_TIME] [et/END_TIME]` <br> e.g `filtertimeslot sd/2025-11-27 ed/2025-11-27 st/0800 et/1200`
 **Clear past Timeslots** | `clearpast`
 **Help** | `help`
 **Exit** | `exit`

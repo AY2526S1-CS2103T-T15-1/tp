@@ -182,12 +182,12 @@ The following sequence diagram shows how a `filtertimeslot` operation goes throu
 **Aspect: How to parse the filter parameters:**
 
 * **Alternative 1 (current choice):** Use flexible, optional prefixes (e.g., `sd/`, `st/`, `et/`).
-    * Pros: Highly flexible. Allows users to filter by just a start time (`st/0900`), just a date range (`sd/2025-10-20 ed/2025-10-22`), or a specific time on a specific day (`sd/2025-10-20 st/0900 et/1700`).
-    * Cons: Parsing logic is more complex as many combinations are valid.
+    * **Pros:** Highly flexible. Allows users to filter by just a start time (`st/0900`), just a date range (`sd/2025-10-20 ed/2025-10-22`), or a specific time on a specific day (`sd/2025-10-20 st/0900 et/1700`).
+    * **Cons:** Parsing logic is more complex as many combinations are valid.
 
 * **Alternative 2:** A single, fixed-format argument (e.g., `filtertimeslot YYYY-MM-DD to YYYY-MM-DD`).
-    * Pros: Very simple to parse.
-    * Cons: Much less flexible. It's difficult to filter for "all 9am-12pm slots on any date," which is a key use case.
+    * **Pros:** Very simple to parse.
+    * **Cons:** Much less flexible. It's difficult to filter for "all 9am-12pm slots on any date," which is a key use case.
 
 **Aspect: Handling of Relative Time ("Now"/"Today")**
 
@@ -236,16 +236,16 @@ The following activity diagram summarizes the logic flow for the `clearpast` com
 **Aspect: How to handle recurring timeslots:**
 
 * **Alternative 1 (current choice):** A manual `clearpast` command that checks for a `t/recurring` tag.
-    * Pros: Simple to implement and understand. The user retains full control over when their schedule is cleaned up. Fits well within a command-line application.
-    * Cons: The user needs to remember to run the command. Only supports one type of recurrence (weekly).
+    * **Pros:** Simple to implement and understand. The user retains full control over when their schedule is cleaned up. Fits well within a command-line application.
+    * **Cons:** The user needs to remember to run the command. Only supports one type of recurrence (weekly).
 
 * **Alternative 2:** A fully abstract `Schedule` class with `OneTimeSlot` and `RecurringSlot` subclasses.
-    * Pros: Far more powerful. Could support complex schedules (e.g., "every Monday and Wednesday"). The `list` command could show all future occurrences.
-    * Cons: Massive architectural change. It would require rewriting all time-based commands (`add`, `edit`, `findtimeslot`, `filtertimeslot`, `list` sorting) and the conflict detection logic.
+    * **Pros:** Far more powerful. Could support complex schedules (e.g., "every Monday and Wednesday"). The `list` command could show all future occurrences.
+    * **Cons:** Massive architectural change. It would require rewriting all time-based commands (`add`, `edit`, `findtimeslot`, `filtertimeslot`, `list` sorting) and the conflict detection logic.
 
 * **Alternative 3:** An automatic background service that "watches" the clock.
-    * Pros: Fully automated.
-    * Cons: Not feasible for a simple command-line application. It's impossible to resolve conflicts (like in Alternative 1) without user input, leading to data being lost or updates failing silently.
+    * **Pros:** Fully automated.
+    * **Cons:** Not feasible for a simple command-line application. It's impossible to resolve conflicts (like in Alternative 1) without user input, leading to data being lost or updates failing silently.
 
 **Aspect: Conflict Resolution Strategy for Recurring Slots**
 
@@ -395,7 +395,7 @@ The following activity diagram summarizes what happens when a user executes a ne
 * prefers typing to mouse interactions
 * is reasonably comfortable using CLI apps
 * wants to stay organized by storing student details, lesson schedules, and progress notes in one fast, CLI-based system
-* wants to search for upcoming students in a particular appointment slot
+* wants to search for upcoming students in a particular appointment slot, and filter them by timeslots.
 * wants to sort all students by timeslot, earlier first
 
 **Value proposition**: manage contacts faster than a typical mouse/GUI driven app
@@ -470,7 +470,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
       Use case resumes at step 4.
 
 * 3b. User enters invalid data that is of wrong format.
-    * 3b1. EduTrack shows an error message `Emails should be of the format local-part@domain`.
+    * 3b1. EduTrack shows an error message `Emails should be of the format local-part@domain...`.
 
       Use case resumes at step 2.
 
@@ -506,8 +506,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 4.
 
-Here are the improved use cases for your `DeveloperGuide.md`, updated to reflect your application's precise logic, error messages, and command outputs based on our conversation.
-
 ---
 
 **Use case 4: Find persons by tag**
@@ -526,7 +524,7 @@ Here are the improved use cases for your `DeveloperGuide.md`, updated to reflect
     * 3a1. EduTrack shows an error message: `Invalid command format! findtag: Finds all persons...`.
       Use case resumes at step 2.
 * 4a. No persons are found with the given tag.
-    * 4a1. EduTrack shows a message `0 persons listed! with tag(s): []` and displays an empty list.
+    * 4a1. EduTrack shows a message `0 persons listed! with tag(s): [GIVEN_TAG]` and displays an empty list.
       Use case ends.
 
 ---
@@ -539,7 +537,7 @@ Here are the improved use cases for your `DeveloperGuide.md`, updated to reflect
 2.  EduTrack shows a list of persons.
 3.  User requests to find persons with a time slot on a specific date and time (e.g., `findtimeslot 2025-11-06 1000`).
 4.  EduTrack performs an **AND** search, filtering the list to show only persons who have a time slot on that date **AND** starting at that time.
-5.  EduTrack shows a success message, e.g., `1 persons listed! with timeslot starting on/at: [2025-11-06, 1000]`.
+5.  EduTrack shows a success message, e.g., `1 person listed using the 'findtimeslot' command, found by date and time matching: [2025-11-06, 1000]`.
     Use case ends.
 
 **Extensions**
@@ -554,7 +552,7 @@ Here are the improved use cases for your `DeveloperGuide.md`, updated to reflect
     * 3c1. EduTrack shows a specific error message: `Invalid keyword: '7837e832e'. Keywords must be a valid date (YYYY-MM-DD) or a valid time (HHMM).`.
       Use case resumes at step 2.
 * 5a. No persons are found.
-    * 5a1. EduTrack shows a message `0 persons listed! with timeslot starting on/at: [2025-11-06, 0900]` and displays an empty list.
+    * 5a1. EduTrack shows a message `0 persons listed using the 'findtimeslot' command, found by date and time matching: [GIVEN_TIMESLOT]` and displays an empty list.
       Use case ends.
 
 ---
@@ -582,7 +580,7 @@ Here are the improved use cases for your `DeveloperGuide.md`, updated to reflect
     * 3c1. EduTrack shows an error message: `Start date must be before or on end date.`.
       Use case resumes at step 2.
 * 5a. No persons are found within the filter range.
-    * 5a1. EduTrack shows a message `0 persons listed! with timeslots...` and displays an empty list.
+    * 5a1. EduTrack shows a message `0 persons listed using the 'filtertimeslot' command...` and displays an empty list.
       Use case ends.
 
 ---
@@ -598,10 +596,9 @@ Here are the improved use cases for your `DeveloperGuide.md`, updated to reflect
     * If the contact does **not** have the `t/recurring` tag, it is **deleted** from EduTrack.
     * If the contact **has** the `t/recurring` tag, EduTrack calculates the next weekly occurrence. It then attempts to update the contact to this new time slot.
 5.  EduTrack shows a multi-part success message summarizing the actions, e.g.:
-    `ClearPast command successful.`
     `Deleted 1 past contact(s): Charlie Goh`
     `Updated 1 recurring contact(s): Diana Heng`
-    `Could not update 1 recurring contact(s) due to conflicts: Ethan Yeo (Conflict: This time slot conflicts with: Ben Lim [2025-11-06 1000-1200])`.
+    `Could not update 1 recurring contact(s) due to conflicts: Ethan Yeo's next recurring slot [2025-11-06 1000-1200] conflicts with Ben Lim [2025-11-06 1000-1200]`.
     Use case ends.
 
 **Extensions**
@@ -676,15 +673,15 @@ testers are expected to do more *exploratory* testing. The sample data loaded on
 
 1.  **Adding a person with a time slot conflict**
 
-    1.  **Prerequisites:** Sample data is loaded. Note Alice Tan's slot: `2025-11-05 1400-1600`.
-    2.  **Test case:** `add n/New Student p/12345678 e/new@email.com a/New Address ts/2025-11-05 1500-1700` (This slot overlaps with Alice Tan)
-    3.  **Expected:** No person is added. An error message is shown in the result display, identifying the conflict: `This time slot conflicts with: Alice Tan [2025-11-05 1400-1600]`.
+    1.  **Prerequisites:** Sample data is loaded. Note Fiona Wee's slot: `2025-11-12 1100-1300`.
+    2.  **Test case:** `add n/New Student p/12345678 e/new@email.com a/New Address ts/2025-11-12 1000-1200` (This slot overlaps with Fiona Wee)
+    3.  **Expected:** No person is added. An error message is shown in the result display, identifying the conflict: `This time slot conflicts with: Alice Tan [2025-11-12 1000-1200]`.
 
 2.  **Adding a person with invalid fields**
 
-    1.  **Test case (invalid time):** `add n/New Student p/12345678 e/new@email.com a/New Address ts/2025-11-05 1500-1400`
+    1.  **Test case (invalid time):** `add n/New Student p/12345678 e/new@email.com a/New Address ts/2025-11-12 1500-1400`
     2.  **Expected:** No person is added. Error message about invalid time slot range.
-    3.  **Test case (missing name):** `add p/12345678 e/new@email.com a/New Address ts/2025-11-05 1500-1700`
+    3.  **Test case (missing name):** `add p/12345678 e/new@email.com a/New Address ts/2025-11-12 1500-1700`
     4.  **Expected:** No person is added. Error message about missing `n/` prefix.
 
 ### Locating by tag (`findtag`)
@@ -711,7 +708,7 @@ testers are expected to do more *exploratory* testing. The sample data loaded on
 
     1.  **Prerequisites:** Sample data is loaded.
     2.  **Test case:** `findtag NonExistentTag`
-    3.  **Expected:** The list is empty. Status message indicates `0 persons listed!`.
+    3.  **Expected:** The list is empty. Status message indicates `0 persons listed using the 'findtag' command with tag(s): [NonExistentTag]`.
 
 5.  **Invalid `findtag` command**
 
@@ -805,7 +802,7 @@ The test case below is **time-sensitive**. You will need to copy and paste the `
 
 1.  **Test setup (Full Scenario)**
 
-    1.  Note your current system date and time. For this example, let's assume it's `2025-11-02 15:30:00`.
+    1.  Note your current system date and time. For this example, let's assume it's `2025-11-02 15:30:00`. Adjust the timeslots that you set accordingly based on current date.
     2.  First, add a "blocker" contact for *next week*. This contact will be the conflict target for one of our recurring students.
         * `add n/Future Blocker p/333 e/block@e.com a/block ts/2025-11-09 15:31-15:33 t/TestBlock`
     3.  **Quickly**, add the following three contacts. Their time slots are set 1-2 minutes in the future and will all be in the past in about 4-5 minutes.
@@ -823,7 +820,7 @@ The test case below is **time-sensitive**. You will need to copy and paste the `
     2.  **Expected:** A composite success message should appear, similar to:
         * `Deleted 1 past contact(s): Past Student`
         * `Updated 1 recurring contact(s): Update Student`
-        * `Could not update 1 recurring contact(s) due to conflicts: Conflict Student (Conflict: This time slot conflicts with: Future Blocker [2025-11-09 15:31-15:33])`
+        * `Could not update 1 recurring contact(s) due to conflicts: Conflict Student's next recurring slot [ts/2025-11-09 15:31-15:33] conflicts with: Future Blocker [2025-11-09 15:31-15:33])`
 
 4.  **Test case: Verify state with `list`**
 
@@ -877,16 +874,21 @@ The test case below is **time-sensitive**. You will need to copy and paste the `
     1.  **Test case:** `clear 123`
     2.  **Expected:** Error message: `Invalid command format! clear: ...`
 
-### Planned Enhancements
+--------------------------------------------------------------------------------------------------------------------
 
-**Team Size:** 5
+## **Appendix: Planned Enhancements**
 
 1.  **Support for Multiple Lessons per Person:** The current data model supports only a one-to-one relationship between a `Person` and a `TimeSlot`. This will be refactored to a one-to-many relationship, allowing a single `Person` to be associated with a list of `TimeSlot` objects. Business logic will be added to ensure these timeslots do not overlap.
 2.  **Support for Multi-Person Timeslots (Group Tuition):** The data model will be enhanced to support a many-to-many relationship, allowing multiple `Person` objects to be associated with a single `TimeSlot`.
 3.  **Unique, Immutable Student ID:** We plan to implement a system to generate a unique, non-editable Student ID (e.g., `S-0001`) for every `Person` created.
     * **Justification:** This ID will serve as the stable primary key for each student. This prevents data ambiguity when two students have the same name and ensures data integrity if a student's name changes. This ID will be crucial for stable integration with other systems, such as payment portals or external academic record databases.
 4.  **Timeslots Spanning Across Midnight:** The `TimeSlot` model will be re-designed to support start and end `LocalDateTime` objects instead of just `LocalDate` and `LocalTime`. This will allow a `TimeSlot` to correctly span across calendar days (e.g., 23:00 on Monday to 01:00 on Tuesday).
-5.  **Flexible Recurrence Intervals:** The recurrence logic is currently hardcoded for weekly intervals (e.g., the `clearpast` command advances a `t/recurring` lesson by 7 days). This will be refactored to support more versatile intervals, such as daily, bi-weekly, and monthly.
+5.  **Flexible Recurrence Intervals:** The recurrence logic is currently hardcoded for weekly intervals (e.g., the `clearpast` command advances a `t/recurring` lesson by intervals of 7 days). This will be refactored to support more versatile intervals, such as daily, bi-weekly, and monthly.
 6.  **Enhanced Help Window:** The `help` command's UI will be improved to include a concise command summary. This provides users with an "at-a-glance" view of all available commands and their syntax, in addition to the existing link to the user guide.
+7.  **Taller Result Display:** The UI component for displaying command results will be enlarged vertically. This will allow longer success or error messages (e.g., from `find` or `clearpast`) to be fully visible without requiring the user to scroll.
+    Based on a review of your user guide, here are three excellent planned enhancements you can add.
+8.  **Cumulative Tag Editing:** The `edit` command currently overwrites all existing tags with the new ones provided. We plan to refactor this to support cumulative editing. This would introduce new prefixes (e.g., `t+/` to add a tag, `t-/` to remove a tag), allowing users to modify a person's tags without losing all existing ones.
+9.  **Support for Multiple Phone Numbers:** The `Person` model is currently limited to one phone number. We plan to enhance the data model to allow storing multiple phone numbers per person (e.g., a "Student" number and a "Parent" number). This would involve updating the `add` and `edit` commands to manage these multiple fields.
+10. **Import/Export to CSV:** The app currently relies on users manually editing the `edutrack.json` file for bulk changes, which is risky and can lead to data corruption. We plan to implement `import` and `export` commands to allow users to safely manage their student list in a common format like CSV.
 
 
