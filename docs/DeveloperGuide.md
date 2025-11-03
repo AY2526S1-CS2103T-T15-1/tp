@@ -415,7 +415,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `**`     | busy tutor                  | edit a student’s details when their contact info or schedule changes       | keep my records updated without re-adding the student                        |
 | `*`      | busy tutor                  | open the help command when I forget a command format                       | avoid wasting time guessing syntax                                           |
 | `***`    | careless tutor              | receive conflict warnings when adding or editing overlapping time slots    | avoid double-booking myself by accident                                      |
-| `***`    | careless tutor              | get feedback when I enter duplicate phone numbers                          | ensure no student record is entered twice by mistake                         |
 | `**`     | careless tutor              | clear past lessons while keeping recurring ones                            | maintain recurring classes without losing future slots                       |
 | `*`      | careless tutor              | rely on automatic saving after each command                                | avoid losing data if I forget to save manually                               |
 | `***`    | tutor with regular students | tag students as “recurring” or by subject group                            | easily organize and find my regular students                                 |
@@ -478,11 +477,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 * 2a. User enters conflicting timeslot.
     * 2a1. EduTrack shows an error message `This time slot conflicts with another existing time slot! John Doe [2025-10-31 1500-1800]`
     
-      Use case resumes at step 2.
-
-* 2b. User enters conflicting phone number.
-    * 2b1. EduTrack shows an error message `This phone number already exists in the address book, assigned to: John Doe`
-  
       Use case resumes at step 2.
 
     Use case ends.
@@ -601,7 +595,7 @@ Here are the improved use cases for your `DeveloperGuide.md`, updated to reflect
 2.  EduTrack gets the current system time (`now`).
 3.  EduTrack identifies all contacts with time slots ending before `now`.
 4.  For each identified contact:
-    * If the contact does **not** have the `t/recurring` tag, it is **deleted** from the address book.
+    * If the contact does **not** have the `t/recurring` tag, it is **deleted** from EduTrack.
     * If the contact **has** the `t/recurring` tag, EduTrack calculates the next weekly occurrence. It then attempts to update the contact to this new time slot.
 5.  EduTrack shows a multi-part success message summarizing the actions, e.g.:
     `ClearPast command successful.`
