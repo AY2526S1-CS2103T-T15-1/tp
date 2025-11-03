@@ -95,7 +95,7 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS ts/YYYY-MM-DD HHMM-HHMM [t/
 
 <box type="tip" seamless>
 
-**Note:** A person can have any number of tags (including 0). Duplicate tags are treated as a single tag — repeated tags will not affect search results.
+**Note:** A person can have any number of tags (including 0). Duplicate tags are treated as a single tag — repeated tags will not affect search results. However, you cannot add an empty tag (add ... `t/` will have an error).
 </box>
 
 <box type="tip" seamless>
@@ -308,7 +308,7 @@ Assume current day is 2025-10-30, time is 15:30.
 **Result displayed**:
 * Deleted 1 past contact(s): Charlie Goh 
 * Updated 1 recurring contact(s): Diana Heng 
-* Could not update 1 recurring contact(s) due to conflicts: Ethan Yeo (Conflict: This time slot conflicts with: Ben Lim [2025-11-06 1000-1200])
+* Could not update 1 recurring contact(s) due to conflicts: Ethan Yeo's next recurring slot [2025-11-06 1000-1200] conflicts with Ben Lim [2025-11-06 1000-1200]
 
 **Why this happened**:
 
@@ -353,10 +353,6 @@ If your changes to the data file makes its format invalid, EduTrack will discard
 Furthermore, certain edits can cause EduTrack to behave in unexpected ways (e.g., if a value entered is outside the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
 </box>
 
-### Archiving data files `[coming in v2.0]`
-
-_Details coming soon ..._
-
 --------------------------------------------------------------------------------------------------------------------
 
 ## FAQ
@@ -378,6 +374,7 @@ _Details coming soon ..._
     * **Result:** The person's name will be saved as `Tom r/good`.
     * **Workaround:** Always ensure correct, known prefixes are used in the commands.
 7.  **Recurring Tag is Weekly Only:** The application supports a `t/recurring` tag. Other commands (like `clearpast`) use this tag to manage repeating lessons. However, this tag *only* signifies a **weekly** recurrence. It is not possible to set up monthly or bi-weekly recurring lessons.
+8.  **Phone Numbers Only Accept Digits:** The application only accepts phone numbers containing digits (0-9). Special characters such as `+`, `(`, `)`, and spaces are not allowed. This is a design choice, as the app is intended for a local tuition context where international prefixes are not required.
 
 --------------------------------------------------------------------------------------------------------------------
 
