@@ -205,7 +205,10 @@ public class ClearPastCommandTest {
                 + " [" + conflictingPerson.getTimeSlot() + "]";
 
         // 2. This is the new format from ClearPastCommand's helper method
-        String conflictDetails = "Recurring Carl (Conflict: " + conflictError + ")";
+        String conflictDetails = "Recurring Carl's next recurring slot ["
+                + pastRecurring.getTimeSlot().getNextOccurrence(now).toString()
+                + "] conflicts with "
+                + conflictingPerson.getName() + " [" + conflictingPerson.getTimeSlot() + "]";
 
         String expectedMessage = getExpectedClearPastMessage(
                 Collections.emptyList(), // No deleted
@@ -239,6 +242,6 @@ public class ClearPastCommandTest {
             result.append(String.format(ClearPastCommand.MESSAGE_CONFLICTS,
                     conflictDetails.size(), String.join(", ", conflictDetails)));
         }
-        return result.toString();
+        return result.toString().trim();
     }
 }

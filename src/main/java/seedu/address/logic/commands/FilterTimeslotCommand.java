@@ -22,7 +22,7 @@ public class FilterTimeslotCommand extends Command {
             + "ed/END_DATE (YYYY-MM-DD) "
             + "st/START_TIME (HHMM) "
             + "et/END_TIME (HHMM)\n"
-            + "Example: " + COMMAND_WORD + " sd/2025-10-20 st/0900 et/1300";
+            + "Example: " + COMMAND_WORD + " sd/2025-12-20 st/0900 et/1300";
 
     private final TimeslotRangePredicate predicate;
 
