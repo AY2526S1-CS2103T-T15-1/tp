@@ -117,9 +117,15 @@ public class ClearPastCommand extends Command {
                 model.setPerson(ptu.oldPerson, updatedPerson);
                 updatedNames.add(updatedPerson.getName().toString());
             } catch (TimeSlotConflictException e) {
-                // Catch specific conflict exceptions
+                String originalMessage = e.getMessage();
+                String conflictDetails = originalMessage;
+                String prefix = "This time slot conflicts with another existing time slot! ";
+                if (originalMessage.startsWith(prefix)) {
+                    conflictDetails = originalMessage.substring(prefix.length());
+                }
                 conflictNames.add(ptu.oldPerson.getName().toString()
-                        + " (Conflict: " + e.getMessage() + ")");
+                        + "'s next recurring slot [" + ptu.newTimeSlot.toString()
+                        + "] conflicts with " + conflictDetails);
             } catch (Exception e) {
                 // Catch other potential errors
                 logger.warning("Unexpected error while updating recurring person ");
@@ -150,8 +156,7 @@ public class ClearPastCommand extends Command {
             result.append(String.format(MESSAGE_CONFLICTS,
                     conflictNames.size(), String.join(", ", conflictNames)));
         }
-
-        return new CommandResult(result.toString());
+        return new CommandResult(result.toString().trim());
     }
 
     /**

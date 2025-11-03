@@ -21,7 +21,7 @@ public class FindTimeslotCommand extends Command {
             + "matches any of the specified dates or start times (case-insensitive). "
             + "You can search using either date (YYYY-MM-DD) or time (HHmm).\n"
             + "Parameters: DATE_OR_START_TIME [MORE_KEYWORDS]...\n"
-            + "Example: " + COMMAND_WORD + " 2025-10-12 0900 1600";
+            + "Example: " + COMMAND_WORD + " 2025-12-12 0900 1600";
 
     private final TimeslotStartTimeContainsKeywordsPredicate predicate;
 
